@@ -1,0 +1,31 @@
+{
+  "name": "cutipdf",
+  "version": "1.0.0",
+  "description": "🌸 CutiPDF (cutipdf.com) — Cute & minimal Japanese-style PDF studio with 100% in-browser client-side conversion.",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx serve .",
+    "start": "npx serve .",
+    "test": "echo \"Error: no test specified\" && exit 0"
+  },
+  "keywords": [
+    "pdf",
+    "converter",
+    "cutipdf",
+    "kawaii",
+    "japanese-minimal",
+    "image-to-pdf",
+    "pdf-merge",
+    "client-side"
+  ],
+  "author": "weir-doabby",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/weir-doabby/cutipdf.git"
+  },
+  "bugs": {
+    "url": "https://github.com/weir-doabby/cutipdf/issues"
+  },
+  "homepage": "https://weir-doabby.github.io/cutipdf/"
+}
