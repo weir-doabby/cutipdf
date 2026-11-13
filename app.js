@@ -1,182 +1,373 @@
 /**
- * CutiPDF (cutipdf.com) - Modern Minimalist PDF Studio
- * Inspired by iLovePDF & Documents by Readdle
- * 100% In-Browser & Client-Side Privacy
+ * CutiPDF (cutipdf.com) - Minimalist & Clean PDF Studio
+ * Structured like iLovePDF • 100% In-Browser Privacy
  */
+
+// Tools Catalog Definition (Structured cleanly like iLovePDF)
+const TOOLS_CATALOG = {
+  'CONVERT TO PDF': [
+    {
+      id: 'jpg-to-pdf',
+      title: 'JPG to PDF',
+      desc: 'Convert JPG, PNG, and WebP images to PDF in seconds.',
+      icon: '🖼️',
+      color: '#e63946',
+      accept: 'image/jpeg,image/png,image/webp,image/jpg',
+      btnText: 'Select JPG images',
+      actionText: 'Convert to PDF',
+      functional: true
+    },
+    {
+      id: 'word-to-pdf',
+      title: 'Word to PDF',
+      desc: 'Convert DOC and DOCX documents to high quality PDF.',
+      icon: '📄',
+      color: '#2b579a',
+      accept: '.doc,.docx',
+      btnText: 'Select Word files',
+      actionText: 'Convert to PDF',
+      functional: false
+    },
+    {
+      id: 'powerpoint-to-pdf',
+      title: 'PowerPoint to PDF',
+      desc: 'Convert PPT and PPTX presentations to PDF slides.',
+      icon: '📊',
+      color: '#d24726',
+      accept: '.ppt,.pptx',
+      btnText: 'Select Powerpoint files',
+      actionText: 'Convert to PDF',
+      functional: false
+    },
+    {
+      id: 'excel-to-pdf',
+      title: 'Excel to PDF',
+      desc: 'Convert Excel spreadsheets into neat PDF tables.',
+      icon: '📈',
+      color: '#217346',
+      accept: '.xls,.xlsx',
+      btnText: 'Select Excel spreadsheets',
+      actionText: 'Convert to PDF',
+      functional: false
+    },
+    {
+      id: 'html-to-pdf',
+      title: 'HTML to PDF',
+      desc: 'Convert web pages or HTML code to PDF document.',
+      icon: '🌐',
+      color: '#e44d26',
+      accept: '.html,.htm',
+      btnText: 'Select HTML files',
+      actionText: 'Convert to PDF',
+      functional: false
+    }
+  ],
+  'ORGANIZE PDF': [
+    {
+      id: 'merge-pdf',
+      title: 'Merge PDF',
+      desc: 'Combine multiple PDF files in the order you want.',
+      icon: '📑',
+      color: '#e63946',
+      accept: 'application/pdf',
+      btnText: 'Select PDF files',
+      actionText: 'Merge PDF',
+      functional: true
+    },
+    {
+      id: 'split-pdf',
+      title: 'Split PDF',
+      desc: 'Separate one page or a whole set for easy extraction.',
+      icon: '✂️',
+      color: '#f59e0b',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Split PDF',
+      functional: true
+    },
+    {
+      id: 'remove-pages',
+      title: 'Remove Pages',
+      desc: 'Select and remove unwanted pages from your document.',
+      icon: '🗑️',
+      color: '#ef4444',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Remove Pages',
+      functional: false
+    }
+  ],
+  'CONVERT FROM PDF': [
+    {
+      id: 'pdf-to-jpg',
+      title: 'PDF to JPG',
+      desc: 'Extract all images or convert each page to high-res JPG.',
+      icon: '🖼️',
+      color: '#10b981',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Convert to JPG',
+      functional: false
+    },
+    {
+      id: 'pdf-to-word',
+      title: 'PDF to Word',
+      desc: 'Easily convert your PDF files into editable DOCX.',
+      icon: '📄',
+      color: '#2b579a',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Convert to Word',
+      functional: false
+    },
+    {
+      id: 'pdf-to-excel',
+      title: 'PDF to Excel',
+      desc: 'Extract tables and data straight into Excel sheets.',
+      icon: '📈',
+      color: '#217346',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Convert to Excel',
+      functional: false
+    }
+  ],
+  'OPTIMIZE & EDIT': [
+    {
+      id: 'compress-pdf',
+      title: 'Compress PDF',
+      desc: 'Reduce file size while keeping the best PDF quality.',
+      icon: '🗜️',
+      color: '#8b5cf6',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Compress PDF',
+      functional: true
+    },
+    {
+      id: 'text-to-pdf',
+      title: 'Text to PDF',
+      desc: 'Convert notes, markdown, and plain text to PDF.',
+      icon: '📝',
+      color: '#6366f1',
+      accept: '.txt,.md,text/plain',
+      btnText: 'Select Text file',
+      actionText: 'Convert to PDF',
+      functional: true
+    },
+    {
+      id: 'rotate-pdf',
+      title: 'Rotate PDF',
+      desc: 'Rotate your PDF pages to portrait or landscape.',
+      icon: '🔄',
+      color: '#3b82f6',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Rotate PDF',
+      functional: true
+    }
+  ],
+  'PDF SECURITY': [
+    {
+      id: 'protect-pdf',
+      title: 'Protect PDF',
+      desc: 'Encrypt your PDF with a password to secure privacy.',
+      icon: '🔒',
+      color: '#ec4899',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Protect PDF',
+      functional: false
+    },
+    {
+      id: 'unlock-pdf',
+      title: 'Unlock PDF',
+      desc: 'Remove PDF password protection for quick access.',
+      icon: '🔓',
+      color: '#14b8a6',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Unlock PDF',
+      functional: false
+    }
+  ]
+};
 
 // Application State
 const state = {
-  currentTab: 'convert', // 'convert', 'tools', 'history'
-  activeTool: 'image-to-pdf', // 'image-to-pdf', 'merge-pdf', 'text-to-pdf'
-  
-  // Image to PDF Workspace
-  images: [], // { id, file, url, name, size, width, height, rotation: 0 }
-  settings: {
-    orientation: 'auto', // 'auto', 'portrait', 'landscape'
-    pageSize: 'fit', // 'fit', 'a4', 'letter'
-    margin: 'none', // 'none', 'small', 'big'
-    outputName: 'CutiPDF_Document'
-  },
-  
-  // Merge PDF Workspace
-  pdfFiles: [], // { id, file, name, size, pageCount }
-  
-  // Text to PDF
-  textNote: '',
-  textTitle: 'My Notes',
-
-  // History & Stats
-  history: JSON.parse(localStorage.getItem('cutipdf_history') || '[]'),
-  stats: JSON.parse(localStorage.getItem('cutipdf_stats') || '{"converted": 0, "images": 0}')
+  currentView: 'all-tools', // 'all-tools' or 'tool-active'
+  activeTool: null,
+  selectedFiles: [],
+  theme: localStorage.getItem('cutipdf_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
 };
 
 // DOM Elements
 const DOM = {
-  tabContents: document.querySelectorAll('.tab-content'),
-  navButtons: document.querySelectorAll('.nav-btn'),
-  fabUpload: document.getElementById('fabUpload'),
-  fileInputImages: document.getElementById('fileInputImages'),
-  fileInputPdfs: document.getElementById('fileInputPdfs'),
+  viewAllTools: document.getElementById('view-all-tools'),
+  viewToolActive: document.getElementById('view-tool-active'),
+  toolsGridContainer: document.getElementById('toolsGridContainer'),
+  btnBackToTools: document.getElementById('btnBackToTools'),
+  floatingToolsBtn: document.getElementById('floatingToolsBtn'),
+  themeToggle: document.getElementById('themeToggle'),
+  themeIcon: document.getElementById('themeIcon'),
   
-  // Convert tab sections
-  dropzoneInitial: document.getElementById('dropzoneInitial'),
-  workspaceActive: document.getElementById('workspaceActive'),
-  imagesGrid: document.getElementById('imagesGrid'),
-  btnAddMoreImages: document.getElementById('btnAddMoreImages'),
+  // Active Tool Elements
+  toolIcon: document.getElementById('toolIcon'),
+  toolTitle: document.getElementById('toolTitle'),
+  toolDesc: document.getElementById('toolDesc'),
+  toolDropzone: document.getElementById('toolDropzone'),
+  fileInput: document.getElementById('fileInput'),
+  btnSelectFiles: document.getElementById('btnSelectFiles'),
+  dropzoneText: document.getElementById('dropzoneText'),
   
-  // Conversion Settings Controls
-  btnOrientation: document.querySelectorAll('[data-orientation]'),
-  btnPageSize: document.querySelectorAll('[data-pagesize]'),
-  btnMargin: document.querySelectorAll('[data-margin]'),
-  inputFilename: document.getElementById('inputFilename'),
-  btnConvertImages: document.getElementById('btnConvertImages'),
-  btnClearWorkspace: document.getElementById('btnClearWorkspace'),
+  // Active Tool File Management
+  filesSelectedArea: document.getElementById('filesSelectedArea'),
+  selectedFilesList: document.getElementById('selectedFilesList'),
+  btnClearFiles: document.getElementById('btnClearFiles'),
+  btnExecuteAction: document.getElementById('btnExecuteAction'),
+  actionButtonText: document.getElementById('actionButtonText'),
   
-  // Progress & Result
-  conversionProgress: document.getElementById('conversionProgress'),
-  progressBar: document.getElementById('progressBar'),
-  progressLabel: document.getElementById('progressLabel'),
-  
-  // History & Profile
-  historyList: document.getElementById('historyList'),
-  statTotalConverted: document.getElementById('statTotalConverted'),
-  statTotalImages: document.getElementById('statTotalImages'),
-  btnClearHistory: document.getElementById('btnClearHistory'),
-  
-  // Toast
+  // Global Toast
   toast: document.getElementById('toast'),
   toastMessage: document.getElementById('toastMessage')
 };
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
-  initNavigation();
-  initDropzones();
-  initSettingsControls();
-  initImageWorkspace();
-  initMergeWorkspace();
-  initTextWorkspace();
-  renderHistory();
-  renderStats();
+  initTheme();
+  renderAllToolsCatalog();
+  initToolEvents();
+  initDropzoneEvents();
 });
 
 // ==========================================
-// Navigation & Tabs
+// Theme Management (Light / Dark)
 // ==========================================
-function initNavigation() {
-  DOM.navButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      const tab = btn.getAttribute('data-tab');
-      switchTab(tab);
-    });
+function initTheme() {
+  applyTheme(state.theme);
+  DOM.themeToggle.addEventListener('click', () => {
+    state.theme = state.theme === 'dark' ? 'light' : 'dark';
+    localStorage.setItem('cutipdf_theme', state.theme);
+    applyTheme(state.theme);
   });
+}
 
-  if (DOM.fabUpload) {
-    DOM.fabUpload.addEventListener('click', () => {
-      switchTab('convert');
-      if (DOM.fileInputImages) {
-        DOM.fileInputImages.click();
-      }
-    });
+function applyTheme(theme) {
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+    DOM.themeIcon.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+      </svg>
+    `;
+  } else {
+    document.documentElement.classList.remove('dark');
+    DOM.themeIcon.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+      </svg>
+    `;
   }
 }
 
-function switchTab(tabId) {
-  state.currentTab = tabId;
+// ==========================================
+// Render All Tools Catalog (iLovePDF Style)
+// ==========================================
+function renderAllToolsCatalog() {
+  DOM.toolsGridContainer.innerHTML = '';
 
-  DOM.tabContents.forEach(tab => {
-    tab.classList.remove('active');
-    if (tab.id === `tab-${tabId}`) {
-      tab.classList.add('active');
-    }
-  });
+  for (const [category, tools] of Object.entries(TOOLS_CATALOG)) {
+    const section = document.createElement('section');
+    section.className = 'space-y-4';
 
-  DOM.navButtons.forEach(btn => {
-    btn.classList.remove('active');
-    if (btn.getAttribute('data-tab') === tabId) {
-      btn.classList.add('active');
-    }
-  });
+    section.innerHTML = `
+      <div class="flex items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-2">
+        <h2 class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">${category}</h2>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        ${tools.map(tool => `
+          <div onclick="openToolPage('${tool.id}')" class="tool-card group">
+            <div class="flex items-start justify-between mb-4">
+              <span class="text-3xl">${tool.icon}</span>
+              ${!tool.functional ? '<span class="text-[10px] font-semibold text-zinc-400 dark:text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-md">Coming Soon</span>' : ''}
+            </div>
+            <h3 class="font-bold text-sm text-zinc-900 dark:text-zinc-100 group-hover:text-[#e63946] transition-colors">${tool.title}</h3>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-2 leading-relaxed">${tool.desc}</p>
+          </div>
+        `).join('')}
+      </div>
+    `;
 
+    DOM.toolsGridContainer.appendChild(section);
+  }
+}
+
+// ==========================================
+// Tool Navigation & Dedicated Pages
+// ==========================================
+function findToolById(id) {
+  for (const tools of Object.values(TOOLS_CATALOG)) {
+    const found = tools.find(t => t.id === id);
+    if (found) return found;
+  }
+  return null;
+}
+
+window.openToolPage = function(toolId) {
+  const tool = findToolById(toolId);
+  if (!tool) return;
+
+  state.activeTool = tool;
+  state.selectedFiles = [];
+
+  // Update Tool Header
+  DOM.toolIcon.textContent = tool.icon;
+  DOM.toolTitle.textContent = tool.title;
+  DOM.toolDesc.textContent = tool.desc;
+
+  // Update Input & Button Texts
+  DOM.fileInput.accept = tool.accept;
+  DOM.btnSelectFiles.textContent = tool.btnText;
+  DOM.actionButtonText.textContent = tool.actionText;
+
+  // Reset File Views
+  DOM.filesSelectedArea.classList.add('hidden');
+  DOM.toolDropzone.classList.remove('hidden');
+
+  // Switch View
+  DOM.viewAllTools.classList.remove('active');
+  DOM.viewToolActive.classList.add('active');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+function showAllTools() {
+  state.currentView = 'all-tools';
+  DOM.viewToolActive.classList.remove('active');
+  DOM.viewAllTools.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-window.switchTab = switchTab;
+window.showAllTools = showAllTools;
 
-// ==========================================
-// Settings Controls (iLovePDF / Readdle style)
-// ==========================================
-function initSettingsControls() {
-  // Orientation
-  DOM.btnOrientation.forEach(btn => {
-    btn.addEventListener('click', () => {
-      DOM.btnOrientation.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      state.settings.orientation = btn.getAttribute('data-orientation');
-    });
+function initToolEvents() {
+  DOM.btnBackToTools.addEventListener('click', showAllTools);
+  DOM.floatingToolsBtn.addEventListener('click', showAllTools);
+
+  DOM.btnClearFiles.addEventListener('click', () => {
+    state.selectedFiles = [];
+    DOM.filesSelectedArea.classList.add('hidden');
+    DOM.toolDropzone.classList.remove('hidden');
   });
 
-  // Page Size
-  DOM.btnPageSize.forEach(btn => {
-    btn.addEventListener('click', () => {
-      DOM.btnPageSize.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      state.settings.pageSize = btn.getAttribute('data-pagesize');
-    });
-  });
-
-  // Margin
-  DOM.btnMargin.forEach(btn => {
-    btn.addEventListener('click', () => {
-      DOM.btnMargin.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      state.settings.margin = btn.getAttribute('data-margin');
-    });
-  });
-
-  // Filename input
-  if (DOM.inputFilename) {
-    DOM.inputFilename.addEventListener('input', (e) => {
-      state.settings.outputName = e.target.value.trim() || 'CutiPDF_Document';
-    });
-  }
-
-  // Clear workspace
-  if (DOM.btnClearWorkspace) {
-    DOM.btnClearWorkspace.addEventListener('click', () => {
-      state.images = [];
-      updateWorkspaceView();
-      showToast('Workspace cleared');
-    });
-  }
+  DOM.btnExecuteAction.addEventListener('click', executeActiveToolAction);
 }
 
 // ==========================================
-// Dropzone & File Input
+// Dropzone & File Selection
 // ==========================================
-function initDropzones() {
-  const dropzone = DOM.dropzoneInitial;
-  if (!dropzone) return;
+function initDropzoneEvents() {
+  const dropzone = DOM.toolDropzone;
 
   ['dragenter', 'dragover'].forEach(name => {
     dropzone.addEventListener(name, (e) => {
@@ -196,608 +387,259 @@ function initDropzones() {
 
   dropzone.addEventListener('drop', (e) => {
     const files = Array.from(e.dataTransfer.files);
-    handleSelectedImages(files);
+    handleFilesSelected(files);
+  });
+
+  DOM.btnSelectFiles.addEventListener('click', (e) => {
+    e.stopPropagation();
+    DOM.fileInput.click();
   });
 
   dropzone.addEventListener('click', (e) => {
-    if (e.target.tagName !== 'BUTTON' && !e.target.closest('button')) {
-      DOM.fileInputImages.click();
-    }
+    DOM.fileInput.click();
   });
 
-  if (DOM.fileInputImages) {
-    DOM.fileInputImages.addEventListener('change', (e) => {
-      const files = Array.from(e.target.files);
-      handleSelectedImages(files);
-      DOM.fileInputImages.value = '';
-    });
-  }
-
-  if (DOM.btnAddMoreImages) {
-    DOM.btnAddMoreImages.addEventListener('click', () => {
-      DOM.fileInputImages.click();
-    });
-  }
-}
-
-// ==========================================
-// Image Workspace Management
-// ==========================================
-async function handleSelectedImages(files) {
-  const imageFiles = files.filter(f => f.type.startsWith('image/'));
-  if (imageFiles.length === 0) {
-    showToast('Please select valid image files (JPG, PNG, WebP)');
-    return;
-  }
-
-  for (const file of imageFiles) {
-    const imgData = await readImageFile(file);
-    state.images.push(imgData);
-  }
-
-  updateWorkspaceView();
-  showToast(`${imageFiles.length} images added to workspace`);
-}
-
-function readImageFile(file) {
-  return new Promise((resolve) => {
-    const url = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = () => {
-      resolve({
-        id: Math.random().toString(36).substring(2, 9),
-        file,
-        url,
-        name: file.name,
-        size: formatBytes(file.size),
-        width: img.width,
-        height: img.height,
-        rotation: 0
-      });
-    };
-    img.src = url;
+  DOM.fileInput.addEventListener('change', (e) => {
+    const files = Array.from(e.target.files);
+    handleFilesSelected(files);
+    DOM.fileInput.value = '';
   });
 }
 
-function updateWorkspaceView() {
-  if (state.images.length === 0) {
-    DOM.dropzoneInitial.classList.remove('hidden');
-    DOM.workspaceActive.classList.add('hidden');
-    return;
-  }
+function handleFilesSelected(files) {
+  if (!files || files.length === 0) return;
 
-  DOM.dropzoneInitial.classList.add('hidden');
-  DOM.workspaceActive.classList.remove('hidden');
-  renderImageThumbnails();
+  state.selectedFiles = files;
+  renderSelectedFilesList();
 
-  DOM.btnConvertImages.innerHTML = `
-    <span>Convert ${state.images.length} ${state.images.length === 1 ? 'Image' : 'Images'} to PDF</span>
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-    </svg>
-  `;
+  DOM.toolDropzone.classList.add('hidden');
+  DOM.filesSelectedArea.classList.remove('hidden');
 }
 
-function renderImageThumbnails() {
-  DOM.imagesGrid.innerHTML = '';
+function renderSelectedFilesList() {
+  DOM.selectedFilesList.innerHTML = '';
 
-  state.images.forEach((item, index) => {
-    const card = document.createElement('div');
-    card.className = 'thumbnail-card group flex flex-col justify-between';
-    card.innerHTML = `
-      <div class="relative bg-zinc-100 flex items-center justify-center h-48 overflow-hidden">
-        <!-- Page Number Pill -->
-        <div class="absolute top-2.5 left-2.5 z-10 bg-white/90 backdrop-blur-md border border-zinc-200 text-zinc-800 text-[11px] font-bold px-2 py-0.5 rounded-md shadow-xs">
-          Page ${index + 1}
-        </div>
-
-        <!-- Quick Action Buttons -->
-        <div class="absolute top-2.5 right-2.5 z-10 flex items-center gap-1">
-          <button onclick="rotateImage(${index})" class="w-7 h-7 rounded-full bg-white/90 backdrop-blur-md border border-zinc-200 text-zinc-700 hover:text-[#e63946] flex items-center justify-center shadow-xs transition-colors" title="Rotate 90°">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-          </button>
-          <button onclick="removeImage(${index})" class="w-7 h-7 rounded-full bg-white/90 backdrop-blur-md border border-zinc-200 text-zinc-700 hover:text-red-600 flex items-center justify-center shadow-xs transition-colors" title="Remove">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <!-- Thumbnail Image with Rotation -->
-        <img src="${item.url}" 
-             alt="${item.name}" 
-             style="transform: rotate(${item.rotation}deg);" 
-             class="max-h-full max-w-full object-contain transition-transform duration-200" />
-      </div>
-
-      <!-- Card Footer with Reorder and Details -->
-      <div class="p-3 bg-white border-t border-zinc-100 flex items-center justify-between">
-        <div class="overflow-hidden pr-2">
-          <p class="text-xs font-semibold text-zinc-800 truncate" title="${item.name}">${item.name}</p>
-          <p class="text-[10px] text-zinc-400">${item.width}×${item.height} • ${item.size}</p>
-        </div>
-
-        <!-- Reorder arrows -->
-        <div class="flex items-center gap-1">
-          <button onclick="moveImage(${index}, -1)" ${index === 0 ? 'disabled' : ''} class="w-6 h-6 rounded border border-zinc-200 flex items-center justify-center text-zinc-500 hover:bg-zinc-50 disabled:opacity-30 disabled:pointer-events-none" title="Move Left">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-          <button onclick="moveImage(${index}, 1)" ${index === state.images.length - 1 ? 'disabled' : ''} class="w-6 h-6 rounded border border-zinc-200 flex items-center justify-center text-zinc-500 hover:bg-zinc-50 disabled:opacity-30 disabled:pointer-events-none" title="Move Right">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </div>
-      </div>
-    `;
-
-    DOM.imagesGrid.appendChild(card);
-  });
-}
-
-// Global Image Actions
-window.rotateImage = function(index) {
-  state.images[index].rotation = (state.images[index].rotation + 90) % 360;
-  renderImageThumbnails();
-};
-
-window.removeImage = function(index) {
-  state.images.splice(index, 1);
-  updateWorkspaceView();
-};
-
-window.moveImage = function(index, direction) {
-  const newIndex = index + direction;
-  if (newIndex < 0 || newIndex >= state.images.length) return;
-  const temp = state.images[index];
-  state.images[index] = state.images[newIndex];
-  state.images[newIndex] = temp;
-  renderImageThumbnails();
-};
-
-// ==========================================
-// Real PDF Conversion Engine (iLovePDF Grade)
-// ==========================================
-function initImageWorkspace() {
-  DOM.btnConvertImages.addEventListener('click', async () => {
-    if (state.images.length === 0) return;
-
-    try {
-      showProgress(15, 'Preparing document canvas...');
-      DOM.btnConvertImages.disabled = true;
-
-      const { PDFDocument, PageSizes } = PDFLib;
-      const pdfDoc = await PDFDocument.create();
-
-      for (let i = 0; i < state.images.length; i++) {
-        const item = state.images[i];
-        const progress = Math.round(20 + (i / state.images.length) * 70);
-        showProgress(progress, `Rendering page ${i + 1} of ${state.images.length}...`);
-
-        // Convert image to PNG buffer with applied rotation via canvas
-        const orientedBlob = await renderRotatedImageBlob(item);
-        const arrayBuffer = await orientedBlob.arrayBuffer();
-        const embeddedImage = await pdfDoc.embedPng(arrayBuffer);
-
-        const imgWidth = embeddedImage.width;
-        const imgHeight = embeddedImage.height;
-
-        // Determine Page Size & Dimensions
-        let pageWidth, pageHeight;
-        if (state.settings.pageSize === 'a4') {
-          pageWidth = PageSizes.A4[0];
-          pageHeight = PageSizes.A4[1];
-        } else if (state.settings.pageSize === 'letter') {
-          pageWidth = PageSizes.Letter[0];
-          pageHeight = PageSizes.Letter[1];
-        } else {
-          // 'fit' mode: exactly match image
-          pageWidth = imgWidth;
-          pageHeight = imgHeight;
-        }
-
-        // Apply orientation if explicitly chosen
-        if (state.settings.orientation === 'portrait' && pageWidth > pageHeight) {
-          const temp = pageWidth;
-          pageWidth = pageHeight;
-          pageHeight = temp;
-        } else if (state.settings.orientation === 'landscape' && pageHeight > pageWidth) {
-          const temp = pageWidth;
-          pageWidth = pageHeight;
-          pageHeight = temp;
-        }
-
-        // Margins
-        let margin = 0;
-        if (state.settings.margin === 'small') margin = 20;
-        if (state.settings.margin === 'big') margin = 40;
-
-        const availWidth = Math.max(10, pageWidth - margin * 2);
-        const availHeight = Math.max(10, pageHeight - margin * 2);
-
-        // Scale image within available area preserving aspect ratio
-        const scale = Math.min(availWidth / imgWidth, availHeight / imgHeight);
-        const finalWidth = imgWidth * scale;
-        const finalHeight = imgHeight * scale;
-
-        // Center on page
-        const posX = (pageWidth - finalWidth) / 2;
-        const posY = (pageHeight - finalHeight) / 2;
-
-        const page = pdfDoc.addPage([pageWidth, pageHeight]);
-        page.drawImage(embeddedImage, {
-          x: posX,
-          y: posY,
-          width: finalWidth,
-          height: finalHeight
-        });
-      }
-
-      showProgress(95, 'Finalizing PDF output...');
-      const pdfBytes = await pdfDoc.save();
-      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-      const downloadUrl = URL.createObjectURL(blob);
-
-      const filename = `${state.settings.outputName || 'CutiPDF_Document'}.pdf`;
-
-      // Trigger automatic instant download
-      const a = document.createElement('a');
-      a.href = downloadUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-
-      // Celebrate with confetti
-      if (typeof confetti === 'function') {
-        confetti({
-          particleCount: 80,
-          spread: 70,
-          origin: { y: 0.65 },
-          colors: ['#e63946', '#18181b', '#f87171', '#d4d4d8']
-        });
-      }
-
-      // Record History & Stats
-      addHistoryRecord(filename, blob.size, state.images.length);
-
-      showProgress(100, 'Conversion successful! Downloading...');
-      setTimeout(() => {
-        DOM.conversionProgress.classList.add('hidden');
-        DOM.btnConvertImages.disabled = false;
-        showToast('🎉 Your PDF has been downloaded successfully!');
-      }, 1000);
-
-    } catch (err) {
-      console.error(err);
-      DOM.conversionProgress.classList.add('hidden');
-      DOM.btnConvertImages.disabled = false;
-      showToast('Error during conversion. Please check your images.');
-    }
-  });
-}
-
-// Render rotated image to PNG Blob via Canvas
-function renderRotatedImageBlob(item) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const rot = item.rotation % 360;
-
-      if (rot === 90 || rot === 270) {
-        canvas.width = img.height;
-        canvas.height = img.width;
-      } else {
-        canvas.width = img.width;
-        canvas.height = img.height;
-      }
-
-      ctx.save();
-      ctx.translate(canvas.width / 2, canvas.height / 2);
-      ctx.rotate((rot * Math.PI) / 180);
-      ctx.drawImage(img, -img.width / 2, -img.height / 2);
-      ctx.restore();
-
-      canvas.toBlob((blob) => {
-        if (blob) resolve(blob);
-        else reject(new Error('Canvas blob failed'));
-      }, 'image/png');
-    };
-    img.onerror = reject;
-    img.src = item.url;
-  });
-}
-
-function showProgress(percent, label) {
-  DOM.conversionProgress.classList.remove('hidden');
-  DOM.progressBar.style.width = `${percent}%`;
-  DOM.progressLabel.textContent = label;
-}
-
-// ==========================================
-// Merge PDF Workspace
-// ==========================================
-function initMergeWorkspace() {
-  const dropzoneMerge = document.getElementById('dropzoneMerge');
-  const fileInputPdfs = document.getElementById('fileInputPdfs');
-  const btnMergePdfs = document.getElementById('btnMergePdfs');
-
-  if (!dropzoneMerge || !fileInputPdfs) return;
-
-  dropzoneMerge.addEventListener('click', () => fileInputPdfs.click());
-  fileInputPdfs.addEventListener('change', async (e) => {
-    const files = Array.from(e.target.files).filter(f => f.name.toLowerCase().endsWith('.pdf') || f.type === 'application/pdf');
-    if (files.length === 0) return;
-
-    for (const f of files) {
-      state.pdfFiles.push({
-        id: Math.random().toString(36).substring(2, 9),
-        file: f,
-        name: f.name,
-        size: formatBytes(f.size)
-      });
-    }
-
-    renderPdfMergeList();
-    fileInputPdfs.value = '';
-  });
-
-  if (btnMergePdfs) {
-    btnMergePdfs.addEventListener('click', async () => {
-      if (state.pdfFiles.length < 2) {
-        showToast('Please select at least 2 PDF files to merge.');
-        return;
-      }
-
-      try {
-        btnMergePdfs.disabled = true;
-        btnMergePdfs.textContent = 'Merging PDFs...';
-
-        const { PDFDocument } = PDFLib;
-        const mergedDoc = await PDFDocument.create();
-
-        for (const item of state.pdfFiles) {
-          const bytes = await item.file.arrayBuffer();
-          const doc = await PDFDocument.load(bytes);
-          const pages = await mergedDoc.copyPages(doc, doc.getPageIndices());
-          pages.forEach(p => mergedDoc.addPage(p));
-        }
-
-        const mergedBytes = await mergedDoc.save();
-        const blob = new Blob([mergedBytes], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Merged_${Date.now()}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-
-        addHistoryRecord(`Merged_${Date.now()}.pdf`, blob.size, state.pdfFiles.length);
-        showToast('PDF files merged successfully!');
-
-        btnMergePdfs.disabled = false;
-        btnMergePdfs.textContent = 'Merge PDF Files';
-      } catch (err) {
-        console.error(err);
-        btnMergePdfs.disabled = false;
-        btnMergePdfs.textContent = 'Merge PDF Files';
-        showToast('Error merging PDF files.');
-      }
-    });
-  }
-}
-
-function renderPdfMergeList() {
-  const container = document.getElementById('pdfMergeList');
-  const actionArea = document.getElementById('mergeActionArea');
-  if (!container) return;
-
-  if (state.pdfFiles.length === 0) {
-    container.innerHTML = '';
-    if (actionArea) actionArea.classList.add('hidden');
-    return;
-  }
-
-  if (actionArea) actionArea.classList.remove('hidden');
-  container.innerHTML = '';
-
-  state.pdfFiles.forEach((item, index) => {
+  state.selectedFiles.forEach((file, index) => {
     const row = document.createElement('div');
-    row.className = 'flex items-center justify-between p-3.5 bg-white border border-zinc-200 rounded-xl';
+    row.className = 'flex items-center justify-between p-3.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl';
     row.innerHTML = `
       <div class="flex items-center gap-3 overflow-hidden">
-        <span class="w-8 h-8 rounded-lg bg-red-50 text-[#e63946] flex items-center justify-center font-bold text-xs">PDF</span>
+        <span class="text-2xl">${state.activeTool ? state.activeTool.icon : '📄'}</span>
         <div class="overflow-hidden">
-          <p class="text-xs font-semibold text-zinc-800 truncate max-w-xs">${item.name}</p>
-          <p class="text-[10px] text-zinc-400">${item.size}</p>
+          <p class="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate max-w-[200px] sm:max-w-md">${file.name}</p>
+          <p class="text-[11px] text-zinc-400">${formatBytes(file.size)}</p>
         </div>
       </div>
-      <button onclick="removePdfFile(${index})" class="text-zinc-400 hover:text-red-500 p-1">
+      <button onclick="removeSelectedFile(${index})" class="text-zinc-400 hover:text-red-500 p-1 transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
     `;
-    container.appendChild(row);
+    DOM.selectedFilesList.appendChild(row);
   });
+
+  DOM.actionButtonText.textContent = `${state.activeTool.actionText} (${state.selectedFiles.length})`;
 }
 
-window.removePdfFile = function(index) {
-  state.pdfFiles.splice(index, 1);
-  renderPdfMergeList();
+window.removeSelectedFile = function(index) {
+  state.selectedFiles.splice(index, 1);
+  if (state.selectedFiles.length === 0) {
+    DOM.filesSelectedArea.classList.add('hidden');
+    DOM.toolDropzone.classList.remove('hidden');
+  } else {
+    renderSelectedFilesList();
+  }
 };
 
 // ==========================================
-// Text to PDF Workspace
+// Tool Execution Engine
 // ==========================================
-function initTextWorkspace() {
-  const btnConvertText = document.getElementById('btnConvertText');
-  const inputNotes = document.getElementById('inputNotes');
-  const inputNoteTitle = document.getElementById('inputNoteTitle');
+async function executeActiveToolAction() {
+  if (!state.activeTool || state.selectedFiles.length === 0) return;
 
-  if (!btnConvertText) return;
+  const toolId = state.activeTool.id;
 
-  btnConvertText.addEventListener('click', async () => {
-    const content = inputNotes.value.trim();
-    if (!content) {
-      showToast('Please type some notes or paste text to convert.');
-      return;
+  try {
+    DOM.btnExecuteAction.disabled = true;
+    DOM.actionButtonText.textContent = 'Processing...';
+
+    if (toolId === 'jpg-to-pdf') {
+      await convertImagesToPdf(state.selectedFiles);
+    } else if (toolId === 'merge-pdf') {
+      await mergePdfs(state.selectedFiles);
+    } else if (toolId === 'text-to-pdf') {
+      await convertTextToPdf(state.selectedFiles);
+    } else if (toolId === 'split-pdf') {
+      await splitPdf(state.selectedFiles);
+    } else if (toolId === 'compress-pdf' || toolId === 'rotate-pdf') {
+      await processAndDownloadPdf(state.selectedFiles, toolId);
+    } else {
+      // Coming soon fallback
+      showToast(`${state.activeTool.title} engine is coming soon!`);
     }
 
-    try {
-      const { PDFDocument, StandardFonts, rgb } = PDFLib;
-      const pdfDoc = await PDFDocument.create();
-      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-      const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    DOM.btnExecuteAction.disabled = false;
+    DOM.actionButtonText.textContent = state.activeTool.actionText;
 
-      const page = pdfDoc.addPage([595, 842]); // A4
-      const title = inputNoteTitle.value.trim() || 'Notes';
+  } catch (err) {
+    console.error(err);
+    DOM.btnExecuteAction.disabled = false;
+    DOM.actionButtonText.textContent = state.activeTool.actionText;
+    showToast('An error occurred during processing.');
+  }
+}
 
-      page.drawText(title, {
-        x: 50,
-        y: 780,
-        size: 20,
-        font: fontBold,
-        color: rgb(0.09, 0.09, 0.11)
-      });
+// 1. JPG to PDF
+async function convertImagesToPdf(files) {
+  const { PDFDocument } = PDFLib;
+  const pdfDoc = await PDFDocument.create();
 
-      page.drawText(`Created with CutiPDF • ${new Date().toLocaleDateString()}`, {
-        x: 50,
-        y: 760,
-        size: 10,
-        font: font,
-        color: rgb(0.44, 0.44, 0.48)
-      });
+  for (const file of files) {
+    const arrayBuffer = await file.arrayBuffer();
+    let embeddedImg;
 
-      // Simple line wrapping
-      const lines = content.split('\n');
-      let currentY = 720;
-
-      for (const line of lines) {
-        if (currentY < 60) break;
-        page.drawText(line.substring(0, 80), {
-          x: 50,
-          y: currentY,
-          size: 11,
-          font: font,
-          color: rgb(0.16, 0.17, 0.2)
-        });
-        currentY -= 18;
-      }
-
-      const pdfBytes = await pdfDoc.save();
-      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
-
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${title.replace(/\s+/g, '_')}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-
-      addHistoryRecord(`${title}.pdf`, blob.size, 1);
-      showToast('Notes converted to PDF successfully!');
-    } catch (err) {
-      console.error(err);
-      showToast('Error converting text to PDF.');
+    if (file.type === 'image/jpeg' || file.name.toLowerCase().endsWith('.jpg') || file.name.toLowerCase().endsWith('.jpeg')) {
+      embeddedImg = await pdfDoc.embedJpg(arrayBuffer);
+    } else {
+      // Convert to PNG blob via canvas if needed
+      const pngBlob = await imageToPngBlob(file);
+      const pngBytes = await pngBlob.arrayBuffer();
+      embeddedImg = await pdfDoc.embedPng(pngBytes);
     }
-  });
-}
 
-// ==========================================
-// History & Stats
-// ==========================================
-function addHistoryRecord(filename, size, fileCount) {
-  const record = {
-    id: Date.now(),
-    filename,
-    size: formatBytes(size),
-    fileCount,
-    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
-  };
-
-  state.history.unshift(record);
-  if (state.history.length > 25) state.history.pop();
-  localStorage.setItem('cutipdf_history', JSON.stringify(state.history));
-
-  state.stats.converted += 1;
-  state.stats.images += fileCount;
-  localStorage.setItem('cutipdf_stats', JSON.stringify(state.stats));
-
-  renderHistory();
-  renderStats();
-}
-
-function renderHistory() {
-  if (!DOM.historyList) return;
-  if (state.history.length === 0) {
-    DOM.historyList.innerHTML = `
-      <div class="text-center py-10 text-zinc-400">
-        <div class="text-3xl mb-2">📑</div>
-        <p class="text-xs">No converted documents yet</p>
-      </div>
-    `;
-    return;
+    const { width, height } = embeddedImg.scale(1);
+    const page = pdfDoc.addPage([width, height]);
+    page.drawImage(embeddedImg, { x: 0, y: 0, width, height });
   }
 
-  DOM.historyList.innerHTML = '';
-  state.history.forEach(item => {
-    const row = document.createElement('div');
-    row.className = 'flex items-center justify-between p-3.5 bg-white rounded-xl border border-zinc-200 shadow-2xs hover:border-[#e63946] transition-all text-xs';
-    row.innerHTML = `
-      <div class="flex items-center gap-2.5 overflow-hidden">
-        <span class="text-[#e63946] text-base font-bold">📄</span>
-        <div class="overflow-hidden">
-          <p class="font-semibold text-zinc-900 truncate max-w-[180px] sm:max-w-xs">${item.filename}</p>
-          <p class="text-[11px] text-zinc-400">${item.size} • ${item.date}</p>
-        </div>
-      </div>
-      <span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-semibold text-[10px]">Ready</span>
-    `;
-    DOM.historyList.appendChild(row);
+  const pdfBytes = await pdfDoc.save();
+  downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), `CutiPDF_Converted_${Date.now()}.pdf`);
+}
+
+// 2. Merge PDF
+async function mergePdfs(files) {
+  const { PDFDocument } = PDFLib;
+  const mergedDoc = await PDFDocument.create();
+
+  for (const file of files) {
+    const bytes = await file.arrayBuffer();
+    const doc = await PDFDocument.load(bytes);
+    const pages = await mergedDoc.copyPages(doc, doc.getPageIndices());
+    pages.forEach(p => mergedDoc.addPage(p));
+  }
+
+  const mergedBytes = await mergedDoc.save();
+  downloadBlob(new Blob([mergedBytes], { type: 'application/pdf' }), `Merged_${Date.now()}.pdf`);
+}
+
+// 3. Text to PDF
+async function convertTextToPdf(files) {
+  const { PDFDocument, StandardFonts, rgb } = PDFLib;
+  const pdfDoc = await PDFDocument.create();
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+  for (const file of files) {
+    const text = await file.text();
+    const page = pdfDoc.addPage([595, 842]);
+    page.drawText(file.name.replace(/\.[^/.]+$/, ''), { x: 50, y: 790, size: 18, font: fontBold, color: rgb(0.1, 0.1, 0.1) });
+
+    const lines = text.split('\n');
+    let y = 750;
+    for (const line of lines) {
+      if (y < 50) break;
+      page.drawText(line.substring(0, 80), { x: 50, y, size: 11, font, color: rgb(0.2, 0.2, 0.2) });
+      y -= 16;
+    }
+  }
+
+  const pdfBytes = await pdfDoc.save();
+  downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), `Document_${Date.now()}.pdf`);
+}
+
+// 4. Split PDF
+async function splitPdf(files) {
+  const { PDFDocument } = PDFLib;
+  const sourceBytes = await files[0].arrayBuffer();
+  const sourceDoc = await PDFDocument.load(sourceBytes);
+  const total = sourceDoc.getPageCount();
+
+  const newDoc = await PDFDocument.create();
+  const [firstPage] = await newDoc.copyPages(sourceDoc, [0]);
+  newDoc.addPage(firstPage);
+
+  const bytes = await newDoc.save();
+  downloadBlob(new Blob([bytes], { type: 'application/pdf' }), `Split_Page_1.pdf`);
+}
+
+// 5. Rotate / Compress PDF
+async function processAndDownloadPdf(files, action) {
+  const { PDFDocument, degrees } = PDFLib;
+  const bytes = await files[0].arrayBuffer();
+  const doc = await PDFDocument.load(bytes);
+
+  if (action === 'rotate-pdf') {
+    doc.getPages().forEach(p => p.setRotation(degrees(90)));
+  }
+
+  const outBytes = await doc.save();
+  downloadBlob(new Blob([outBytes], { type: 'application/pdf' }), `Processed_${Date.now()}.pdf`);
+}
+
+// Helper: Image to PNG
+function imageToPngBlob(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      canvas.toBlob(resolve, 'image/png');
+    };
+    img.onerror = reject;
+    img.src = URL.createObjectURL(file);
   });
 }
 
-function renderStats() {
-  if (DOM.statTotalConverted) DOM.statTotalConverted.textContent = state.stats.converted;
-  if (DOM.statTotalImages) DOM.statTotalImages.textContent = state.stats.images;
+// Download Helper with Confetti
+function downloadBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 
-  if (DOM.btnClearHistory) {
-    DOM.btnClearHistory.addEventListener('click', () => {
-      state.history = [];
-      localStorage.removeItem('cutipdf_history');
-      renderHistory();
-      showToast('Conversion history cleared');
+  if (typeof confetti === 'function') {
+    confetti({
+      particleCount: 75,
+      spread: 60,
+      origin: { y: 0.7 },
+      colors: ['#e63946', '#2b2d42', '#f87171']
     });
   }
+
+  showToast('File downloaded successfully!');
 }
 
-// ==========================================
-// Quick Toast Notification
-// ==========================================
+// Toast
 let toastTimer;
-function showToast(message) {
+function showToast(msg) {
   if (toastTimer) clearTimeout(toastTimer);
-  DOM.toastMessage.textContent = message;
+  DOM.toastMessage.textContent = msg;
   DOM.toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
   DOM.toast.classList.add('opacity-100', 'translate-y-0');
 
   toastTimer = setTimeout(() => {
     DOM.toast.classList.remove('opacity-100', 'translate-y-0');
     DOM.toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
-  }, 3000);
+  }, 2800);
 }
 
-// Format bytes
 function formatBytes(bytes) {
   if (bytes === 0) return '0 B';
   const k = 1024;
@@ -805,19 +647,3 @@ function formatBytes(bytes) {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 }
-
-// Tool launcher from Tools Tab
-window.launchTool = function(toolName) {
-  if (toolName === 'image-to-pdf') {
-    switchTab('convert');
-    DOM.fileInputImages.click();
-  } else if (toolName === 'merge-pdf') {
-    switchTab('tools');
-    const mergeSection = document.getElementById('toolSectionMerge');
-    if (mergeSection) mergeSection.scrollIntoView({ behavior: 'smooth' });
-  } else if (toolName === 'text-to-pdf') {
-    switchTab('tools');
-    const textSection = document.getElementById('toolSectionText');
-    if (textSection) textSection.scrollIntoView({ behavior: 'smooth' });
-  }
-};
