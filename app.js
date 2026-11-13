@@ -1,72 +1,102 @@
 /**
- * CutiPDF (cutipdf.com) - Cute & Minimalist Japanese-style PDF Studio
- * 100% Client-side conversion, zero server tracking, pure kawaii vibes.
+ * CutiPDF (cutipdf.com) - Modern Minimalist PDF Studio
+ * Inspired by iLovePDF & Documents by Readdle
+ * 100% In-Browser & Client-Side Privacy
  */
 
-// State Management
+// Application State
 const state = {
-  currentTab: 'home',
-  files: [],
-  conversionMode: 'images-to-pdf', // 'images-to-pdf', 'text-to-pdf', 'merge-pdf'
+  currentTab: 'convert', // 'convert', 'tools', 'history'
+  activeTool: 'image-to-pdf', // 'image-to-pdf', 'merge-pdf', 'text-to-pdf'
+  
+  // Image to PDF Workspace
+  images: [], // { id, file, url, name, size, width, height, rotation: 0 }
+  settings: {
+    orientation: 'auto', // 'auto', 'portrait', 'landscape'
+    pageSize: 'fit', // 'fit', 'a4', 'letter'
+    margin: 'none', // 'none', 'small', 'big'
+    outputName: 'CutiPDF_Document'
+  },
+  
+  // Merge PDF Workspace
+  pdfFiles: [], // { id, file, name, size, pageCount }
+  
+  // Text to PDF
+  textNote: '',
+  textTitle: 'My Notes',
+
+  // History & Stats
   history: JSON.parse(localStorage.getItem('cutipdf_history') || '[]'),
-  sakuraEnabled: localStorage.getItem('cutipdf_sakura') !== 'false',
-  stats: JSON.parse(localStorage.getItem('cutipdf_stats') || '{"converted": 0, "savedMb": 0}'),
-  selectedKaomoji: localStorage.getItem('cutipdf_kaomoji') || '(｡♥‿♥｡)'
+  stats: JSON.parse(localStorage.getItem('cutipdf_stats') || '{"converted": 0, "images": 0}')
 };
 
 // DOM Elements
-const elements = {
-  tabPanes: document.querySelectorAll('.tab-pane'),
-  navItems: document.querySelectorAll('.nav-item'),
-  fabButton: document.getElementById('fabUpload'),
-  fileInput: document.getElementById('fileInput'),
-  dropzone: document.getElementById('dropzone'),
-  fileListContainer: document.getElementById('fileListContainer'),
-  fileList: document.getElementById('fileList'),
-  actionButtons: document.getElementById('actionButtons'),
-  btnConvert: document.getElementById('btnConvert'),
-  btnClearFiles: document.getElementById('btnClearFiles'),
-  progressContainer: document.getElementById('progressContainer'),
+const DOM = {
+  tabContents: document.querySelectorAll('.tab-content'),
+  navButtons: document.querySelectorAll('.nav-btn'),
+  fabUpload: document.getElementById('fabUpload'),
+  fileInputImages: document.getElementById('fileInputImages'),
+  fileInputPdfs: document.getElementById('fileInputPdfs'),
+  
+  // Convert tab sections
+  dropzoneInitial: document.getElementById('dropzoneInitial'),
+  workspaceActive: document.getElementById('workspaceActive'),
+  imagesGrid: document.getElementById('imagesGrid'),
+  btnAddMoreImages: document.getElementById('btnAddMoreImages'),
+  
+  // Conversion Settings Controls
+  btnOrientation: document.querySelectorAll('[data-orientation]'),
+  btnPageSize: document.querySelectorAll('[data-pagesize]'),
+  btnMargin: document.querySelectorAll('[data-margin]'),
+  inputFilename: document.getElementById('inputFilename'),
+  btnConvertImages: document.getElementById('btnConvertImages'),
+  btnClearWorkspace: document.getElementById('btnClearWorkspace'),
+  
+  // Progress & Result
+  conversionProgress: document.getElementById('conversionProgress'),
   progressBar: document.getElementById('progressBar'),
-  progressText: document.getElementById('progressText'),
-  toast: document.getElementById('toast'),
-  toastText: document.getElementById('toastText'),
-  sakuraContainer: document.getElementById('sakuraContainer'),
-  sakuraToggle: document.getElementById('sakuraToggle'),
+  progressLabel: document.getElementById('progressLabel'),
+  
+  // History & Profile
   historyList: document.getElementById('historyList'),
-  statConverted: document.getElementById('statConverted'),
-  userKaomoji: document.getElementById('userKaomoji'),
-  kaomojiPicker: document.getElementById('kaomojiPicker')
+  statTotalConverted: document.getElementById('statTotalConverted'),
+  statTotalImages: document.getElementById('statTotalImages'),
+  btnClearHistory: document.getElementById('btnClearHistory'),
+  
+  // Toast
+  toast: document.getElementById('toast'),
+  toastMessage: document.getElementById('toastMessage')
 };
 
-// Initialize App
+// Initialize
 document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
-  initDragAndDrop();
-  initFileInput();
-  initConversionEngine();
-  initSakuraEffect();
+  initDropzones();
+  initSettingsControls();
+  initImageWorkspace();
+  initMergeWorkspace();
+  initTextWorkspace();
   renderHistory();
   renderStats();
-  initKaomojiPicker();
 });
 
-// Navigation Handling
+// ==========================================
+// Navigation & Tabs
+// ==========================================
 function initNavigation() {
-  elements.navItems.forEach(item => {
-    item.addEventListener('click', () => {
-      const targetTab = item.getAttribute('data-tab');
-      switchTab(targetTab);
+  DOM.navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.getAttribute('data-tab');
+      switchTab(tab);
     });
   });
 
-  // Center FAB (+) button
-  if (elements.fabButton) {
-    elements.fabButton.addEventListener('click', () => {
-      // If not on home, switch to home first
-      switchTab('home');
-      // Trigger file selector
-      elements.fileInput.click();
+  if (DOM.fabUpload) {
+    DOM.fabUpload.addEventListener('click', () => {
+      switchTab('convert');
+      if (DOM.fileInputImages) {
+        DOM.fileInputImages.click();
+      }
     });
   }
 }
@@ -74,40 +104,90 @@ function initNavigation() {
 function switchTab(tabId) {
   state.currentTab = tabId;
 
-  // Update tabs visibility
-  elements.tabPanes.forEach(pane => {
-    pane.classList.remove('active');
-    if (pane.id === `tab-${tabId}`) {
-      pane.classList.add('active');
+  DOM.tabContents.forEach(tab => {
+    tab.classList.remove('active');
+    if (tab.id === `tab-${tabId}`) {
+      tab.classList.add('active');
     }
   });
 
-  // Update nav item active state
-  elements.navItems.forEach(item => {
-    item.classList.remove('active');
-    if (item.getAttribute('data-tab') === tabId) {
-      item.classList.add('active');
+  DOM.navButtons.forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.getAttribute('data-tab') === tabId) {
+      btn.classList.add('active');
     }
   });
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Drag & Drop Handling
-function initDragAndDrop() {
-  const dropzone = elements.dropzone;
+window.switchTab = switchTab;
+
+// ==========================================
+// Settings Controls (iLovePDF / Readdle style)
+// ==========================================
+function initSettingsControls() {
+  // Orientation
+  DOM.btnOrientation.forEach(btn => {
+    btn.addEventListener('click', () => {
+      DOM.btnOrientation.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.settings.orientation = btn.getAttribute('data-orientation');
+    });
+  });
+
+  // Page Size
+  DOM.btnPageSize.forEach(btn => {
+    btn.addEventListener('click', () => {
+      DOM.btnPageSize.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.settings.pageSize = btn.getAttribute('data-pagesize');
+    });
+  });
+
+  // Margin
+  DOM.btnMargin.forEach(btn => {
+    btn.addEventListener('click', () => {
+      DOM.btnMargin.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.settings.margin = btn.getAttribute('data-margin');
+    });
+  });
+
+  // Filename input
+  if (DOM.inputFilename) {
+    DOM.inputFilename.addEventListener('input', (e) => {
+      state.settings.outputName = e.target.value.trim() || 'CutiPDF_Document';
+    });
+  }
+
+  // Clear workspace
+  if (DOM.btnClearWorkspace) {
+    DOM.btnClearWorkspace.addEventListener('click', () => {
+      state.images = [];
+      updateWorkspaceView();
+      showToast('Workspace cleared');
+    });
+  }
+}
+
+// ==========================================
+// Dropzone & File Input
+// ==========================================
+function initDropzones() {
+  const dropzone = DOM.dropzoneInitial;
   if (!dropzone) return;
 
-  ['dragenter', 'dragover'].forEach(eventName => {
-    dropzone.addEventListener(eventName, (e) => {
+  ['dragenter', 'dragover'].forEach(name => {
+    dropzone.addEventListener(name, (e) => {
       e.preventDefault();
       e.stopPropagation();
       dropzone.classList.add('drag-active');
     });
   });
 
-  ['dragleave', 'drop'].forEach(eventName => {
-    dropzone.addEventListener(eventName, (e) => {
+  ['dragleave', 'drop'].forEach(name => {
+    dropzone.addEventListener(name, (e) => {
       e.preventDefault();
       e.stopPropagation();
       dropzone.classList.remove('drag-active');
@@ -115,309 +195,542 @@ function initDragAndDrop() {
   });
 
   dropzone.addEventListener('drop', (e) => {
-    const dt = e.dataTransfer;
-    const droppedFiles = Array.from(dt.files);
-    handleNewFiles(droppedFiles);
+    const files = Array.from(e.dataTransfer.files);
+    handleSelectedImages(files);
   });
 
   dropzone.addEventListener('click', (e) => {
-    // Avoid re-triggering if clicked on inner buttons
     if (e.target.tagName !== 'BUTTON' && !e.target.closest('button')) {
-      elements.fileInput.click();
+      DOM.fileInputImages.click();
     }
   });
+
+  if (DOM.fileInputImages) {
+    DOM.fileInputImages.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files);
+      handleSelectedImages(files);
+      DOM.fileInputImages.value = '';
+    });
+  }
+
+  if (DOM.btnAddMoreImages) {
+    DOM.btnAddMoreImages.addEventListener('click', () => {
+      DOM.fileInputImages.click();
+    });
+  }
 }
 
-// File Input
-function initFileInput() {
-  elements.fileInput.addEventListener('change', (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    handleNewFiles(selectedFiles);
-    elements.fileInput.value = ''; // reset so same file can be picked again
-  });
-
-  elements.btnClearFiles.addEventListener('click', () => {
-    state.files = [];
-    renderFileList();
-    showToast('(・_・;) لیست فایل‌ها پاک شد');
-  });
-}
-
-function handleNewFiles(newFiles) {
-  if (!newFiles || newFiles.length === 0) return;
-
-  // Filter allowed file types
-  const validFiles = newFiles.filter(file => {
-    const type = file.type;
-    const name = file.name.toLowerCase();
-    return (
-      type.startsWith('image/') ||
-      type === 'application/pdf' ||
-      name.endsWith('.pdf') ||
-      name.endsWith('.txt') ||
-      name.endsWith('.md')
-    );
-  });
-
-  if (validFiles.length === 0) {
-    showToast('(・`ω´・) لطفاً فایل تصویری، پی‌دی‌اف یا متن انتخاب کنید!');
+// ==========================================
+// Image Workspace Management
+// ==========================================
+async function handleSelectedImages(files) {
+  const imageFiles = files.filter(f => f.type.startsWith('image/'));
+  if (imageFiles.length === 0) {
+    showToast('Please select valid image files (JPG, PNG, WebP)');
     return;
   }
 
-  // Detect mode based on files
-  const hasPdfs = validFiles.some(f => f.name.endsWith('.pdf') || f.type === 'application/pdf');
-  const hasImages = validFiles.some(f => f.type.startsWith('image/'));
-
-  if (hasPdfs && !hasImages) {
-    state.conversionMode = 'merge-pdf';
-  } else {
-    state.conversionMode = 'images-to-pdf';
+  for (const file of imageFiles) {
+    const imgData = await readImageFile(file);
+    state.images.push(imgData);
   }
 
-  state.files.push(...validFiles);
-  renderFileList();
-  showToast(`(◕‿◕✿) ${validFiles.length} فایل جدید اضافه شد`);
+  updateWorkspaceView();
+  showToast(`${imageFiles.length} images added to workspace`);
 }
 
-function renderFileList() {
-  if (state.files.length === 0) {
-    elements.fileListContainer.classList.add('hidden');
-    elements.actionButtons.classList.add('hidden');
+function readImageFile(file) {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      resolve({
+        id: Math.random().toString(36).substring(2, 9),
+        file,
+        url,
+        name: file.name,
+        size: formatBytes(file.size),
+        width: img.width,
+        height: img.height,
+        rotation: 0
+      });
+    };
+    img.src = url;
+  });
+}
+
+function updateWorkspaceView() {
+  if (state.images.length === 0) {
+    DOM.dropzoneInitial.classList.remove('hidden');
+    DOM.workspaceActive.classList.add('hidden');
     return;
   }
 
-  elements.fileListContainer.classList.remove('hidden');
-  elements.actionButtons.classList.remove('hidden');
-  elements.fileList.innerHTML = '';
+  DOM.dropzoneInitial.classList.add('hidden');
+  DOM.workspaceActive.classList.remove('hidden');
+  renderImageThumbnails();
 
-  state.files.forEach((file, index) => {
+  DOM.btnConvertImages.innerHTML = `
+    <span>Convert ${state.images.length} ${state.images.length === 1 ? 'Image' : 'Images'} to PDF</span>
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+    </svg>
+  `;
+}
+
+function renderImageThumbnails() {
+  DOM.imagesGrid.innerHTML = '';
+
+  state.images.forEach((item, index) => {
     const card = document.createElement('div');
-    card.className = 'flex items-center justify-between p-3.5 bg-white border border-[#fae1e8] rounded-2xl shadow-sm hover:border-[#ff85a1] transition-all';
-
-    const isImage = file.type.startsWith('image/');
-    const isPdf = file.name.toLowerCase().endsWith('.pdf');
-    const iconBadge = isImage ? '🌸 عکس' : isPdf ? '📑 PDF' : '📝 متن';
-    const sizeStr = formatBytes(file.size);
-
-    let previewHtml = '';
-    if (isImage) {
-      const url = URL.createObjectURL(file);
-      previewHtml = `<img src="${url}" class="w-12 h-12 object-cover rounded-xl border border-pink-100 flex-shrink-0" />`;
-    } else {
-      previewHtml = `
-        <div class="w-12 h-12 rounded-xl bg-[#fff0f3] text-[#ff5d8f] flex items-center justify-center font-bold text-lg flex-shrink-0">
-          ${isPdf ? 'PDF' : 'TXT'}
-        </div>
-      `;
-    }
-
+    card.className = 'thumbnail-card group flex flex-col justify-between';
     card.innerHTML = `
-      <div class="flex items-center gap-3 overflow-hidden">
-        ${previewHtml}
-        <div class="text-right overflow-hidden">
-          <p class="font-medium text-sm text-[#2b2d42] truncate max-w-[180px] sm:max-w-xs" title="${file.name}">${file.name}</p>
-          <div class="flex items-center gap-2 mt-1">
-            <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[#fff0f3] text-[#ff5d8f]">${iconBadge}</span>
-            <span class="text-[11px] text-gray-400 font-latin">${sizeStr}</span>
-          </div>
+      <div class="relative bg-zinc-100 flex items-center justify-center h-48 overflow-hidden">
+        <!-- Page Number Pill -->
+        <div class="absolute top-2.5 left-2.5 z-10 bg-white/90 backdrop-blur-md border border-zinc-200 text-zinc-800 text-[11px] font-bold px-2 py-0.5 rounded-md shadow-xs">
+          Page ${index + 1}
+        </div>
+
+        <!-- Quick Action Buttons -->
+        <div class="absolute top-2.5 right-2.5 z-10 flex items-center gap-1">
+          <button onclick="rotateImage(${index})" class="w-7 h-7 rounded-full bg-white/90 backdrop-blur-md border border-zinc-200 text-zinc-700 hover:text-[#e63946] flex items-center justify-center shadow-xs transition-colors" title="Rotate 90°">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+          <button onclick="removeImage(${index})" class="w-7 h-7 rounded-full bg-white/90 backdrop-blur-md border border-zinc-200 text-zinc-700 hover:text-red-600 flex items-center justify-center shadow-xs transition-colors" title="Remove">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Thumbnail Image with Rotation -->
+        <img src="${item.url}" 
+             alt="${item.name}" 
+             style="transform: rotate(${item.rotation}deg);" 
+             class="max-h-full max-w-full object-contain transition-transform duration-200" />
+      </div>
+
+      <!-- Card Footer with Reorder and Details -->
+      <div class="p-3 bg-white border-t border-zinc-100 flex items-center justify-between">
+        <div class="overflow-hidden pr-2">
+          <p class="text-xs font-semibold text-zinc-800 truncate" title="${item.name}">${item.name}</p>
+          <p class="text-[10px] text-zinc-400">${item.width}×${item.height} • ${item.size}</p>
+        </div>
+
+        <!-- Reorder arrows -->
+        <div class="flex items-center gap-1">
+          <button onclick="moveImage(${index}, -1)" ${index === 0 ? 'disabled' : ''} class="w-6 h-6 rounded border border-zinc-200 flex items-center justify-center text-zinc-500 hover:bg-zinc-50 disabled:opacity-30 disabled:pointer-events-none" title="Move Left">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <button onclick="moveImage(${index}, 1)" ${index === state.images.length - 1 ? 'disabled' : ''} class="w-6 h-6 rounded border border-zinc-200 flex items-center justify-center text-zinc-500 hover:bg-zinc-50 disabled:opacity-30 disabled:pointer-events-none" title="Move Right">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
       </div>
-      <button onclick="removeFile(${index})" class="text-gray-400 hover:text-red-500 p-2 rounded-full hover:bg-red-50 transition-colors" title="حذف">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-        </svg>
-      </button>
     `;
-    elements.fileList.appendChild(card);
-  });
 
-  // Update button text
-  if (state.conversionMode === 'merge-pdf') {
-    elements.btnConvert.innerHTML = `<span>ادغام ${state.files.length} فایل PDF ✨</span>`;
-  } else {
-    elements.btnConvert.innerHTML = `<span>تبدیل ${state.files.length} فایل به PDF ✨</span>`;
-  }
+    DOM.imagesGrid.appendChild(card);
+  });
 }
 
-window.removeFile = function(index) {
-  state.files.splice(index, 1);
-  renderFileList();
+// Global Image Actions
+window.rotateImage = function(index) {
+  state.images[index].rotation = (state.images[index].rotation + 90) % 360;
+  renderImageThumbnails();
 };
 
-// Conversion Engine (100% In-Browser using PDFLib & jsPDF)
-function initConversionEngine() {
-  elements.btnConvert.addEventListener('click', async () => {
-    if (state.files.length === 0) return;
+window.removeImage = function(index) {
+  state.images.splice(index, 1);
+  updateWorkspaceView();
+};
+
+window.moveImage = function(index, direction) {
+  const newIndex = index + direction;
+  if (newIndex < 0 || newIndex >= state.images.length) return;
+  const temp = state.images[index];
+  state.images[index] = state.images[newIndex];
+  state.images[newIndex] = temp;
+  renderImageThumbnails();
+};
+
+// ==========================================
+// Real PDF Conversion Engine (iLovePDF Grade)
+// ==========================================
+function initImageWorkspace() {
+  DOM.btnConvertImages.addEventListener('click', async () => {
+    if (state.images.length === 0) return;
 
     try {
-      showProgress(15, 'در حال آماده‌سازی جادو... (｡♥‿♥｡)');
-      elements.btnConvert.disabled = true;
+      showProgress(15, 'Preparing document canvas...');
+      DOM.btnConvertImages.disabled = true;
 
-      let pdfBytes;
-      let outputFileName = `cutipdf_${Date.now()}.pdf`;
+      const { PDFDocument, PageSizes } = PDFLib;
+      const pdfDoc = await PDFDocument.create();
 
-      if (state.conversionMode === 'merge-pdf') {
-        pdfBytes = await mergePdfFiles(state.files);
-      } else {
-        pdfBytes = await convertImagesToPdf(state.files);
+      for (let i = 0; i < state.images.length; i++) {
+        const item = state.images[i];
+        const progress = Math.round(20 + (i / state.images.length) * 70);
+        showProgress(progress, `Rendering page ${i + 1} of ${state.images.length}...`);
+
+        // Convert image to PNG buffer with applied rotation via canvas
+        const orientedBlob = await renderRotatedImageBlob(item);
+        const arrayBuffer = await orientedBlob.arrayBuffer();
+        const embeddedImage = await pdfDoc.embedPng(arrayBuffer);
+
+        const imgWidth = embeddedImage.width;
+        const imgHeight = embeddedImage.height;
+
+        // Determine Page Size & Dimensions
+        let pageWidth, pageHeight;
+        if (state.settings.pageSize === 'a4') {
+          pageWidth = PageSizes.A4[0];
+          pageHeight = PageSizes.A4[1];
+        } else if (state.settings.pageSize === 'letter') {
+          pageWidth = PageSizes.Letter[0];
+          pageHeight = PageSizes.Letter[1];
+        } else {
+          // 'fit' mode: exactly match image
+          pageWidth = imgWidth;
+          pageHeight = imgHeight;
+        }
+
+        // Apply orientation if explicitly chosen
+        if (state.settings.orientation === 'portrait' && pageWidth > pageHeight) {
+          const temp = pageWidth;
+          pageWidth = pageHeight;
+          pageHeight = temp;
+        } else if (state.settings.orientation === 'landscape' && pageHeight > pageWidth) {
+          const temp = pageWidth;
+          pageWidth = pageHeight;
+          pageHeight = temp;
+        }
+
+        // Margins
+        let margin = 0;
+        if (state.settings.margin === 'small') margin = 20;
+        if (state.settings.margin === 'big') margin = 40;
+
+        const availWidth = Math.max(10, pageWidth - margin * 2);
+        const availHeight = Math.max(10, pageHeight - margin * 2);
+
+        // Scale image within available area preserving aspect ratio
+        const scale = Math.min(availWidth / imgWidth, availHeight / imgHeight);
+        const finalWidth = imgWidth * scale;
+        const finalHeight = imgHeight * scale;
+
+        // Center on page
+        const posX = (pageWidth - finalWidth) / 2;
+        const posY = (pageHeight - finalHeight) / 2;
+
+        const page = pdfDoc.addPage([pageWidth, pageHeight]);
+        page.drawImage(embeddedImage, {
+          x: posX,
+          y: posY,
+          width: finalWidth,
+          height: finalHeight
+        });
       }
 
-      showProgress(90, 'در حال پردازش نهایی...');
-
-      // Create download blob
+      showProgress(95, 'Finalizing PDF output...');
+      const pdfBytes = await pdfDoc.save();
       const blob = new Blob([pdfBytes], { type: 'application/pdf' });
       const downloadUrl = URL.createObjectURL(blob);
 
-      // Trigger instant download
+      const filename = `${state.settings.outputName || 'CutiPDF_Document'}.pdf`;
+
+      // Trigger automatic instant download
       const a = document.createElement('a');
       a.href = downloadUrl;
-      a.download = outputFileName;
+      a.download = filename;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
 
-      showProgress(100, 'تبدیل با موفقیت انجام شد! (◕‿◕✿)');
-
-      // Kawaii confetti celebration
+      // Celebrate with confetti
       if (typeof confetti === 'function') {
         confetti({
           particleCount: 80,
           spread: 70,
           origin: { y: 0.65 },
-          colors: ['#ff85a1', '#ffccd5', '#b7e4c7', '#bde0fe']
+          colors: ['#e63946', '#18181b', '#f87171', '#d4d4d8']
         });
       }
 
-      // Record to history and stats
-      addHistoryRecord(outputFileName, blob.size, state.files.length);
+      // Record History & Stats
+      addHistoryRecord(filename, blob.size, state.images.length);
 
+      showProgress(100, 'Conversion successful! Downloading...');
       setTimeout(() => {
-        elements.progressContainer.classList.add('hidden');
-        elements.btnConvert.disabled = false;
-        showToast('(｡♥‿♥｡) فایل پی‌دی‌اف شما با موفقیت دانلود شد!');
-      }, 1200);
+        DOM.conversionProgress.classList.add('hidden');
+        DOM.btnConvertImages.disabled = false;
+        showToast('🎉 Your PDF has been downloaded successfully!');
+      }, 1000);
 
     } catch (err) {
       console.error(err);
-      elements.progressContainer.classList.add('hidden');
-      elements.btnConvert.disabled = false;
-      showToast('(╥﹏╥) متاسفانه خطایی در تبدیل فایل‌ها رخ داد.');
+      DOM.conversionProgress.classList.add('hidden');
+      DOM.btnConvertImages.disabled = false;
+      showToast('Error during conversion. Please check your images.');
     }
   });
 }
 
-// Convert Images to PDF via PDF-Lib
-async function convertImagesToPdf(files) {
-  const { PDFDocument } = PDFLib;
-  const pdfDoc = await PDFDocument.create();
-
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    const progress = Math.round(20 + (i / files.length) * 60);
-    showProgress(progress, `تبدیل صفحه ${i + 1} از ${files.length}...`);
-
-    const arrayBuffer = await file.arrayBuffer();
-    let embeddedImage;
-
-    if (file.type === 'image/jpeg' || file.name.toLowerCase().endsWith('.jpg') || file.name.toLowerCase().endsWith('.jpeg')) {
-      embeddedImage = await pdfDoc.embedJpg(arrayBuffer);
-    } else if (file.type === 'image/png' || file.name.toLowerCase().endsWith('.png')) {
-      embeddedImage = await pdfDoc.embedPng(arrayBuffer);
-    } else {
-      // For webp or other formats, convert to PNG via Canvas first
-      const pngBuffer = await convertImageToPngBuffer(file);
-      embeddedImage = await pdfDoc.embedPng(pngBuffer);
-    }
-
-    const { width, height } = embeddedImage.scale(1);
-    
-    // Create page matching image aspect ratio (or A4 scale)
-    const page = pdfDoc.addPage([width, height]);
-    page.drawImage(embeddedImage, {
-      x: 0,
-      y: 0,
-      width: width,
-      height: height,
-    });
-  }
-
-  return await pdfDoc.save();
-}
-
-// Merge Multiple PDFs
-async function mergePdfFiles(files) {
-  const { PDFDocument } = PDFLib;
-  const mergedPdf = await PDFDocument.create();
-
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-    showProgress(Math.round(20 + (i / files.length) * 60), `ادغام فایل ${i + 1} از ${files.length}...`);
-
-    const arrayBuffer = await file.arrayBuffer();
-    const pdf = await PDFDocument.load(arrayBuffer);
-    const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-    copiedPages.forEach((page) => mergedPdf.addPage(page));
-  }
-
-  return await mergedPdf.save();
-}
-
-// Helper: Convert Any Image to PNG Buffer via Canvas
-function convertImageToPngBuffer(file) {
+// Render rotated image to PNG Blob via Canvas
+function renderRotatedImageBlob(item) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
+      const rot = item.rotation % 360;
+
+      if (rot === 90 || rot === 270) {
+        canvas.width = img.height;
+        canvas.height = img.width;
+      } else {
+        canvas.width = img.width;
+        canvas.height = img.height;
+      }
+
+      ctx.save();
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate((rot * Math.PI) / 180);
+      ctx.drawImage(img, -img.width / 2, -img.height / 2);
+      ctx.restore();
+
       canvas.toBlob((blob) => {
-        blob.arrayBuffer().then(resolve).catch(reject);
+        if (blob) resolve(blob);
+        else reject(new Error('Canvas blob failed'));
       }, 'image/png');
     };
     img.onerror = reject;
-    img.src = URL.createObjectURL(file);
+    img.src = item.url;
   });
 }
 
-function showProgress(percent, text) {
-  elements.progressContainer.classList.remove('hidden');
-  elements.progressBar.style.width = `${percent}%`;
-  elements.progressText.textContent = text;
+function showProgress(percent, label) {
+  DOM.conversionProgress.classList.remove('hidden');
+  DOM.progressBar.style.width = `${percent}%`;
+  DOM.progressLabel.textContent = label;
 }
 
-// Toast notification
-let toastTimeout;
-function showToast(message) {
-  if (toastTimeout) clearTimeout(toastTimeout);
-  elements.toastText.textContent = message;
-  elements.toast.classList.remove('opacity-0', 'translate-y-6', 'pointer-events-none');
-  elements.toast.classList.add('opacity-100', 'translate-y-0');
+// ==========================================
+// Merge PDF Workspace
+// ==========================================
+function initMergeWorkspace() {
+  const dropzoneMerge = document.getElementById('dropzoneMerge');
+  const fileInputPdfs = document.getElementById('fileInputPdfs');
+  const btnMergePdfs = document.getElementById('btnMergePdfs');
 
-  toastTimeout = setTimeout(() => {
-    elements.toast.classList.remove('opacity-100', 'translate-y-0');
-    elements.toast.classList.add('opacity-0', 'translate-y-6', 'pointer-events-none');
-  }, 3200);
+  if (!dropzoneMerge || !fileInputPdfs) return;
+
+  dropzoneMerge.addEventListener('click', () => fileInputPdfs.click());
+  fileInputPdfs.addEventListener('change', async (e) => {
+    const files = Array.from(e.target.files).filter(f => f.name.toLowerCase().endsWith('.pdf') || f.type === 'application/pdf');
+    if (files.length === 0) return;
+
+    for (const f of files) {
+      state.pdfFiles.push({
+        id: Math.random().toString(36).substring(2, 9),
+        file: f,
+        name: f.name,
+        size: formatBytes(f.size)
+      });
+    }
+
+    renderPdfMergeList();
+    fileInputPdfs.value = '';
+  });
+
+  if (btnMergePdfs) {
+    btnMergePdfs.addEventListener('click', async () => {
+      if (state.pdfFiles.length < 2) {
+        showToast('Please select at least 2 PDF files to merge.');
+        return;
+      }
+
+      try {
+        btnMergePdfs.disabled = true;
+        btnMergePdfs.textContent = 'Merging PDFs...';
+
+        const { PDFDocument } = PDFLib;
+        const mergedDoc = await PDFDocument.create();
+
+        for (const item of state.pdfFiles) {
+          const bytes = await item.file.arrayBuffer();
+          const doc = await PDFDocument.load(bytes);
+          const pages = await mergedDoc.copyPages(doc, doc.getPageIndices());
+          pages.forEach(p => mergedDoc.addPage(p));
+        }
+
+        const mergedBytes = await mergedDoc.save();
+        const blob = new Blob([mergedBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Merged_${Date.now()}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        addHistoryRecord(`Merged_${Date.now()}.pdf`, blob.size, state.pdfFiles.length);
+        showToast('PDF files merged successfully!');
+
+        btnMergePdfs.disabled = false;
+        btnMergePdfs.textContent = 'Merge PDF Files';
+      } catch (err) {
+        console.error(err);
+        btnMergePdfs.disabled = false;
+        btnMergePdfs.textContent = 'Merge PDF Files';
+        showToast('Error merging PDF files.');
+      }
+    });
+  }
 }
 
+function renderPdfMergeList() {
+  const container = document.getElementById('pdfMergeList');
+  const actionArea = document.getElementById('mergeActionArea');
+  if (!container) return;
+
+  if (state.pdfFiles.length === 0) {
+    container.innerHTML = '';
+    if (actionArea) actionArea.classList.add('hidden');
+    return;
+  }
+
+  if (actionArea) actionArea.classList.remove('hidden');
+  container.innerHTML = '';
+
+  state.pdfFiles.forEach((item, index) => {
+    const row = document.createElement('div');
+    row.className = 'flex items-center justify-between p-3.5 bg-white border border-zinc-200 rounded-xl';
+    row.innerHTML = `
+      <div class="flex items-center gap-3 overflow-hidden">
+        <span class="w-8 h-8 rounded-lg bg-red-50 text-[#e63946] flex items-center justify-center font-bold text-xs">PDF</span>
+        <div class="overflow-hidden">
+          <p class="text-xs font-semibold text-zinc-800 truncate max-w-xs">${item.name}</p>
+          <p class="text-[10px] text-zinc-400">${item.size}</p>
+        </div>
+      </div>
+      <button onclick="removePdfFile(${index})" class="text-zinc-400 hover:text-red-500 p-1">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    `;
+    container.appendChild(row);
+  });
+}
+
+window.removePdfFile = function(index) {
+  state.pdfFiles.splice(index, 1);
+  renderPdfMergeList();
+};
+
+// ==========================================
+// Text to PDF Workspace
+// ==========================================
+function initTextWorkspace() {
+  const btnConvertText = document.getElementById('btnConvertText');
+  const inputNotes = document.getElementById('inputNotes');
+  const inputNoteTitle = document.getElementById('inputNoteTitle');
+
+  if (!btnConvertText) return;
+
+  btnConvertText.addEventListener('click', async () => {
+    const content = inputNotes.value.trim();
+    if (!content) {
+      showToast('Please type some notes or paste text to convert.');
+      return;
+    }
+
+    try {
+      const { PDFDocument, StandardFonts, rgb } = PDFLib;
+      const pdfDoc = await PDFDocument.create();
+      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+      const page = pdfDoc.addPage([595, 842]); // A4
+      const title = inputNoteTitle.value.trim() || 'Notes';
+
+      page.drawText(title, {
+        x: 50,
+        y: 780,
+        size: 20,
+        font: fontBold,
+        color: rgb(0.09, 0.09, 0.11)
+      });
+
+      page.drawText(`Created with CutiPDF • ${new Date().toLocaleDateString()}`, {
+        x: 50,
+        y: 760,
+        size: 10,
+        font: font,
+        color: rgb(0.44, 0.44, 0.48)
+      });
+
+      // Simple line wrapping
+      const lines = content.split('\n');
+      let currentY = 720;
+
+      for (const line of lines) {
+        if (currentY < 60) break;
+        page.drawText(line.substring(0, 80), {
+          x: 50,
+          y: currentY,
+          size: 11,
+          font: font,
+          color: rgb(0.16, 0.17, 0.2)
+        });
+        currentY -= 18;
+      }
+
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${title.replace(/\s+/g, '_')}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      addHistoryRecord(`${title}.pdf`, blob.size, 1);
+      showToast('Notes converted to PDF successfully!');
+    } catch (err) {
+      console.error(err);
+      showToast('Error converting text to PDF.');
+    }
+  });
+}
+
+// ==========================================
 // History & Stats
+// ==========================================
 function addHistoryRecord(filename, size, fileCount) {
   const record = {
     id: Date.now(),
     filename,
     size: formatBytes(size),
     fileCount,
-    date: new Date().toLocaleDateString('fa-IR')
+    date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
   };
 
   state.history.unshift(record);
-  if (state.history.length > 20) state.history.pop();
+  if (state.history.length > 25) state.history.pop();
   localStorage.setItem('cutipdf_history', JSON.stringify(state.history));
 
-  // Update stats
   state.stats.converted += 1;
-  state.stats.savedMb += Math.round(size / (1024 * 1024) * 10) / 10;
+  state.stats.images += fileCount;
   localStorage.setItem('cutipdf_stats', JSON.stringify(state.stats));
 
   renderHistory();
@@ -425,100 +738,66 @@ function addHistoryRecord(filename, size, fileCount) {
 }
 
 function renderHistory() {
-  if (!elements.historyList) return;
+  if (!DOM.historyList) return;
   if (state.history.length === 0) {
-    elements.historyList.innerHTML = `
-      <div class="text-center py-8 text-gray-400">
-        <div class="text-3xl mb-2">🌸</div>
-        <p class="text-sm">هنوز فایلی تبدیل نشده است</p>
+    DOM.historyList.innerHTML = `
+      <div class="text-center py-10 text-zinc-400">
+        <div class="text-3xl mb-2">📑</div>
+        <p class="text-xs">No converted documents yet</p>
       </div>
     `;
     return;
   }
 
-  elements.historyList.innerHTML = '';
+  DOM.historyList.innerHTML = '';
   state.history.forEach(item => {
     const row = document.createElement('div');
-    row.className = 'flex items-center justify-between p-3 bg-white rounded-xl border border-[#fae1e8] shadow-xs hover:border-[#ff85a1] transition-all text-xs';
+    row.className = 'flex items-center justify-between p-3.5 bg-white rounded-xl border border-zinc-200 shadow-2xs hover:border-[#e63946] transition-all text-xs';
     row.innerHTML = `
-      <div class="flex items-center gap-2 overflow-hidden">
-        <span class="text-[#ff5d8f] text-base">📑</span>
+      <div class="flex items-center gap-2.5 overflow-hidden">
+        <span class="text-[#e63946] text-base font-bold">📄</span>
         <div class="overflow-hidden">
-          <p class="font-medium text-[#2b2d42] truncate max-w-[150px] font-latin">${item.filename}</p>
-          <p class="text-[11px] text-gray-400 font-latin">${item.size} • ${item.date}</p>
+          <p class="font-semibold text-zinc-900 truncate max-w-[180px] sm:max-w-xs">${item.filename}</p>
+          <p class="text-[11px] text-zinc-400">${item.size} • ${item.date}</p>
         </div>
       </div>
-      <span class="text-[#52b788] bg-[#e8f5e9] px-2 py-0.5 rounded-full font-semibold">موفق</span>
+      <span class="text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-semibold text-[10px]">Ready</span>
     `;
-    elements.historyList.appendChild(row);
+    DOM.historyList.appendChild(row);
   });
 }
 
 function renderStats() {
-  if (elements.statConverted) {
-    elements.statConverted.textContent = state.stats.converted;
-  }
-}
+  if (DOM.statTotalConverted) DOM.statTotalConverted.textContent = state.stats.converted;
+  if (DOM.statTotalImages) DOM.statTotalImages.textContent = state.stats.images;
 
-// Kaomoji Picker
-function initKaomojiPicker() {
-  if (!elements.userKaomoji) return;
-  elements.userKaomoji.textContent = state.selectedKaomoji;
-
-  const kaomojis = ['(｡♥‿♥｡)', '(◕‿◕✿)', '(✿◠‿◠)', '(=^･ω･^=)', '(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', '(づ｡◕‿‿◕｡)づ'];
-  if (elements.kaomojiPicker) {
-    elements.kaomojiPicker.innerHTML = '';
-    kaomojis.forEach(km => {
-      const btn = document.createElement('button');
-      btn.className = 'px-3 py-1.5 rounded-xl border border-pink-100 bg-pink-50 text-xs text-[#ff5d8f] hover:bg-pink-100 transition-all font-latin font-semibold';
-      btn.textContent = km;
-      btn.onclick = () => {
-        state.selectedKaomoji = km;
-        localStorage.setItem('cutipdf_kaomoji', km);
-        elements.userKaomoji.textContent = km;
-        showToast(`${km} کاوموجی شما بروز شد!`);
-      };
-      elements.kaomojiPicker.appendChild(btn);
+  if (DOM.btnClearHistory) {
+    DOM.btnClearHistory.addEventListener('click', () => {
+      state.history = [];
+      localStorage.removeItem('cutipdf_history');
+      renderHistory();
+      showToast('Conversion history cleared');
     });
   }
 }
 
-// Sakura Falling Petals Animation
-function initSakuraEffect() {
-  if (elements.sakuraToggle) {
-    elements.sakuraToggle.checked = state.sakuraEnabled;
-    elements.sakuraToggle.addEventListener('change', (e) => {
-      state.sakuraEnabled = e.target.checked;
-      localStorage.setItem('cutipdf_sakura', state.sakuraEnabled);
-      if (!state.sakuraEnabled) {
-        elements.sakuraContainer.innerHTML = '';
-      }
-    });
-  }
+// ==========================================
+// Quick Toast Notification
+// ==========================================
+let toastTimer;
+function showToast(message) {
+  if (toastTimer) clearTimeout(toastTimer);
+  DOM.toastMessage.textContent = message;
+  DOM.toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+  DOM.toast.classList.add('opacity-100', 'translate-y-0');
 
-  // Generate petals periodically
-  setInterval(() => {
-    if (!state.sakuraEnabled || !elements.sakuraContainer) return;
-    createSakuraPetal();
-  }, 1200);
+  toastTimer = setTimeout(() => {
+    DOM.toast.classList.remove('opacity-100', 'translate-y-0');
+    DOM.toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
+  }, 3000);
 }
 
-function createSakuraPetal() {
-  const petal = document.createElement('div');
-  petal.className = 'sakura-petal';
-  const size = Math.random() * 8 + 10;
-  petal.style.width = `${size}px`;
-  petal.style.height = `${size * 1.3}px`;
-  petal.style.left = `${Math.random() * 100}vw`;
-  petal.style.animationDuration = `${Math.random() * 5 + 6}s`;
-  elements.sakuraContainer.appendChild(petal);
-
-  setTimeout(() => {
-    petal.remove();
-  }, 11000);
-}
-
-// Helper: Format Bytes
+// Format bytes
 function formatBytes(bytes) {
   if (bytes === 0) return '0 B';
   const k = 1024;
@@ -527,17 +806,18 @@ function formatBytes(bytes) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 }
 
-// Tools Quick Launcher
-window.openTool = function(toolType) {
-  switchTab('home');
-  if (toolType === 'images-to-pdf') {
-    elements.fileInput.accept = 'image/*';
-    elements.fileInput.click();
-  } else if (toolType === 'merge-pdf') {
-    elements.fileInput.accept = 'application/pdf';
-    elements.fileInput.click();
-  } else if (toolType === 'text-to-pdf') {
-    elements.fileInput.accept = '.txt,.md,text/plain';
-    elements.fileInput.click();
+// Tool launcher from Tools Tab
+window.launchTool = function(toolName) {
+  if (toolName === 'image-to-pdf') {
+    switchTab('convert');
+    DOM.fileInputImages.click();
+  } else if (toolName === 'merge-pdf') {
+    switchTab('tools');
+    const mergeSection = document.getElementById('toolSectionMerge');
+    if (mergeSection) mergeSection.scrollIntoView({ behavior: 'smooth' });
+  } else if (toolName === 'text-to-pdf') {
+    switchTab('tools');
+    const textSection = document.getElementById('toolSectionText');
+    if (textSection) textSection.scrollIntoView({ behavior: 'smooth' });
   }
 };

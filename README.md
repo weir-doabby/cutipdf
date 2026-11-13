@@ -1,70 +1,78 @@
-# 🌸 CutiPDF (キューティーPDF) — cutipdf.com
+# 🌸 CutiPDF (ちいさな PDF スタジオ) — cutipdf.com
 
-> **ちいさくて、かわいい PDF ツール**  
-> ابزار مینیمال و کیووت تبدیل به PDF با سبک طراحی ژاپنی، ناوبری شناور و پردازش ۱۰۰٪ درون مرورگر.
+<div align="center">
+  <img src="assets/logo_clean.png" alt="CutiPDF Logo" width="220" />
+  <p><strong>A modern, minimalist Japanese-inspired PDF studio with 100% in-browser client-side conversion.</strong></p>
+  <p>Designed for fast, private, and international workflows. Inspired by iLovePDF and Documents by Readdle.</p>
+</div>
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-ff85a1.svg)](https://opensource.org/licenses/MIT)
-[![Style: Japanese Minimal](https://img.shields.io/badge/Style-Japanese%20Minimal-ffd6e0.svg)](#)
-[![Client Side: 100%](https://img.shields.io/badge/Privacy-100%25%20In--Browser-52b788.svg)](#)
-[![Website: cutipdf.com](https://img.shields.io/badge/Website-cutipdf.com-4361ee.svg)](#)
-
----
-
-## ✨ ویژگی‌ها (Features)
-
-- 🎨 **طراحی مینیمال و کیووت ژاپنی (Kawaii Aesthetic):**
-  - تم رنگی لطیف شکوفه‌های گیلاس (Sakura Pink)، سفید شیری و مینیمالیسم شرقی.
-  - انیمیشن ملایم بارش گلبرگ‌های ساکورا (قابلیت فعال/غیرفعال‌سازی در تنظیمات).
-  - المان‌ها و نشان‌های کاوموجی بامزه مانند `(=^･ω･^=)` و `(｡♥‿♥｡)`.
-
-- 📱 **ناوبری شناور شبیه اینستاگرام (Floating Bottom Navigation):**
-  - نوار ابزار شیشه‌ای شناور (Glassmorphism) در پایین صفحه.
-  - دکمه میانی برجسته و شناور **`+`** با پالس نوری و انیمیشن برای آپلود سریع فایل.
-  - دکمه‌های کناری شامل **ابزارها (Tools)** و **پروفایل (Profile)**.
-
-- 🔒 **امنیت و حریم خصوصی ۱۰۰٪ محلی (Zero Server Upload):**
-  - تمامی تبدیل‌ها و ادغام‌ها مستقیماً با استفاده از موتور `PDF-Lib` در مرورگر کاربر انجام می‌شوند.
-  - هیچ فایلی به هیچ سرور خارجی ارسال نمی‌شود؛ فایل‌های شما در امنیت کامل باقی می‌مانند.
-
-- ⚡ **ابزارهای کاربردی:**
-  - **تبدیل عکس به پی‌دی‌اف (Image to PDF):** پشتیبانی از PNG, JPG, WebP به صورت تکی یا دسته‌ای.
-  - **ادغام فایل‌های پی‌دی‌اف (Merge PDF):** ترکیب چند فایل PDF به یک فایل بدون افت کیفیت.
-  - **متن به پی‌دی‌اف (Text to PDF):** تبدیل آسان یادداشت‌ها و اسناد.
-  - **تاریخچه و آمار درون مرورگری:** ذخیره تاریخچه تبدیلات در `localStorage`.
-  - انیمیشن جشن کانفتی پس از دانلود موفق فایل.
+[![License: MIT](https://img.shields.io/badge/License-MIT-e63946.svg)](https://opensource.org/licenses/MIT)
+[![Privacy: 100% In-Browser](https://img.shields.io/badge/Privacy-100%25%20In--Browser-059669.svg)](#)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-weir--doabby.github.io%2Fcutipdf-2563eb.svg)](https://weir-doabby.github.io/cutipdf/)
 
 ---
 
-## 🚀 راهنمای اجرا و توسعه (Getting Started)
+## ✨ Features
 
-این پروژه به صورت ماژولار و بدون نیاز به بیلد پیچیده طراحی شده است و به صورت آنی در هر وب‌سروری قابل اجرا است.
+- 🎨 **Visual Identity Inspired by Logo:**
+  - Japanese minimalist calligraphy-inspired aesthetic with deep sumi-e ink black (`#18181B`) and dynamic Japanese crimson accents (`#E63946`).
+  - Warm washi paper canvas texture and subtle rounded card architecture.
 
-### اجرای سریع با Node.js:
+- 🖼️ **Multi-Image to PDF Workspace (iLovePDF & Documents by Readdle Style):**
+  - **Batch Multi-Select:** Choose multiple JPG, PNG, and WebP images all at once.
+  - **Visual Thumbnail Gallery:** Real-time page number badges (`Page 1`, `Page 2`, ...), image resolution, and file size.
+  - **Interactive Controls:**
+    - 🔄 **90° Rotation** per individual image.
+    - ⬅️ ➡️ **Reorder & Rearrange** page order with single clicks.
+    - 🗑️ **Delete / Replace** images seamlessly.
+  - **Document Setup Drawer:**
+    - Page Orientation: `Auto`, `Portrait`, `Landscape`.
+    - Page Size: `Fit to Image`, `A4 (210 × 297 mm)`, `US Letter`.
+    - Margins: `No Margin`, `Small (20pt)`, `Big (40pt)`.
+    - Custom output PDF file naming.
+
+- 📱 **Floating Bottom Navigation Bar:**
+  - Instagram-style glassmorphism floating capsule at the bottom of the screen.
+  - Prominent crimson center floating action button (**`+`**) with pulse animation for quick file uploads.
+  - Tab controls for **Tools**, **Quick Convert**, and **History**.
+
+- 📑 **Integrated PDF Toolbox:**
+  - **JPG to PDF:** Convert collections of photos into a clean PDF.
+  - **Merge PDF:** Combine multiple PDF files into one master document.
+  - **Text to PDF:** Convert formatted notes and text into clean PDF documents.
+
+- 🔒 **100% In-Browser Client-Side Privacy:**
+  - Powered by `PDF-Lib`.
+  - Zero files are uploaded to any external server. Everything is rendered and compiled directly in your web browser.
+
+---
+
+## 🚀 Getting Started
+
+Open directly in your web browser, or serve with any static server:
+
 ```bash
+# Clone the repository
 git clone https://github.com/weir-doabby/cutipdf.git
+
+# Navigate to project folder
 cd cutipdf
+
+# Run local development server
 npx serve .
 ```
 
-یا باز کردن مستقیم فایل `index.html` در مرورگر!
+Or open `index.html` directly in Google Chrome, Safari, or Firefox!
 
 ---
 
-## 🛠️ ساختار فایل‌های پروژه (Architecture)
+## 🌐 Live Demo
 
-```
-cutipdf/
-├── index.html            # هسته اصلی و ساختار تب‌ها و ناوبری شناور
-├── style.css             # استایل‌های سبک ژاپنی، گلس‌مورفیسم و انیمیشن ساکورا
-├── app.js                # موتور پردازش PDF با PDF-Lib، رویدادها و ذخیره‌سازی محلی
-├── package.json          # مشخصات پروژه
-├── .github/
-│   └── workflows/
-│       └── deploy.yml    # استقرار خودکار روی GitHub Pages
-└── README.md             # مستندات کامل پروژه
-```
+Try it live on GitHub Pages:  
+👉 **[https://weir-doabby.github.io/cutipdf/](https://weir-doabby.github.io/cutipdf/)**
 
 ---
 
-## 📄 لایسنس
-این پروژه تحت لایسنس [MIT](LICENSE) منتشر شده است.
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
