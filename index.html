@@ -36,10 +36,10 @@
   <!-- Clean Top Header -->
   <header class="w-full max-w-6xl mx-auto px-5 py-4 flex items-center justify-between border-b border-zinc-200/80 dark:border-zinc-800/80">
     <!-- Brand Logo -->
-    <div class="flex items-center gap-2.5 cursor-pointer" onclick="showAllTools()">
+    <a href="#all-tools" class="flex items-center gap-2.5 cursor-pointer no-underline text-inherit">
       <img src="assets/logo_clean.png" alt="CutiPDF" class="h-9 w-auto object-contain">
       <span class="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">CutiPDF</span>
-    </div>
+    </a>
 
     <!-- Dark / Light Mode Toggle -->
     <button id="themeToggle" class="w-9 h-9 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 flex items-center justify-center hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors shadow-2xs" title="Toggle Theme">
@@ -51,7 +51,7 @@
   <main class="w-full max-w-6xl mx-auto px-5 py-8 flex-1">
 
     <!-- ============================================================ -->
-    <!-- VIEW 1: ALL TOOLS CATALOG (iLovePDF Clean Organization) -->
+    <!-- VIEW 1: ALL TOOLS CATALOG (Full iLovePDF Tool Suite) -->
     <!-- ============================================================ -->
     <div id="view-all-tools" class="view-container active space-y-10">
       
@@ -69,7 +69,7 @@
     </div>
 
     <!-- ============================================================ -->
-    <!-- VIEW 2: DEDICATED TOOL PAGE (e.g. JPG to PDF) -->
+    <!-- VIEW 2: DEDICATED TOOL PAGE FOR EACH TOOL -->
     <!-- ============================================================ -->
     <div id="view-tool-active" class="view-container max-w-3xl mx-auto space-y-8">
       
@@ -83,48 +83,78 @@
         </button>
       </div>
 
-      <!-- Tool Header -->
-      <div class="text-center space-y-2">
-        <div id="toolIcon" class="text-5xl mx-auto">🖼️</div>
-        <h2 id="toolTitle" class="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-100">JPG to PDF</h2>
-        <p id="toolDesc" class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto">
-          Convert JPG, PNG, and WebP images to PDF in seconds.
+      <!-- Tool Header with Gorgeous Custom Vector -->
+      <div class="text-center space-y-3">
+        <div id="toolVectorContainer" class="w-20 h-20 sm:w-24 sm:h-24 mx-auto flex items-center justify-center drop-shadow-sm">
+          <!-- Injected SVG Vector -->
+        </div>
+
+        <div>
+          <div class="inline-block mb-1.5">
+            <span id="toolStatusBadge" class="text-[11px] font-semibold px-3 py-0.5 rounded-full"></span>
+          </div>
+          <h2 id="toolTitle" class="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-100">Tool Name</h2>
+        </div>
+
+        <p id="toolDesc" class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto leading-relaxed">
+          Description
         </p>
       </div>
 
-      <!-- Upload Dropzone (iLovePDF Style) -->
-      <div id="toolDropzone" class="tool-dropzone p-12 sm:p-16 text-center cursor-pointer group">
-        <input type="file" id="fileInput" class="hidden" multiple>
+      <!-- FUNCTIONAL TOOLS AREA (Active) -->
+      <div id="toolFunctionalArea" class="space-y-6">
+        <!-- Upload Dropzone (iLovePDF Style) -->
+        <div id="toolDropzone" class="tool-dropzone p-12 sm:p-16 text-center cursor-pointer group">
+          <input type="file" id="fileInput" class="hidden" multiple>
 
-        <div class="flex flex-col items-center justify-center space-y-4">
-          <button id="btnSelectFiles" class="btn-primary-action text-sm sm:text-base">
-            Select JPG images
-          </button>
-          <p id="dropzoneText" class="text-xs text-zinc-400 dark:text-zinc-500">
-            or drop files here
-          </p>
+          <div class="flex flex-col items-center justify-center space-y-4">
+            <button id="btnSelectFiles" class="btn-primary-action text-sm sm:text-base">
+              Select files
+            </button>
+            <p class="text-xs text-zinc-400 dark:text-zinc-500">
+              or drop files here
+            </p>
+          </div>
+        </div>
+
+        <!-- Selected Files Workspace & Action Button -->
+        <div id="filesSelectedArea" class="hidden space-y-6">
+          <div class="flex items-center justify-between px-1">
+            <span class="text-xs font-bold text-zinc-700 dark:text-zinc-300">Selected Files</span>
+            <button id="btnClearFiles" class="text-xs text-zinc-400 hover:text-red-500 transition-colors">
+              Clear all
+            </button>
+          </div>
+
+          <!-- Files List -->
+          <div id="selectedFilesList" class="space-y-2.5 max-h-80 overflow-y-auto pr-1"></div>
+
+          <!-- Convert Action Button -->
+          <div class="text-center pt-2">
+            <button id="btnExecuteAction" class="btn-primary-action w-full py-4 text-base">
+              <span id="actionButtonText">Convert to PDF</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- Selected Files Workspace & Action Button -->
-      <div id="filesSelectedArea" class="hidden space-y-6">
-        <div class="flex items-center justify-between px-1">
-          <span class="text-xs font-bold text-zinc-700 dark:text-zinc-300">Selected Files</span>
-          <button id="btnClearFiles" class="text-xs text-zinc-400 hover:text-red-500 transition-colors">
-            Clear all
-          </button>
+      <!-- COMING SOON TOOLS AREA -->
+      <div id="toolComingSoonArea" class="hidden cuti-card p-8 sm:p-10 text-center space-y-4 bg-zinc-50/50 dark:bg-zinc-900/40 border border-dashed border-zinc-300 dark:border-zinc-800 rounded-3xl">
+        <div class="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-500 flex items-center justify-center mx-auto text-xl">
+          ⏳
         </div>
-
-        <!-- Files List -->
-        <div id="selectedFilesList" class="space-y-2.5 max-h-80 overflow-y-auto pr-1"></div>
-
-        <!-- Convert Action Button -->
-        <div class="text-center pt-2">
-          <button id="btnExecuteAction" class="btn-primary-action w-full py-4 text-base">
-            <span id="actionButtonText">Convert to PDF</span>
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
+        <div class="space-y-1">
+          <h3 class="font-bold text-sm text-zinc-900 dark:text-zinc-100">Tool Under Development</h3>
+          <p class="text-xs text-zinc-500 dark:text-zinc-400 max-w-sm mx-auto">
+            This tool is actively being engineered for in-browser client-side processing. It will be released in an upcoming update!
+          </p>
+        </div>
+        <div class="pt-2">
+          <button onclick="window.location.hash=''" class="text-xs font-semibold px-4 py-2 rounded-xl bg-zinc-200 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-300 dark:hover:bg-zinc-700 transition-colors">
+            Browse Ready Tools
           </button>
         </div>
       </div>
@@ -147,7 +177,9 @@
     <span>Tools</span>
   </button>
 
-  <!-- Main JavaScript File -->
+  <!-- Vector Illustrations -->
+  <script src="vectors.js"></script>
+  <!-- Main Application Script -->
   <script src="app.js"></script>
 </body>
 </html>

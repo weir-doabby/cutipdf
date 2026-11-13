@@ -1,74 +1,14 @@
 /**
- * CutiPDF (cutipdf.com) - Minimalist & Clean PDF Studio
- * Structured like iLovePDF • 100% In-Browser Privacy
+ * CutiPDF (cutipdf.com) - Full Suite of 30 PDF Tools
+ * Modeled after iLovePDF with Beautiful Custom Vector Art & In-Browser Privacy
  */
 
-// Tools Catalog Definition (Structured cleanly like iLovePDF)
 const TOOLS_CATALOG = {
-  'CONVERT TO PDF': [
-    {
-      id: 'jpg-to-pdf',
-      title: 'JPG to PDF',
-      desc: 'Convert JPG, PNG, and WebP images to PDF in seconds.',
-      icon: '🖼️',
-      color: '#e63946',
-      accept: 'image/jpeg,image/png,image/webp,image/jpg',
-      btnText: 'Select JPG images',
-      actionText: 'Convert to PDF',
-      functional: true
-    },
-    {
-      id: 'word-to-pdf',
-      title: 'Word to PDF',
-      desc: 'Convert DOC and DOCX documents to high quality PDF.',
-      icon: '📄',
-      color: '#2b579a',
-      accept: '.doc,.docx',
-      btnText: 'Select Word files',
-      actionText: 'Convert to PDF',
-      functional: false
-    },
-    {
-      id: 'powerpoint-to-pdf',
-      title: 'PowerPoint to PDF',
-      desc: 'Convert PPT and PPTX presentations to PDF slides.',
-      icon: '📊',
-      color: '#d24726',
-      accept: '.ppt,.pptx',
-      btnText: 'Select Powerpoint files',
-      actionText: 'Convert to PDF',
-      functional: false
-    },
-    {
-      id: 'excel-to-pdf',
-      title: 'Excel to PDF',
-      desc: 'Convert Excel spreadsheets into neat PDF tables.',
-      icon: '📈',
-      color: '#217346',
-      accept: '.xls,.xlsx',
-      btnText: 'Select Excel spreadsheets',
-      actionText: 'Convert to PDF',
-      functional: false
-    },
-    {
-      id: 'html-to-pdf',
-      title: 'HTML to PDF',
-      desc: 'Convert web pages or HTML code to PDF document.',
-      icon: '🌐',
-      color: '#e44d26',
-      accept: '.html,.htm',
-      btnText: 'Select HTML files',
-      actionText: 'Convert to PDF',
-      functional: false
-    }
-  ],
   'ORGANIZE PDF': [
     {
       id: 'merge-pdf',
       title: 'Merge PDF',
-      desc: 'Combine multiple PDF files in the order you want.',
-      icon: '📑',
-      color: '#e63946',
+      desc: 'Combine PDFs in the order you want with the easiest PDF merger available.',
       accept: 'application/pdf',
       btnText: 'Select PDF files',
       actionText: 'Merge PDF',
@@ -77,9 +17,7 @@ const TOOLS_CATALOG = {
     {
       id: 'split-pdf',
       title: 'Split PDF',
-      desc: 'Separate one page or a whole set for easy extraction.',
-      icon: '✂️',
-      color: '#f59e0b',
+      desc: 'Separate one page or a whole set for easy conversion into independent PDF files.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Split PDF',
@@ -88,22 +26,133 @@ const TOOLS_CATALOG = {
     {
       id: 'remove-pages',
       title: 'Remove Pages',
-      desc: 'Select and remove unwanted pages from your document.',
-      icon: '🗑️',
-      color: '#ef4444',
+      desc: 'Remove pages from a PDF document quickly and easily.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Remove Pages',
       functional: false
+    },
+    {
+      id: 'extract-pages',
+      title: 'Extract Pages',
+      desc: 'Get a new document containing only the desired pages from your PDF.',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Extract Pages',
+      functional: false
+    },
+    {
+      id: 'organize-pdf',
+      title: 'Organize PDF',
+      desc: 'Sort pages of your PDF file however you like. Delete or add PDF pages.',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Organize PDF',
+      functional: false
+    },
+    {
+      id: 'scan-to-pdf',
+      title: 'Scan to PDF',
+      desc: 'Capture document scans directly from your camera and convert them into PDF.',
+      accept: 'image/*',
+      btnText: 'Select Scans',
+      actionText: 'Save as PDF',
+      functional: false
     }
   ],
+
+  'OPTIMIZE PDF': [
+    {
+      id: 'compress-pdf',
+      title: 'Compress PDF',
+      desc: 'Reduce file size while optimizing for maximal PDF quality.',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Compress PDF',
+      functional: true
+    },
+    {
+      id: 'repair-pdf',
+      title: 'Repair PDF',
+      desc: 'Repair damaged or corrupted PDF files and recover data from them.',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Repair PDF',
+      functional: false
+    },
+    {
+      id: 'ocr-pdf',
+      title: 'OCR PDF',
+      desc: 'Convert scanned PDF documents into searchable and selectable text files.',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Perform OCR',
+      functional: false
+    }
+  ],
+
+  'CONVERT TO PDF': [
+    {
+      id: 'jpg-to-pdf',
+      title: 'JPG to PDF',
+      desc: 'Convert JPG, PNG, and WebP images to PDF in seconds. Easily adjust orientation and margins.',
+      accept: 'image/jpeg,image/png,image/webp,image/jpg',
+      btnText: 'Select JPG images',
+      actionText: 'Convert to PDF',
+      functional: true
+    },
+    {
+      id: 'word-to-pdf',
+      title: 'Word to PDF',
+      desc: 'Convert DOC and DOCX files into accurate PDF documents.',
+      accept: '.doc,.docx',
+      btnText: 'Select Word files',
+      actionText: 'Convert to PDF',
+      functional: false
+    },
+    {
+      id: 'powerpoint-to-pdf',
+      title: 'PowerPoint to PDF',
+      desc: 'Convert PPT and PPTX presentations into PDF slides.',
+      accept: '.ppt,.pptx',
+      btnText: 'Select PowerPoint files',
+      actionText: 'Convert to PDF',
+      functional: false
+    },
+    {
+      id: 'excel-to-pdf',
+      title: 'Excel to PDF',
+      desc: 'Convert Excel tables and spreadsheets into PDF reports.',
+      accept: '.xls,.xlsx',
+      btnText: 'Select Excel spreadsheets',
+      actionText: 'Convert to PDF',
+      functional: false
+    },
+    {
+      id: 'html-to-pdf',
+      title: 'HTML to PDF',
+      desc: 'Convert webpages, HTML files, or raw code into PDF.',
+      accept: '.html,.htm',
+      btnText: 'Select HTML file',
+      actionText: 'Convert to PDF',
+      functional: false
+    },
+    {
+      id: 'text-to-pdf',
+      title: 'Text to PDF',
+      desc: 'Convert plain text, notes, and markdown into formatted PDF.',
+      accept: '.txt,.md,text/plain',
+      btnText: 'Select Text file',
+      actionText: 'Convert to PDF',
+      functional: true
+    }
+  ],
+
   'CONVERT FROM PDF': [
     {
       id: 'pdf-to-jpg',
       title: 'PDF to JPG',
-      desc: 'Extract all images or convert each page to high-res JPG.',
-      icon: '🖼️',
-      color: '#10b981',
+      desc: 'Extract all images contained in a PDF or convert each page into a JPG.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Convert to JPG',
@@ -112,82 +161,133 @@ const TOOLS_CATALOG = {
     {
       id: 'pdf-to-word',
       title: 'PDF to Word',
-      desc: 'Easily convert your PDF files into editable DOCX.',
-      icon: '📄',
-      color: '#2b579a',
+      desc: 'Easily convert your PDF files into editable DOC and DOCX documents.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Convert to Word',
       functional: false
     },
     {
+      id: 'pdf-to-powerpoint',
+      title: 'PDF to PowerPoint',
+      desc: 'Convert your PDF documents into editable PPTX presentation slides.',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Convert to PPTX',
+      functional: false
+    },
+    {
       id: 'pdf-to-excel',
       title: 'PDF to Excel',
-      desc: 'Extract tables and data straight into Excel sheets.',
-      icon: '📈',
-      color: '#217346',
+      desc: 'Extract tabular data straight from PDF into Excel spreadsheets.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Convert to Excel',
       functional: false
-    }
-  ],
-  'OPTIMIZE & EDIT': [
+    },
     {
-      id: 'compress-pdf',
-      title: 'Compress PDF',
-      desc: 'Reduce file size while keeping the best PDF quality.',
-      icon: '🗜️',
-      color: '#8b5cf6',
+      id: 'pdf-to-pdfa',
+      title: 'PDF to PDF/A',
+      desc: 'Convert your PDF to PDF/A, the ISO-standardized version for long-term archiving.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
-      actionText: 'Compress PDF',
-      functional: true
-    },
-    {
-      id: 'text-to-pdf',
-      title: 'Text to PDF',
-      desc: 'Convert notes, markdown, and plain text to PDF.',
-      icon: '📝',
-      color: '#6366f1',
-      accept: '.txt,.md,text/plain',
-      btnText: 'Select Text file',
-      actionText: 'Convert to PDF',
-      functional: true
-    },
+      actionText: 'Convert to PDF/A',
+      functional: false
+    }
+  ],
+
+  'EDIT & ENHANCE': [
     {
       id: 'rotate-pdf',
       title: 'Rotate PDF',
-      desc: 'Rotate your PDF pages to portrait or landscape.',
-      icon: '🔄',
-      color: '#3b82f6',
+      desc: 'Rotate your PDF pages permanently portrait or landscape.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Rotate PDF',
       functional: true
+    },
+    {
+      id: 'page-numbers',
+      title: 'Page Numbers',
+      desc: 'Add page numbers into PDFs easily with custom typography and placement.',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Add Page Numbers',
+      functional: false
+    },
+    {
+      id: 'watermark-pdf',
+      title: 'Watermark',
+      desc: 'Stamp an image or text over your PDF in seconds with custom opacity.',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Add Watermark',
+      functional: false
+    },
+    {
+      id: 'edit-pdf',
+      title: 'Edit PDF',
+      desc: 'Add text, shapes, highlights, and annotations directly into your PDF.',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Edit PDF',
+      functional: false
+    },
+    {
+      id: 'crop-pdf',
+      title: 'Crop PDF',
+      desc: 'Trim the visible page margins of your PDF documents.',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Crop PDF',
+      functional: false
     }
   ],
+
   'PDF SECURITY': [
+    {
+      id: 'unlock-pdf',
+      title: 'Unlock PDF',
+      desc: 'Remove PDF password security and permissions to use your document freely.',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Unlock PDF',
+      functional: false
+    },
     {
       id: 'protect-pdf',
       title: 'Protect PDF',
-      desc: 'Encrypt your PDF with a password to secure privacy.',
-      icon: '🔒',
-      color: '#ec4899',
+      desc: 'Encrypt your PDF with a strong password to prevent unauthorized access.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Protect PDF',
       functional: false
     },
     {
-      id: 'unlock-pdf',
-      title: 'Unlock PDF',
-      desc: 'Remove PDF password protection for quick access.',
-      icon: '🔓',
-      color: '#14b8a6',
+      id: 'sign-pdf',
+      title: 'Sign PDF',
+      desc: 'Sign documents yourself or request cryptographic electronic signatures.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
-      actionText: 'Unlock PDF',
+      actionText: 'Sign Document',
+      functional: false
+    },
+    {
+      id: 'redact-pdf',
+      title: 'Redact PDF',
+      desc: 'Permanently remove or black-out confidential content and text from your PDF.',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Redact Content',
+      functional: false
+    },
+    {
+      id: 'compare-pdf',
+      title: 'Compare PDF',
+      desc: 'Show a side-by-side comparison of two PDF files to spot visual changes.',
+      accept: 'application/pdf',
+      btnText: 'Select 2 PDF files',
+      actionText: 'Compare Documents',
       functional: false
     }
   ]
@@ -195,13 +295,12 @@ const TOOLS_CATALOG = {
 
 // Application State
 const state = {
-  currentView: 'all-tools', // 'all-tools' or 'tool-active'
   activeTool: null,
   selectedFiles: [],
   theme: localStorage.getItem('cutipdf_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
 };
 
-// DOM Elements
+// DOM Cache
 const DOM = {
   viewAllTools: document.getElementById('view-all-tools'),
   viewToolActive: document.getElementById('view-tool-active'),
@@ -211,23 +310,27 @@ const DOM = {
   themeToggle: document.getElementById('themeToggle'),
   themeIcon: document.getElementById('themeIcon'),
   
-  // Active Tool Elements
-  toolIcon: document.getElementById('toolIcon'),
+  // Dedicated Tool Page Elements
+  toolVectorContainer: document.getElementById('toolVectorContainer'),
   toolTitle: document.getElementById('toolTitle'),
   toolDesc: document.getElementById('toolDesc'),
+  toolStatusBadge: document.getElementById('toolStatusBadge'),
+  
+  // Active Workspace vs Coming Soon View
+  toolFunctionalArea: document.getElementById('toolFunctionalArea'),
+  toolComingSoonArea: document.getElementById('toolComingSoonArea'),
+  
+  // Dropzone & Action
   toolDropzone: document.getElementById('toolDropzone'),
   fileInput: document.getElementById('fileInput'),
   btnSelectFiles: document.getElementById('btnSelectFiles'),
-  dropzoneText: document.getElementById('dropzoneText'),
-  
-  // Active Tool File Management
   filesSelectedArea: document.getElementById('filesSelectedArea'),
   selectedFilesList: document.getElementById('selectedFilesList'),
   btnClearFiles: document.getElementById('btnClearFiles'),
   btnExecuteAction: document.getElementById('btnExecuteAction'),
   actionButtonText: document.getElementById('actionButtonText'),
   
-  // Global Toast
+  // Toast
   toast: document.getElementById('toast'),
   toastMessage: document.getElementById('toastMessage')
 };
@@ -236,12 +339,12 @@ const DOM = {
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   renderAllToolsCatalog();
-  initToolEvents();
+  initRouting();
   initDropzoneEvents();
 });
 
 // ==========================================
-// Theme Management (Light / Dark)
+// Theme Management
 // ==========================================
 function initTheme() {
   applyTheme(state.theme);
@@ -271,7 +374,7 @@ function applyTheme(theme) {
 }
 
 // ==========================================
-// Render All Tools Catalog (iLovePDF Style)
+// Render All Tools Catalog with Vector Graphics
 // ==========================================
 function renderAllToolsCatalog() {
   DOM.toolsGridContainer.innerHTML = '';
@@ -285,16 +388,29 @@ function renderAllToolsCatalog() {
         <h2 class="text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-400">${category}</h2>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        ${tools.map(tool => `
-          <div onclick="openToolPage('${tool.id}')" class="tool-card group">
-            <div class="flex items-start justify-between mb-4">
-              <span class="text-3xl">${tool.icon}</span>
-              ${!tool.functional ? '<span class="text-[10px] font-semibold text-zinc-400 dark:text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-md">Coming Soon</span>' : ''}
-            </div>
-            <h3 class="font-bold text-sm text-zinc-900 dark:text-zinc-100 group-hover:text-[#e63946] transition-colors">${tool.title}</h3>
-            <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-2 leading-relaxed">${tool.desc}</p>
-          </div>
-        `).join('')}
+        ${tools.map(tool => {
+          const vectorSvg = VECTORS[tool.id] || '<div class="text-3xl">📄</div>';
+          return `
+            <a href="#${tool.id}" class="tool-card group no-underline text-inherit block">
+              <div class="flex items-start justify-between mb-3">
+                <div class="w-12 h-12 flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
+                  ${vectorSvg}
+                </div>
+                ${!tool.functional ? `
+                  <span class="text-[10px] font-semibold text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-md border border-zinc-200/60 dark:border-zinc-700/60">
+                    Coming Soon
+                  </span>
+                ` : `
+                  <span class="text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md border border-emerald-200/60 dark:border-emerald-800/60">
+                    Ready
+                  </span>
+                `}
+              </div>
+              <h3 class="font-bold text-sm text-zinc-900 dark:text-zinc-100 group-hover:text-[#e63946] transition-colors">${tool.title}</h3>
+              <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-2 leading-relaxed">${tool.desc}</p>
+            </a>
+          `;
+        }).join('')}
       </div>
     `;
 
@@ -303,7 +419,7 @@ function renderAllToolsCatalog() {
 }
 
 // ==========================================
-// Tool Navigation & Dedicated Pages
+// Routing & Dedicated Tool Pages
 // ==========================================
 function findToolById(id) {
   for (const tools of Object.values(TOOLS_CATALOG)) {
@@ -313,54 +429,78 @@ function findToolById(id) {
   return null;
 }
 
-window.openToolPage = function(toolId) {
-  const tool = findToolById(toolId);
-  if (!tool) return;
+function initRouting() {
+  window.addEventListener('hashchange', handleRoute);
+  handleRoute();
 
+  DOM.btnBackToTools.addEventListener('click', () => {
+    window.location.hash = '';
+  });
+
+  DOM.floatingToolsBtn.addEventListener('click', () => {
+    window.location.hash = '';
+  });
+}
+
+function handleRoute() {
+  const hash = window.location.hash.replace('#', '').trim();
+
+  if (!hash || hash === 'all-tools' || hash === 'tools') {
+    // Show Catalog View
+    DOM.viewToolActive.classList.remove('active');
+    DOM.viewAllTools.classList.add('active');
+    document.title = 'CutiPDF • Clean & Fast PDF Tools';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return;
+  }
+
+  const tool = findToolById(hash);
+  if (tool) {
+    openToolDedicatedPage(tool);
+  } else {
+    window.location.hash = '';
+  }
+}
+
+function openToolDedicatedPage(tool) {
   state.activeTool = tool;
   state.selectedFiles = [];
 
-  // Update Tool Header
-  DOM.toolIcon.textContent = tool.icon;
+  document.title = `${tool.title} • CutiPDF`;
+
+  // Insert Beautiful Large Vector Graphic
+  const vectorSvg = VECTORS[tool.id] || '<div class="text-5xl">📄</div>';
+  DOM.toolVectorContainer.innerHTML = vectorSvg;
+
   DOM.toolTitle.textContent = tool.title;
   DOM.toolDesc.textContent = tool.desc;
 
-  // Update Input & Button Texts
-  DOM.fileInput.accept = tool.accept;
-  DOM.btnSelectFiles.textContent = tool.btnText;
-  DOM.actionButtonText.textContent = tool.actionText;
+  if (tool.functional) {
+    DOM.toolStatusBadge.className = 'text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-3 py-1 rounded-full border border-emerald-200 dark:border-emerald-800';
+    DOM.toolStatusBadge.textContent = 'Active Tool';
+    
+    DOM.toolFunctionalArea.classList.remove('hidden');
+    DOM.toolComingSoonArea.classList.add('hidden');
 
-  // Reset File Views
-  DOM.filesSelectedArea.classList.add('hidden');
-  DOM.toolDropzone.classList.remove('hidden');
+    DOM.fileInput.accept = tool.accept;
+    DOM.btnSelectFiles.textContent = tool.btnText;
+    DOM.actionButtonText.textContent = tool.actionText;
+
+    DOM.filesSelectedArea.classList.add('hidden');
+    DOM.toolDropzone.classList.remove('hidden');
+  } else {
+    DOM.toolStatusBadge.className = 'text-[11px] font-semibold text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-700';
+    DOM.toolStatusBadge.textContent = 'Coming Soon';
+
+    DOM.toolFunctionalArea.classList.add('hidden');
+    DOM.toolComingSoonArea.classList.remove('hidden');
+  }
 
   // Switch View
   DOM.viewAllTools.classList.remove('active');
   DOM.viewToolActive.classList.add('active');
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
-};
-
-function showAllTools() {
-  state.currentView = 'all-tools';
-  DOM.viewToolActive.classList.remove('active');
-  DOM.viewAllTools.classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-window.showAllTools = showAllTools;
-
-function initToolEvents() {
-  DOM.btnBackToTools.addEventListener('click', showAllTools);
-  DOM.floatingToolsBtn.addEventListener('click', showAllTools);
-
-  DOM.btnClearFiles.addEventListener('click', () => {
-    state.selectedFiles = [];
-    DOM.filesSelectedArea.classList.add('hidden');
-    DOM.toolDropzone.classList.remove('hidden');
-  });
-
-  DOM.btnExecuteAction.addEventListener('click', executeActiveToolAction);
 }
 
 // ==========================================
@@ -395,7 +535,7 @@ function initDropzoneEvents() {
     DOM.fileInput.click();
   });
 
-  dropzone.addEventListener('click', (e) => {
+  dropzone.addEventListener('click', () => {
     DOM.fileInput.click();
   });
 
@@ -404,6 +544,14 @@ function initDropzoneEvents() {
     handleFilesSelected(files);
     DOM.fileInput.value = '';
   });
+
+  DOM.btnClearFiles.addEventListener('click', () => {
+    state.selectedFiles = [];
+    DOM.filesSelectedArea.classList.add('hidden');
+    DOM.toolDropzone.classList.remove('hidden');
+  });
+
+  DOM.btnExecuteAction.addEventListener('click', executeActiveToolAction);
 }
 
 function handleFilesSelected(files) {
@@ -424,7 +572,9 @@ function renderSelectedFilesList() {
     row.className = 'flex items-center justify-between p-3.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl';
     row.innerHTML = `
       <div class="flex items-center gap-3 overflow-hidden">
-        <span class="text-2xl">${state.activeTool ? state.activeTool.icon : '📄'}</span>
+        <div class="w-8 h-8 flex-shrink-0">
+          ${VECTORS[state.activeTool.id] || '<div class="text-xl">📄</div>'}
+        </div>
         <div class="overflow-hidden">
           <p class="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate max-w-[200px] sm:max-w-md">${file.name}</p>
           <p class="text-[11px] text-zinc-400">${formatBytes(file.size)}</p>
@@ -474,9 +624,6 @@ async function executeActiveToolAction() {
       await splitPdf(state.selectedFiles);
     } else if (toolId === 'compress-pdf' || toolId === 'rotate-pdf') {
       await processAndDownloadPdf(state.selectedFiles, toolId);
-    } else {
-      // Coming soon fallback
-      showToast(`${state.activeTool.title} engine is coming soon!`);
     }
 
     DOM.btnExecuteAction.disabled = false;
@@ -502,7 +649,6 @@ async function convertImagesToPdf(files) {
     if (file.type === 'image/jpeg' || file.name.toLowerCase().endsWith('.jpg') || file.name.toLowerCase().endsWith('.jpeg')) {
       embeddedImg = await pdfDoc.embedJpg(arrayBuffer);
     } else {
-      // Convert to PNG blob via canvas if needed
       const pngBlob = await imageToPngBlob(file);
       const pngBytes = await pngBlob.arrayBuffer();
       embeddedImg = await pdfDoc.embedPng(pngBytes);
@@ -563,7 +709,6 @@ async function splitPdf(files) {
   const { PDFDocument } = PDFLib;
   const sourceBytes = await files[0].arrayBuffer();
   const sourceDoc = await PDFDocument.load(sourceBytes);
-  const total = sourceDoc.getPageCount();
 
   const newDoc = await PDFDocument.create();
   const [firstPage] = await newDoc.copyPages(sourceDoc, [0]);
@@ -587,7 +732,6 @@ async function processAndDownloadPdf(files, action) {
   downloadBlob(new Blob([outBytes], { type: 'application/pdf' }), `Processed_${Date.now()}.pdf`);
 }
 
-// Helper: Image to PNG
 function imageToPngBlob(file) {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -604,7 +748,6 @@ function imageToPngBlob(file) {
   });
 }
 
-// Download Helper with Confetti
 function downloadBlob(blob, filename) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -626,7 +769,6 @@ function downloadBlob(blob, filename) {
   showToast('File downloaded successfully!');
 }
 
-// Toast
 let toastTimer;
 function showToast(msg) {
   if (toastTimer) clearTimeout(toastTimer);
