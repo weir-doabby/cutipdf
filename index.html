@@ -53,20 +53,18 @@
     </div>
   </div>
 
-  <!-- Clean Top Header (Centered Logo & Name) -->
-  <header class="w-full max-w-6xl mx-auto px-5 py-4 relative flex items-center justify-center border-b border-zinc-200/80 dark:border-zinc-800/80">
-    <!-- Centered Brand Logo & Name -->
+  <!-- Clean Top Header (Left-Aligned: Name First, then Logo) -->
+  <header class="w-full max-w-6xl mx-auto px-5 py-4 flex items-center justify-between border-b border-zinc-200/80 dark:border-zinc-800/80">
+    <!-- Brand: Left Corner (First Name, then Logo) -->
     <a href="#all-tools" class="flex items-center gap-3 cursor-pointer no-underline text-inherit group" title="CutiPDF Home">
-      <img src="assets/logo_mascot.png" alt="CutiPDF Mascot" class="brand-logo h-11 sm:h-12 w-auto object-contain drop-shadow-xs">
       <span class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff5277] transition-colors font-brush">CutiPDF</span>
+      <img src="assets/logo_mascot.png" alt="CutiPDF Mascot" class="brand-logo h-11 sm:h-12 w-auto object-contain drop-shadow-xs">
     </a>
 
-    <!-- Dark / Light Mode Toggle (Right Aligned) -->
-    <div class="absolute right-5 top-1/2 -translate-y-1/2">
-      <button id="themeToggle" class="w-9 h-9 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 flex items-center justify-center hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors shadow-2xs" title="Toggle Theme">
-        <span id="themeIcon"></span>
-      </button>
-    </div>
+    <!-- Dark / Light Mode Toggle (Right Side) -->
+    <button id="themeToggle" class="w-9 h-9 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 flex items-center justify-center hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors shadow-2xs" title="Toggle Theme">
+      <span id="themeIcon"></span>
+    </button>
   </header>
 
   <!-- Main Content Area -->
