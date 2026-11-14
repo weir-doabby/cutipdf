@@ -1,39 +1,43 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Zen+Maru+Gothic:wght@500;700&display=swap');
 
 :root {
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   
-  --color-crimson: #e63946;
-  --color-crimson-hover: #d00000;
+  /* CutiPDF Signature Watercolor Palette */
+  --color-pink-primary: #ff5277;
+  --color-pink-deep: #ff3366;
+  --color-pink-wash: #fff0f4;
+  --color-pink-border: #ffd1df;
+  --color-pink-glow: rgba(255, 82, 119, 0.28);
   
   /* Light Theme */
-  --bg-main: #fcfcfd;
+  --bg-main: #fdfbfc;
   --bg-card: #ffffff;
   --bg-card-hover: #ffffff;
-  --border-color: #e4e4e7;
-  --border-hover: #d4d4d8;
-  --text-main: #18181b;
-  --text-muted: #71717a;
-  --text-faint: #a1a1aa;
-  --dropzone-bg: #fafafa;
-  --header-bg: rgba(252, 252, 253, 0.85);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
-  --shadow-card: 0 4px 16px -2px rgba(0, 0, 0, 0.04);
+  --border-color: #f7d5df;
+  --border-hover: #ff5277;
+  --text-main: #1f2024;
+  --text-muted: #6b7280;
+  --text-faint: #9ca3af;
+  --dropzone-bg: #fff8fa;
+  --header-bg: rgba(253, 251, 252, 0.9);
+  --shadow-watercolor: 0 4px 20px -2px rgba(255, 82, 119, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+  --shadow-watercolor-hover: 0 12px 30px -4px rgba(255, 82, 119, 0.2), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
 }
 
 html.dark {
-  --bg-main: #0e0e11;
-  --bg-card: #18181c;
-  --bg-card-hover: #1f1f24;
-  --border-color: #27272a;
-  --border-hover: #3f3f46;
-  --text-main: #f4f4f5;
-  --text-muted: #a1a1aa;
-  --text-faint: #71717a;
-  --dropzone-bg: #141417;
-  --header-bg: rgba(14, 14, 17, 0.85);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
-  --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+  --bg-main: #101013;
+  --bg-card: #18181d;
+  --bg-card-hover: #202026;
+  --border-color: #2e262a;
+  --border-hover: #ff5277;
+  --text-main: #f9fafb;
+  --text-muted: #9ca3af;
+  --text-faint: #6b7280;
+  --dropzone-bg: #141214;
+  --header-bg: rgba(16, 16, 19, 0.9);
+  --shadow-watercolor: 0 4px 20px -2px rgba(0, 0, 0, 0.6);
+  --shadow-watercolor-hover: 0 12px 32px -4px rgba(255, 82, 119, 0.25);
 }
 
 * {
@@ -53,30 +57,37 @@ body {
   padding-bottom: 110px;
 }
 
-/* Tool Cards */
+/* Subtle watercolor paper texture effect */
+.watercolor-paper-bg {
+  background-color: var(--bg-main);
+  background-image: radial-gradient(rgba(255, 182, 201, 0.18) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+/* Watercolor Card Styles */
 .tool-card {
   background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 18px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 20px;
   padding: 24px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: pointer;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-watercolor);
   position: relative;
   overflow: hidden;
 }
 
 .tool-card:hover {
   background: var(--bg-card-hover);
-  border-color: var(--color-crimson);
+  border-color: var(--color-pink-primary);
   transform: translateY(-3px);
-  box-shadow: 0 12px 28px -6px rgba(230, 57, 70, 0.15);
+  box-shadow: var(--shadow-watercolor-hover);
 }
 
-/* Floating Square Tools Button */
+/* Floating Square Tools Button (Ergonomic Wrench) */
 .floating-tools-btn {
   position: fixed;
   bottom: 28px;
@@ -86,24 +97,23 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 3px;
   width: 68px;
   height: 68px;
   background: var(--bg-card);
   border: 1.5px solid var(--border-color);
-  border-radius: 18px;
-  box-shadow: 0 12px 32px -4px rgba(0, 0, 0, 0.18);
+  border-radius: 20px;
+  box-shadow: 0 12px 32px -4px rgba(255, 82, 119, 0.2), 0 4px 12px rgba(0, 0, 0, 0.05);
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  color: var(--text-main);
-  backdrop-filter: blur(12px);
+  color: var(--color-pink-primary);
+  backdrop-filter: blur(16px);
 }
 
 .floating-tools-btn:hover {
-  transform: translateY(-4px) scale(1.05);
-  border-color: var(--color-crimson);
-  color: var(--color-crimson);
-  box-shadow: 0 16px 36px -4px rgba(230, 57, 70, 0.25);
+  transform: translateY(-4px) scale(1.06);
+  border-color: var(--color-pink-primary);
+  box-shadow: 0 16px 36px -4px rgba(255, 82, 119, 0.35);
 }
 
 .floating-tools-btn:active {
@@ -123,51 +133,92 @@ body {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  color: var(--text-main);
 }
 
-/* Big Red Action Button (iLovePDF Style) */
+/* Big Watercolor Action Button (iLovePDF Style) */
 .btn-primary-action {
-  background: linear-gradient(135deg, #e63946 0%, #d90429 100%);
+  background: linear-gradient(135deg, #ff5277 0%, #ff3366 50%, #e91e63 100%);
   color: #ffffff;
   font-weight: 700;
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 16px 36px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  box-shadow: 0 8px 24px -2px rgba(230, 57, 70, 0.38);
+  box-shadow: 0 8px 24px -2px var(--color-pink-glow);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   border: none;
   cursor: pointer;
 }
 
 .btn-primary-action:hover {
-  background: linear-gradient(135deg, #d00000 0%, #ba181b 100%);
+  background: linear-gradient(135deg, #ff3366 0%, #e91e63 100%);
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px -2px rgba(230, 57, 70, 0.48);
+  box-shadow: 0 12px 28px -2px rgba(255, 51, 102, 0.45);
 }
 
 .btn-primary-action:active {
   transform: translateY(0);
 }
 
-/* Upload Dropzone */
+/* Upload Dropzone with watercolor border */
 .tool-dropzone {
   border: 2px dashed var(--border-color);
   background: var(--dropzone-bg);
-  border-radius: 24px;
+  border-radius: 26px;
   transition: all 0.2s ease;
 }
 
 .tool-dropzone:hover {
-  border-color: #f87171;
+  border-color: var(--color-pink-primary);
+  background: rgba(255, 82, 119, 0.04);
 }
 
 .tool-dropzone.drag-active {
-  border-color: var(--color-crimson);
-  background: rgba(230, 57, 70, 0.05);
+  border-color: var(--color-pink-deep);
+  background: rgba(255, 82, 119, 0.08);
   transform: scale(1.01);
+}
+
+/* Options Drawer */
+.options-drawer {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: 20px;
+  box-shadow: var(--shadow-watercolor);
+}
+
+/* Segmented Control */
+.segmented-control {
+  display: inline-flex;
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+  padding: 3px;
+  gap: 2px;
+}
+
+html.dark .segmented-control {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.segmented-btn {
+  padding: 6px 14px;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.segmented-btn.active {
+  background: var(--bg-card);
+  color: var(--color-pink-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 /* Smooth view transitions */
@@ -189,4 +240,27 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #f7d5df;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ff5277;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #2e262a;
 }
