@@ -270,7 +270,7 @@ const state = {
   // Interactive Items (for Image or PDF Pages)
   workspaceItems: [], // [{ id, type: 'image'|'pdf-file'|'pdf-page', file, url, rotation, pageNum, selected, removed }]
   toolOptions: {},
-  theme: localStorage.getItem('cutipdf_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+  theme: localStorage.getItem('cutipdf_theme') || 'dark'
 };
 
 // DOM Cache
