@@ -301,7 +301,14 @@ const DOM = {
   
   // Toast
   toast: document.getElementById('toast'),
-  toastMessage: document.getElementById('toastMessage')
+  toastMessage: document.getElementById('toastMessage'),
+
+  // Quick Tools Modal
+  quickToolsModal: document.getElementById('quickToolsModal'),
+  quickToolsContent: document.getElementById('quickToolsContent'),
+  btnCloseQuickTools: document.getElementById('btnCloseQuickTools'),
+  quickToolSearch: document.getElementById('quickToolSearch'),
+  quickToolsModalGrid: document.getElementById('quickToolsModalGrid')
 };
 
 // Initialize
@@ -309,6 +316,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   renderAllToolsCatalog();
   initRouting();
+  initQuickToolsModal();
   initDropzoneEvents();
 });
 
@@ -399,11 +407,119 @@ function initRouting() {
   DOM.btnBackToTools.addEventListener('click', () => {
     window.location.hash = '';
   });
+}
 
-  DOM.floatingToolsBtn.addEventListener('click', () => {
-    window.location.hash = '';
+// ==========================================
+// Quick Tools Preview Modal (Non-Disruptive Preview)
+// ==========================================
+function initQuickToolsModal() {
+  if (!DOM.quickToolsModal) return;
+
+  renderQuickToolsModalGrid('');
+
+  // Floating button opens modal without resetting current tool
+  DOM.floatingToolsBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    openQuickToolsModal();
+  });
+
+  // Close button
+  DOM.btnCloseQuickTools.addEventListener('click', closeQuickToolsModal);
+
+  // Click outside backdrop to close
+  DOM.quickToolsModal.addEventListener('click', (e) => {
+    if (e.target === DOM.quickToolsModal) {
+      closeQuickToolsModal();
+    }
+  });
+
+  // ESC key to close
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !DOM.quickToolsModal.classList.contains('pointer-events-none')) {
+      closeQuickToolsModal();
+    }
+  });
+
+  // Search input filter
+  DOM.quickToolSearch.addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    renderQuickToolsModalGrid(q);
   });
 }
+
+function openQuickToolsModal() {
+  DOM.quickToolsModal.classList.remove('opacity-0', 'pointer-events-none');
+  DOM.quickToolsModal.classList.add('opacity-100', 'pointer-events-auto');
+  DOM.quickToolsContent.classList.remove('scale-95');
+  DOM.quickToolsContent.classList.add('scale-100');
+  DOM.quickToolSearch.value = '';
+  renderQuickToolsModalGrid('');
+  setTimeout(() => DOM.quickToolSearch.focus(), 60);
+}
+
+function closeQuickToolsModal() {
+  DOM.quickToolsModal.classList.remove('opacity-100', 'pointer-events-auto');
+  DOM.quickToolsModal.classList.add('opacity-0', 'pointer-events-none');
+  DOM.quickToolsContent.classList.remove('scale-100');
+  DOM.quickToolsContent.classList.add('scale-95');
+}
+
+function renderQuickToolsModalGrid(query = '') {
+  const container = DOM.quickToolsModalGrid;
+  container.innerHTML = '';
+
+  let matchFound = false;
+
+  for (const [category, tools] of Object.entries(TOOLS_CATALOG)) {
+    const filtered = tools.filter(t => 
+      !query || 
+      t.title.toLowerCase().includes(query) || 
+      t.desc.toLowerCase().includes(query) ||
+      category.toLowerCase().includes(query)
+    );
+
+    if (filtered.length > 0) {
+      matchFound = true;
+      const sec = document.createElement('div');
+      sec.className = 'space-y-3';
+      sec.innerHTML = `
+        <h4 class="category-title text-sm">${category}</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          ${filtered.map(tool => `
+            <div onclick="selectToolFromModal('${tool.id}')" class="p-3 rounded-2xl border border-pink-100 dark:border-zinc-800 hover:border-[#ff5277] bg-white dark:bg-zinc-800/70 hover:shadow-md cursor-pointer transition-all flex items-center gap-3 group">
+              <div class="w-10 h-10 flex-shrink-0 group-hover:scale-105 transition-transform">
+                ${VECTORS[tool.id] || '<div class="text-xl">📄</div>'}
+              </div>
+              <div class="overflow-hidden">
+                <h5 class="font-bold text-xs text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff5277] transition-colors truncate">${tool.title}</h5>
+                <p class="text-[11px] text-zinc-400 truncate mt-0.5">${tool.desc}</p>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      container.appendChild(sec);
+    }
+  }
+
+  if (!matchFound) {
+    container.innerHTML = `
+      <div class="text-center py-10 text-zinc-400">
+        <p class="text-xs">No tools found matching "${query}"</p>
+      </div>
+    `;
+  }
+}
+
+window.selectToolFromModal = function(toolId) {
+  closeQuickToolsModal();
+  if (state.workspaceItems && state.workspaceItems.length > 0) {
+    if (!confirm('Switch tool? Current in-progress files will be cleared.')) {
+      return;
+    }
+  }
+  window.location.hash = '#' + toolId;
+};
 
 function handleRoute() {
   const hash = window.location.hash.replace('#', '').trim();
