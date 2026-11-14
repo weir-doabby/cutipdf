@@ -112,7 +112,7 @@
     <!-- ============================================================ -->
     <!-- VIEW 2: DEDICATED TOOL PAGE FOR EACH TOOL -->
     <!-- ============================================================ -->
-    <div id="view-tool-active" class="view-container space-y-6">
+    <div id="view-tool-active" class="view-container space-y-8 w-full">
       
       <!-- Back Navigation (Aligned to Left Corner with CutiPDF Logo at px-6) -->
       <div class="w-full">
@@ -124,36 +124,34 @@
         </button>
       </div>
 
-      <!-- Centered Tool Workspace (Max-W-4xl) -->
-      <div class="max-w-4xl mx-auto space-y-8">
-
-        <!-- Tool Header with Gorgeous Vector -->
-        <div class="text-center space-y-3">
-          <div id="toolVectorContainer" class="w-20 h-20 sm:w-24 sm:h-24 mx-auto flex items-center justify-center drop-shadow-sm">
-            <!-- Injected SVG Vector -->
-          </div>
-
-          <div>
-            <div class="inline-block mb-1">
-              <span id="toolStatusBadge" class="text-sm sm:text-base font-brush text-[#ff5277] font-semibold tracking-wide">
-                (pdf tool box, but lovely)
-              </span>
-            </div>
-            <h2 id="toolTitle" class="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-100">Tool Name</h2>
-          </div>
-
-          <p id="toolDesc" class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto leading-relaxed">
-            Description
-          </p>
+      <!-- Tool Header with Gorgeous Vector (Centered) -->
+      <div class="text-center space-y-3 max-w-3xl mx-auto">
+        <div id="toolVectorContainer" class="w-20 h-20 sm:w-24 sm:h-24 mx-auto flex items-center justify-center drop-shadow-sm">
+          <!-- Injected SVG Vector -->
         </div>
 
+        <div>
+          <div class="inline-block mb-1.5">
+            <span id="toolStatusBadge" class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 shadow-2xs">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span>Safe, Fast &amp; Secure</span>
+            </span>
+          </div>
+          <h2 id="toolTitle" class="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-100">Tool Name</h2>
+        </div>
+
+        <p id="toolDesc" class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto leading-relaxed">
+          Description
+        </p>
+      </div>
+
       <!-- Tool Options Drawer (Dynamic for tools like Watermark, Password, Page Numbers, Layout) -->
-      <div id="toolOptionsDrawer" class="hidden cuti-card p-4 sm:p-5 bg-white dark:bg-zinc-900 border border-pink-200 dark:border-zinc-800 rounded-2xl space-y-3">
+      <div id="toolOptionsDrawer" class="hidden cuti-card p-4 sm:p-5 bg-white dark:bg-zinc-900 border border-pink-200 dark:border-zinc-800 rounded-2xl space-y-3 w-full">
         <!-- Injected options -->
       </div>
 
-      <!-- Upload Dropzone (iLovePDF Style) -->
-      <div id="toolDropzone" class="tool-dropzone p-12 sm:p-16 text-center cursor-pointer group">
+      <!-- Upload Dropzone (Aligned all the way to ends) -->
+      <div id="toolDropzone" class="tool-dropzone w-full p-12 sm:p-16 text-center cursor-pointer group">
         <input type="file" id="fileInput" class="hidden" multiple>
 
         <div class="flex flex-col items-center justify-center space-y-4">
@@ -167,7 +165,7 @@
       </div>
 
       <!-- Selected Files Workspace & Action Button (Interactive Thumbnail Grid) -->
-      <div id="filesSelectedArea" class="hidden space-y-6">
+      <div id="filesSelectedArea" class="hidden space-y-6 w-full">
         <div class="flex items-center justify-between px-1">
           <div class="flex items-center gap-2">
             <span class="text-xs font-bold text-zinc-800 dark:text-zinc-200">Interactive Preview Workspace</span>
@@ -183,16 +181,13 @@
 
         <!-- Convert Action Button -->
         <div class="text-center pt-2">
-          <button id="btnExecuteAction" class="btn-primary-action w-full py-4 text-base">
+          <button id="btnExecuteAction" class="btn-primary-action w-full max-w-xl mx-auto py-4 text-base">
             <span id="actionButtonText">Process Files</span>
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>
           </button>
         </div>
-      </div>
-
-      <!-- End of Centered Tool Workspace -->
       </div>
 
     </div>
