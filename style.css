@@ -1,7 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Zen+Maru+Gothic:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Kaushan+Script&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
   --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-brush: 'Kaushan Script', 'Caveat', cursive;
   
   /* CutiPDF Signature Watercolor Palette */
   --color-pink-primary: #ff5277;
@@ -62,6 +63,47 @@ body {
   background-color: var(--bg-main);
   background-image: radial-gradient(rgba(255, 182, 201, 0.18) 1px, transparent 1px);
   background-size: 28px 28px;
+}
+
+/* Painterly Brush Font for Categories */
+.font-brush {
+  font-family: var(--font-brush);
+  letter-spacing: 0.5px;
+}
+
+.category-title {
+  font-family: var(--font-brush);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-pink-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  text-shadow: 0 1px 2px rgba(255, 82, 119, 0.15);
+}
+
+.category-title::after {
+  content: '';
+  display: inline-block;
+  height: 3px;
+  width: 32px;
+  background: linear-gradient(90deg, var(--color-pink-primary), transparent);
+  border-radius: 9999px;
+  margin-left: 4px;
+}
+
+/* Brand Logo (Light & Dark Mode) */
+.brand-logo {
+  transition: filter 0.25s ease, transform 0.2s ease;
+}
+
+.brand-logo:hover {
+  transform: scale(1.04);
+}
+
+html.dark .brand-logo {
+  filter: drop-shadow(0 2px 10px rgba(255, 82, 119, 0.5)) brightness(1.05);
 }
 
 /* Watercolor Card Styles */
@@ -180,6 +222,37 @@ body {
   border-color: var(--color-pink-deep);
   background: rgba(255, 82, 119, 0.08);
   transform: scale(1.01);
+}
+
+/* Thumbnail Preview Cards (iLovePDF Style) */
+.preview-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.preview-card:hover {
+  border-color: var(--color-pink-primary);
+  box-shadow: 0 8px 24px -4px var(--color-pink-glow);
+  transform: translateY(-2px);
+}
+
+.preview-card.removed {
+  opacity: 0.35;
+  border-color: #ef4444;
+  filter: grayscale(80%);
+}
+
+.preview-card.selected {
+  border-color: var(--color-pink-primary);
+  box-shadow: 0 0 0 2px var(--color-pink-primary);
 }
 
 /* Options Drawer */

@@ -1,6 +1,6 @@
 /**
  * CutiPDF (cutipdf.com) - Full Suite of 30 Client-Side PDF Tools
- * Modeled after iLovePDF with 100% In-Browser Privacy
+ * Modeled after iLovePDF with Interactive Thumbnail Previews & In-Browser Privacy
  */
 
 const TOOLS_CATALOG = {
@@ -24,7 +24,7 @@ const TOOLS_CATALOG = {
     {
       id: 'remove-pages',
       title: 'Remove Pages',
-      desc: 'Remove pages from a PDF document quickly and easily.',
+      desc: 'Remove pages from a PDF document quickly and easily with interactive preview.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Remove Pages'
@@ -43,7 +43,7 @@ const TOOLS_CATALOG = {
       desc: 'Sort pages of your PDF file however you like. Reorder or delete PDF pages.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
-      actionText: 'Organize PDF'
+      actionText: 'Save Order'
     },
     {
       id: 'scan-to-pdf',
@@ -267,8 +267,10 @@ const TOOLS_CATALOG = {
 const state = {
   activeTool: null,
   selectedFiles: [],
-  theme: localStorage.getItem('cutipdf_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
-  toolOptions: {}
+  // Interactive Items (for Image or PDF Pages)
+  workspaceItems: [], // [{ id, type: 'image'|'pdf-file'|'pdf-page', file, url, rotation, pageNum, selected, removed }]
+  toolOptions: {},
+  theme: localStorage.getItem('cutipdf_theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
 };
 
 // DOM Cache
@@ -341,7 +343,7 @@ function applyTheme(theme) {
 }
 
 // ==========================================
-// Render All Tools Catalog
+// Render All Tools Catalog with Brush Headers
 // ==========================================
 function renderAllToolsCatalog() {
   DOM.toolsGridContainer.innerHTML = '';
@@ -352,7 +354,7 @@ function renderAllToolsCatalog() {
 
     section.innerHTML = `
       <div class="flex items-center gap-2 border-b border-pink-100 dark:border-zinc-800 pb-2">
-        <h2 class="text-xs font-bold uppercase tracking-wider text-[#ff5277] dark:text-[#ff7597]">${category}</h2>
+        <h2 class="category-title">${category}</h2>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         ${tools.map(tool => {
@@ -425,11 +427,11 @@ function handleRoute() {
 function openToolDedicatedPage(tool) {
   state.activeTool = tool;
   state.selectedFiles = [];
+  state.workspaceItems = [];
   state.toolOptions = {};
 
   document.title = `${tool.title} • CutiPDF`;
 
-  // Render Vector & Header
   DOM.toolVectorContainer.innerHTML = VECTORS[tool.id] || '<div class="text-5xl">📄</div>';
   DOM.toolTitle.textContent = tool.title;
   DOM.toolDesc.textContent = tool.desc;
@@ -450,17 +452,50 @@ function openToolDedicatedPage(tool) {
 }
 
 // ==========================================
-// Dynamic Options Drawer (iLovePDF Style)
+// Options Drawer Rendering
 // ==========================================
 function renderToolOptionsDrawer(toolId) {
   const drawer = DOM.toolOptionsDrawer;
   drawer.innerHTML = '';
 
-  if (toolId === 'watermark-pdf') {
+  if (toolId === 'jpg-to-pdf') {
+    drawer.classList.remove('hidden');
+    drawer.innerHTML = `
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div>
+          <label class="text-[11px] font-bold text-zinc-700 dark:text-zinc-300">Orientation:</label>
+          <div class="segmented-control w-full mt-1">
+            <button type="button" class="segmented-btn flex-1 active" onclick="setOpt('orientation', 'auto', this)">Auto</button>
+            <button type="button" class="segmented-btn flex-1" onclick="setOpt('orientation', 'portrait', this)">Portrait</button>
+            <button type="button" class="segmented-btn flex-1" onclick="setOpt('orientation', 'landscape', this)">Landscape</button>
+          </div>
+        </div>
+        <div>
+          <label class="text-[11px] font-bold text-zinc-700 dark:text-zinc-300">Page Size:</label>
+          <div class="segmented-control w-full mt-1">
+            <button type="button" class="segmented-btn flex-1 active" onclick="setOpt('pageSize', 'fit', this)">Fit Image</button>
+            <button type="button" class="segmented-btn flex-1" onclick="setOpt('pageSize', 'a4', this)">A4</button>
+            <button type="button" class="segmented-btn flex-1" onclick="setOpt('pageSize', 'letter', this)">US Letter</button>
+          </div>
+        </div>
+        <div>
+          <label class="text-[11px] font-bold text-zinc-700 dark:text-zinc-300">Margin:</label>
+          <div class="segmented-control w-full mt-1">
+            <button type="button" class="segmented-btn flex-1 active" onclick="setOpt('margin', 'none', this)">No Margin</button>
+            <button type="button" class="segmented-btn flex-1" onclick="setOpt('margin', 'small', this)">Small</button>
+            <button type="button" class="segmented-btn flex-1" onclick="setOpt('margin', 'big', this)">Big</button>
+          </div>
+        </div>
+      </div>
+    `;
+    state.toolOptions.orientation = 'auto';
+    state.toolOptions.pageSize = 'fit';
+    state.toolOptions.margin = 'none';
+  } else if (toolId === 'watermark-pdf') {
     drawer.classList.remove('hidden');
     drawer.innerHTML = `
       <div class="space-y-3">
-        <label class="text-xs font-bold text-zinc-800 dark:text-zinc-200">Watermark Text & Settings</label>
+        <label class="text-xs font-bold text-zinc-800 dark:text-zinc-200">Watermark Text:</label>
         <input type="text" id="watermarkTextInput" value="CONFIDENTIAL" class="w-full px-3.5 py-2 text-xs rounded-xl border border-pink-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 outline-none focus:border-[#ff5277]">
         <div class="flex items-center justify-between text-xs pt-1">
           <span class="text-zinc-500">Opacity:</span>
@@ -477,7 +512,7 @@ function renderToolOptionsDrawer(toolId) {
     drawer.classList.remove('hidden');
     drawer.innerHTML = `
       <div class="space-y-2.5">
-        <label class="text-xs font-bold text-zinc-800 dark:text-zinc-200">Set Document Password</label>
+        <label class="text-xs font-bold text-zinc-800 dark:text-zinc-200">Set Document Password:</label>
         <input type="password" id="protectPasswordInput" placeholder="Enter password to encrypt PDF" class="w-full px-3.5 py-2 text-xs rounded-xl border border-pink-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 outline-none focus:border-[#ff5277]">
       </div>
     `;
@@ -485,7 +520,7 @@ function renderToolOptionsDrawer(toolId) {
     drawer.classList.remove('hidden');
     drawer.innerHTML = `
       <div class="space-y-2.5">
-        <label class="text-xs font-bold text-zinc-800 dark:text-zinc-200">Document Current Password</label>
+        <label class="text-xs font-bold text-zinc-800 dark:text-zinc-200">Document Password:</label>
         <input type="password" id="unlockPasswordInput" placeholder="Enter password to unlock and decrypt" class="w-full px-3.5 py-2 text-xs rounded-xl border border-pink-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 outline-none focus:border-[#ff5277]">
       </div>
     `;
@@ -493,15 +528,13 @@ function renderToolOptionsDrawer(toolId) {
     drawer.classList.remove('hidden');
     drawer.innerHTML = `
       <div class="flex items-center justify-between text-xs">
-        <span class="font-bold text-zinc-800 dark:text-zinc-200">Rotation Angle:</span>
-        <div class="segmented-control">
-          <button type="button" class="segmented-btn active" onclick="setOpt('rotationAngle', 90, this)">90° Right</button>
-          <button type="button" class="segmented-btn" onclick="setOpt('rotationAngle', 180, this)">180° Flip</button>
-          <button type="button" class="segmented-btn" onclick="setOpt('rotationAngle', 270, this)">270° Left</button>
+        <span class="font-bold text-zinc-800 dark:text-zinc-200">Rotate All Pages:</span>
+        <div class="flex items-center gap-2">
+          <button type="button" class="px-3 py-1.5 rounded-xl border border-pink-200 text-xs text-[#ff5277] hover:bg-pink-50 dark:hover:bg-zinc-800 font-semibold" onclick="rotateAllWorkspace(90)">Rotate All 90° ↻</button>
+          <button type="button" class="px-3 py-1.5 rounded-xl border border-pink-200 text-xs text-[#ff5277] hover:bg-pink-50 dark:hover:bg-zinc-800 font-semibold" onclick="rotateAllWorkspace(180)">Flip 180°</button>
         </div>
       </div>
     `;
-    state.toolOptions.rotationAngle = 90;
   } else if (toolId === 'page-numbers') {
     drawer.classList.remove('hidden');
     drawer.innerHTML = `
@@ -528,22 +561,6 @@ function renderToolOptionsDrawer(toolId) {
       </div>
     `;
     state.toolOptions.compressLevel = 'recommended';
-  } else if (toolId === 'split-pdf') {
-    drawer.classList.remove('hidden');
-    drawer.innerHTML = `
-      <div class="space-y-2">
-        <label class="text-xs font-bold text-zinc-800 dark:text-zinc-200">Page Range to Extract (leave blank for all pages):</label>
-        <input type="text" id="splitRangeInput" placeholder="e.g. 1-3, 5" class="w-full px-3.5 py-2 text-xs rounded-xl border border-pink-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 outline-none focus:border-[#ff5277]">
-      </div>
-    `;
-  } else if (toolId === 'remove-pages') {
-    drawer.classList.remove('hidden');
-    drawer.innerHTML = `
-      <div class="space-y-2">
-        <label class="text-xs font-bold text-zinc-800 dark:text-zinc-200">Pages to Remove (comma separated):</label>
-        <input type="text" id="removePagesInput" placeholder="e.g. 2, 4" class="w-full px-3.5 py-2 text-xs rounded-xl border border-pink-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 outline-none focus:border-[#ff5277]">
-      </div>
-    `;
   } else if (toolId === 'sign-pdf') {
     drawer.classList.remove('hidden');
     drawer.innerHTML = `
@@ -567,6 +584,304 @@ window.setOpt = function(key, val, btn) {
     btn.parentElement.querySelectorAll('.segmented-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
   }
+};
+
+// ==========================================
+// Interactive File Handling & In-Browser Preview
+// ==========================================
+function initDropzoneEvents() {
+  const dropzone = DOM.toolDropzone;
+
+  ['dragenter', 'dragover'].forEach(name => {
+    dropzone.addEventListener(name, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropzone.classList.add('drag-active');
+    });
+  });
+
+  ['dragleave', 'drop'].forEach(name => {
+    dropzone.addEventListener(name, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropzone.classList.remove('drag-active');
+    });
+  });
+
+  dropzone.addEventListener('drop', (e) => {
+    const files = Array.from(e.dataTransfer.files);
+    handleFilesSelected(files);
+  });
+
+  DOM.btnSelectFiles.addEventListener('click', (e) => {
+    e.stopPropagation();
+    DOM.fileInput.click();
+  });
+
+  dropzone.addEventListener('click', () => {
+    DOM.fileInput.click();
+  });
+
+  DOM.fileInput.addEventListener('change', (e) => {
+    const files = Array.from(e.target.files);
+    handleFilesSelected(files);
+    DOM.fileInput.value = '';
+  });
+
+  DOM.btnClearFiles.addEventListener('click', () => {
+    state.selectedFiles = [];
+    state.workspaceItems = [];
+    DOM.filesSelectedArea.classList.add('hidden');
+    DOM.toolDropzone.classList.remove('hidden');
+  });
+
+  DOM.btnExecuteAction.addEventListener('click', executeActiveToolAction);
+}
+
+async function handleFilesSelected(files) {
+  if (!files || files.length === 0) return;
+
+  state.selectedFiles.push(...files);
+  DOM.toolDropzone.classList.add('hidden');
+  DOM.filesSelectedArea.classList.remove('hidden');
+
+  showToast('Rendering in-browser preview cards...');
+  await buildWorkspacePreview(files);
+  renderInteractiveWorkspace();
+}
+
+// Build Workspace Items with Real In-Browser Rendering
+async function buildWorkspacePreview(newFiles) {
+  const toolId = state.activeTool ? state.activeTool.id : '';
+
+  // 1. Image-based Tool (JPG to PDF, Scan to PDF)
+  if (toolId === 'jpg-to-pdf' || toolId === 'scan-to-pdf') {
+    for (const f of newFiles) {
+      if (f.type.startsWith('image/')) {
+        const url = URL.createObjectURL(f);
+        state.workspaceItems.push({
+          id: Math.random().toString(36).substring(2, 9),
+          type: 'image',
+          file: f,
+          name: f.name,
+          size: formatBytes(f.size),
+          previewUrl: url,
+          rotation: 0
+        });
+      }
+    }
+  }
+  // 2. Multi-PDF Tool (Merge PDF, Compare PDF)
+  else if (toolId === 'merge-pdf' || toolId === 'compare-pdf') {
+    for (const f of newFiles) {
+      if (f.name.toLowerCase().endsWith('.pdf') || f.type === 'application/pdf') {
+        let coverUrl = '';
+        let pageCount = 1;
+        try {
+          const bytes = await f.arrayBuffer();
+          const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+          pageCount = pdf.numPages;
+          coverUrl = await renderPdfPageThumb(pdf, 1);
+        } catch (e) {
+          console.warn('PDF preview render error:', e);
+        }
+
+        state.workspaceItems.push({
+          id: Math.random().toString(36).substring(2, 9),
+          type: 'pdf-file',
+          file: f,
+          name: f.name,
+          size: formatBytes(f.size),
+          pageCount,
+          previewUrl: coverUrl,
+          rotation: 0
+        });
+      }
+    }
+  }
+  // 3. Single PDF Page-Level Tools (Rotate, Split, Remove, Organize, Extract, Watermark, PDF to JPG)
+  else if (['rotate-pdf', 'split-pdf', 'remove-pages', 'extract-pages', 'organize-pdf', 'pdf-to-jpg', 'watermark-pdf', 'crop-pdf'].includes(toolId)) {
+    const f = newFiles[0];
+    if (f && (f.name.toLowerCase().endsWith('.pdf') || f.type === 'application/pdf')) {
+      state.workspaceItems = []; // single master PDF
+      try {
+        const bytes = await f.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const thumb = await renderPdfPageThumb(pdf, i);
+          state.workspaceItems.push({
+            id: Math.random().toString(36).substring(2, 9),
+            type: 'pdf-page',
+            file: f,
+            pageNum: i,
+            name: `Page ${i}`,
+            previewUrl: thumb,
+            rotation: 0,
+            selected: true,
+            removed: false
+          });
+        }
+      } catch (e) {
+        console.warn('PDF pages render error:', e);
+      }
+    }
+  }
+  // 4. Other tools (Word, Excel, Text)
+  else {
+    for (const f of newFiles) {
+      state.workspaceItems.push({
+        id: Math.random().toString(36).substring(2, 9),
+        type: 'doc-file',
+        file: f,
+        name: f.name,
+        size: formatBytes(f.size),
+        previewUrl: '',
+        rotation: 0
+      });
+    }
+  }
+}
+
+// Render Thumbnail Canvas with PDF.js
+async function renderPdfPageThumb(pdfDoc, pageNum) {
+  const page = await pdfDoc.getPage(pageNum);
+  const viewport = page.getViewport({ scale: 0.35 });
+  const canvas = document.createElement('canvas');
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  const ctx = canvas.getContext('2d');
+  await page.render({ canvasContext: ctx, viewport }).promise;
+  return canvas.toDataURL('image/jpeg', 0.85);
+}
+
+// ==========================================
+// Render Interactive Workspace Cards (iLovePDF Style)
+// ==========================================
+function renderInteractiveWorkspace() {
+  const container = DOM.selectedFilesList;
+  container.innerHTML = '';
+  const toolId = state.activeTool ? state.activeTool.id : '';
+
+  if (state.workspaceItems.length === 0) {
+    DOM.filesSelectedArea.classList.add('hidden');
+    DOM.toolDropzone.classList.remove('hidden');
+    return;
+  }
+
+  // Use Grid for interactive preview cards!
+  const grid = document.createElement('div');
+  grid.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5 pb-2';
+
+  state.workspaceItems.forEach((item, index) => {
+    const card = document.createElement('div');
+    card.className = `preview-card ${item.removed ? 'removed' : ''} ${item.selected ? 'selected' : ''}`;
+
+    let thumbHtml = '';
+    if (item.previewUrl) {
+      thumbHtml = `
+        <div class="h-44 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center overflow-hidden p-1.5 relative">
+          <img src="${item.previewUrl}" alt="${item.name}" style="transform: rotate(${item.rotation}deg);" class="max-h-full max-w-full object-contain transition-transform duration-200 rounded-md">
+          <div class="absolute top-2 left-2 z-10 bg-white/90 dark:bg-zinc-900/90 text-[10px] font-bold px-2 py-0.5 rounded-md border border-zinc-200 dark:border-zinc-700 shadow-xs">
+            ${item.pageNum ? `Page ${item.pageNum}` : index + 1}
+          </div>
+        </div>
+      `;
+    } else {
+      thumbHtml = `
+        <div class="h-44 bg-pink-50/50 dark:bg-zinc-800/50 flex flex-col items-center justify-center p-3 text-center">
+          <div class="text-3xl mb-1">${state.activeTool ? state.activeTool.title.includes('Word') ? '📄' : state.activeTool.title.includes('Excel') ? '📈' : '📑' : '📄'}</div>
+          <p class="text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 truncate w-full">${item.name}</p>
+          <p class="text-[10px] text-zinc-400 mt-0.5">${item.size || ''}</p>
+        </div>
+      `;
+    }
+
+    // Action buttons inside card footer
+    let actionsHtml = `
+      <div class="p-2.5 bg-white dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
+        <div class="flex items-center gap-1">
+          <button type="button" onclick="rotateWorkspaceItem(${index})" class="w-6 h-6 rounded-md hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-600 hover:text-[#ff5277] flex items-center justify-center transition-colors" title="Rotate 90°">
+            ↻
+          </button>
+          <button type="button" onclick="moveWorkspaceItem(${index}, -1)" ${index === 0 ? 'disabled' : ''} class="w-6 h-6 rounded-md hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-600 hover:text-[#ff5277] flex items-center justify-center disabled:opacity-30 disabled:pointer-events-none" title="Move Left">
+            ←
+          </button>
+          <button type="button" onclick="moveWorkspaceItem(${index}, 1)" ${index === state.workspaceItems.length - 1 ? 'disabled' : ''} class="w-6 h-6 rounded-md hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-600 hover:text-[#ff5277] flex items-center justify-center disabled:opacity-30 disabled:pointer-events-none" title="Move Right">
+            →
+          </button>
+        </div>
+        <button type="button" onclick="toggleRemoveWorkspaceItem(${index})" class="w-6 h-6 rounded-md hover:bg-red-50 text-zinc-400 hover:text-red-500 flex items-center justify-center transition-colors" title="Remove">
+          ✕
+        </button>
+      </div>
+    `;
+
+    // Special click toggle for Split / Remove Pages tool
+    if (toolId === 'remove-pages' || toolId === 'split-pdf' || toolId === 'extract-pages') {
+      card.onclick = (e) => {
+        if (e.target.tagName !== 'BUTTON') {
+          toggleRemoveWorkspaceItem(index);
+        }
+      };
+      card.classList.add('cursor-pointer');
+    }
+
+    card.innerHTML = thumbHtml + actionsHtml;
+    grid.appendChild(card);
+  });
+
+  // "Add More Files" Card at the end of the grid (iLovePDF Style)
+  const addMoreCard = document.createElement('div');
+  addMoreCard.className = 'preview-card border-2 border-dashed border-pink-200 hover:border-[#ff5277] bg-pink-50/20 hover:bg-pink-50/50 flex flex-col items-center justify-center p-6 text-center cursor-pointer min-h-[190px] transition-all';
+  addMoreCard.onclick = () => DOM.fileInput.click();
+  addMoreCard.innerHTML = `
+    <div class="w-10 h-10 rounded-full bg-pink-100 text-[#ff5277] flex items-center justify-center text-lg font-bold mb-2">
+      +
+    </div>
+    <span class="text-xs font-bold text-zinc-700 dark:text-zinc-300">Add More</span>
+    <span class="text-[10px] text-zinc-400 mt-0.5">Click to browse</span>
+  `;
+  grid.appendChild(addMoreCard);
+
+  container.appendChild(grid);
+
+  // Update Action Button Text
+  const activeCount = state.workspaceItems.filter(i => !i.removed).length;
+  DOM.actionButtonText.textContent = `${state.activeTool.actionText} (${activeCount})`;
+}
+
+// Interactive Workspace Actions
+window.rotateWorkspaceItem = function(index) {
+  state.workspaceItems[index].rotation = (state.workspaceItems[index].rotation + 90) % 360;
+  renderInteractiveWorkspace();
+};
+
+window.rotateAllWorkspace = function(angle) {
+  state.workspaceItems.forEach(i => {
+    i.rotation = (i.rotation + angle) % 360;
+  });
+  renderInteractiveWorkspace();
+};
+
+window.moveWorkspaceItem = function(index, direction) {
+  const newIndex = index + direction;
+  if (newIndex < 0 || newIndex >= state.workspaceItems.length) return;
+  const temp = state.workspaceItems[index];
+  state.workspaceItems[index] = state.workspaceItems[newIndex];
+  state.workspaceItems[newIndex] = temp;
+  renderInteractiveWorkspace();
+};
+
+window.toggleRemoveWorkspaceItem = function(index) {
+  const toolId = state.activeTool ? state.activeTool.id : '';
+  if (toolId === 'remove-pages') {
+    state.workspaceItems[index].removed = !state.workspaceItems[index].removed;
+  } else if (toolId === 'split-pdf' || toolId === 'extract-pages') {
+    state.workspaceItems[index].selected = !state.workspaceItems[index].selected;
+  } else {
+    state.workspaceItems.splice(index, 1);
+  }
+  renderInteractiveWorkspace();
 };
 
 // Signature Pad Helper
@@ -617,236 +932,112 @@ window.clearSignaturePad = function() {
 };
 
 // ==========================================
-// Dropzone & File Handling
-// ==========================================
-function initDropzoneEvents() {
-  const dropzone = DOM.toolDropzone;
-
-  ['dragenter', 'dragover'].forEach(name => {
-    dropzone.addEventListener(name, (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      dropzone.classList.add('drag-active');
-    });
-  });
-
-  ['dragleave', 'drop'].forEach(name => {
-    dropzone.addEventListener(name, (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      dropzone.classList.remove('drag-active');
-    });
-  });
-
-  dropzone.addEventListener('drop', (e) => {
-    const files = Array.from(e.dataTransfer.files);
-    handleFilesSelected(files);
-  });
-
-  DOM.btnSelectFiles.addEventListener('click', (e) => {
-    e.stopPropagation();
-    DOM.fileInput.click();
-  });
-
-  dropzone.addEventListener('click', () => {
-    DOM.fileInput.click();
-  });
-
-  DOM.fileInput.addEventListener('change', (e) => {
-    const files = Array.from(e.target.files);
-    handleFilesSelected(files);
-    DOM.fileInput.value = '';
-  });
-
-  DOM.btnClearFiles.addEventListener('click', () => {
-    state.selectedFiles = [];
-    DOM.filesSelectedArea.classList.add('hidden');
-    DOM.toolDropzone.classList.remove('hidden');
-  });
-
-  DOM.btnExecuteAction.addEventListener('click', executeActiveToolAction);
-}
-
-function handleFilesSelected(files) {
-  if (!files || files.length === 0) return;
-
-  state.selectedFiles = files;
-  renderSelectedFilesList();
-
-  DOM.toolDropzone.classList.add('hidden');
-  DOM.filesSelectedArea.classList.remove('hidden');
-}
-
-function renderSelectedFilesList() {
-  DOM.selectedFilesList.innerHTML = '';
-
-  state.selectedFiles.forEach((file, index) => {
-    const row = document.createElement('div');
-    row.className = 'flex items-center justify-between p-3.5 bg-white dark:bg-zinc-900 border border-pink-100 dark:border-zinc-800 rounded-xl shadow-xs';
-    row.innerHTML = `
-      <div class="flex items-center gap-3 overflow-hidden">
-        <div class="w-8 h-8 flex-shrink-0">
-          ${VECTORS[state.activeTool.id] || '<div class="text-xl">📄</div>'}
-        </div>
-        <div class="overflow-hidden">
-          <p class="text-xs font-semibold text-zinc-900 dark:text-zinc-100 truncate max-w-[200px] sm:max-w-md">${file.name}</p>
-          <p class="text-[11px] text-zinc-400 font-medium">${formatBytes(file.size)}</p>
-        </div>
-      </div>
-      <button onclick="removeSelectedFile(${index})" class="text-zinc-400 hover:text-red-500 p-1.5 transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-    `;
-    DOM.selectedFilesList.appendChild(row);
-  });
-
-  DOM.actionButtonText.textContent = `${state.activeTool.actionText} (${state.selectedFiles.length})`;
-}
-
-window.removeSelectedFile = function(index) {
-  state.selectedFiles.splice(index, 1);
-  if (state.selectedFiles.length === 0) {
-    DOM.filesSelectedArea.classList.add('hidden');
-    DOM.toolDropzone.classList.remove('hidden');
-  } else {
-    renderSelectedFilesList();
-  }
-};
-
-// ==========================================
-// Comprehensive 30-Tool Client-Side Engine
+// Comprehensive Client-Side Execution Engine
 // ==========================================
 async function executeActiveToolAction() {
-  if (!state.activeTool || state.selectedFiles.length === 0) return;
+  if (!state.activeTool || state.workspaceItems.length === 0) return;
 
   const toolId = state.activeTool.id;
-  const files = state.selectedFiles;
 
   try {
     DOM.btnExecuteAction.disabled = true;
     DOM.actionButtonText.textContent = 'Processing in Browser...';
 
     // 1. JPG to PDF
-    if (toolId === 'jpg-to-pdf') {
-      await engineJpgToPdf(files);
+    if (toolId === 'jpg-to-pdf' || toolId === 'scan-to-pdf') {
+      await engineJpgToPdf();
     }
     // 2. Merge PDF
-    else if (toolId === 'merge-pdf') {
-      await engineMergePdf(files);
+    else if (toolId === 'merge-pdf' || toolId === 'compare-pdf') {
+      await engineMergePdf();
     }
-    // 3. Split PDF
-    else if (toolId === 'split-pdf') {
-      await engineSplitPdf(files);
+    // 3. Split PDF & Extract Pages
+    else if (toolId === 'split-pdf' || toolId === 'extract-pages') {
+      await engineSplitPdf();
     }
-    // 4. Compress PDF
-    else if (toolId === 'compress-pdf') {
-      await engineCompressPdf(files);
+    // 4. Remove Pages
+    else if (toolId === 'remove-pages') {
+      await engineRemovePages();
     }
-    // 5. PDF to JPG
-    else if (toolId === 'pdf-to-jpg') {
-      await enginePdfToJpg(files);
+    // 5. Organize PDF
+    else if (toolId === 'organize-pdf') {
+      await engineOrganizePdf();
     }
-    // 6. Word to PDF
-    else if (toolId === 'word-to-pdf') {
-      await engineWordToPdf(files);
-    }
-    // 7. PDF to Word
-    else if (toolId === 'pdf-to-word') {
-      await enginePdfToWord(files);
-    }
-    // 8. Excel to PDF
-    else if (toolId === 'excel-to-pdf') {
-      await engineExcelToPdf(files);
-    }
-    // 9. PDF to Excel
-    else if (toolId === 'pdf-to-excel') {
-      await enginePdfToExcel(files);
-    }
-    // 10. PowerPoint to PDF
-    else if (toolId === 'powerpoint-to-pdf') {
-      await enginePptToPdf(files);
-    }
-    // 11. PDF to PowerPoint
-    else if (toolId === 'pdf-to-powerpoint') {
-      await enginePdfToPpt(files);
-    }
-    // 12. Rotate PDF
+    // 6. Rotate PDF
     else if (toolId === 'rotate-pdf') {
-      await engineRotatePdf(files);
+      await engineRotatePdf();
     }
-    // 13. Page Numbers
-    else if (toolId === 'page-numbers') {
-      await enginePageNumbers(files);
+    // 7. Compress PDF
+    else if (toolId === 'compress-pdf') {
+      await engineCompressPdf(state.selectedFiles);
+    }
+    // 8. PDF to JPG
+    else if (toolId === 'pdf-to-jpg') {
+      await enginePdfToJpg(state.selectedFiles);
+    }
+    // 9. Word to PDF
+    else if (toolId === 'word-to-pdf') {
+      await engineWordToPdf(state.selectedFiles);
+    }
+    // 10. PDF to Word
+    else if (toolId === 'pdf-to-word' || toolId === 'ocr-pdf') {
+      await enginePdfToWord(state.selectedFiles);
+    }
+    // 11. Excel to PDF
+    else if (toolId === 'excel-to-pdf') {
+      await engineExcelToPdf(state.selectedFiles);
+    }
+    // 12. PDF to Excel
+    else if (toolId === 'pdf-to-excel') {
+      await enginePdfToExcel(state.selectedFiles);
+    }
+    // 13. PowerPoint to PDF / PDF to PowerPoint
+    else if (toolId === 'powerpoint-to-pdf' || toolId === 'pdf-to-powerpoint') {
+      await enginePptToPdf(state.selectedFiles);
     }
     // 14. Watermark PDF
     else if (toolId === 'watermark-pdf') {
-      await engineWatermark(files);
+      await engineWatermark(state.selectedFiles);
     }
-    // 15. Protect PDF
+    // 15. Page Numbers
+    else if (toolId === 'page-numbers') {
+      await enginePageNumbers(state.selectedFiles);
+    }
+    // 16. Protect PDF
     else if (toolId === 'protect-pdf') {
-      await engineProtectPdf(files);
+      await engineProtectPdf(state.selectedFiles);
     }
-    // 16. Unlock PDF
+    // 17. Unlock PDF
     else if (toolId === 'unlock-pdf') {
-      await engineUnlockPdf(files);
+      await engineUnlockPdf(state.selectedFiles);
     }
-    // 17. Remove Pages
-    else if (toolId === 'remove-pages') {
-      await engineRemovePages(files);
-    }
-    // 18. Extract Pages
-    else if (toolId === 'extract-pages') {
-      await engineExtractPages(files);
-    }
-    // 19. Organize PDF
-    else if (toolId === 'organize-pdf') {
-      await engineOrganizePdf(files);
-    }
-    // 20. Text to PDF
-    else if (toolId === 'text-to-pdf') {
-      await engineTextToPdf(files);
-    }
-    // 21. HTML to PDF
-    else if (toolId === 'html-to-pdf') {
-      await engineHtmlToPdf(files);
-    }
-    // 22. Crop PDF
-    else if (toolId === 'crop-pdf') {
-      await engineCropPdf(files);
-    }
-    // 23. Sign PDF
+    // 18. Sign PDF
     else if (toolId === 'sign-pdf') {
-      await engineSignPdf(files);
+      await engineSignPdf(state.selectedFiles);
     }
-    // 24. Redact PDF
+    // 19. Redact PDF
     else if (toolId === 'redact-pdf') {
-      await engineRedactPdf(files);
+      await engineRedactPdf(state.selectedFiles);
     }
-    // 25. Scan to PDF
-    else if (toolId === 'scan-to-pdf') {
-      await engineScanToPdf(files);
+    // 20. Crop PDF
+    else if (toolId === 'crop-pdf') {
+      await engineCropPdf(state.selectedFiles);
     }
-    // 26. Repair PDF
+    // 21. Repair PDF
     else if (toolId === 'repair-pdf') {
-      await engineRepairPdf(files);
+      await engineRepairPdf(state.selectedFiles);
     }
-    // 27. OCR PDF
-    else if (toolId === 'ocr-pdf') {
-      await engineOcrPdf(files);
+    // 22. Text to PDF
+    else if (toolId === 'text-to-pdf' || toolId === 'html-to-pdf') {
+      await engineTextToPdf(state.selectedFiles);
     }
-    // 28. PDF to PDF/A
+    // 23. PDF to PDF/A
     else if (toolId === 'pdf-to-pdfa') {
-      await enginePdfToPdfa(files);
+      await enginePdfToPdfa(state.selectedFiles);
     }
-    // 29. Compare PDF
-    else if (toolId === 'compare-pdf') {
-      await engineComparePdf(files);
-    }
-    // 30. Edit PDF
+    // 24. Edit PDF
     else if (toolId === 'edit-pdf') {
-      await engineEditPdf(files);
+      await engineEditPdf(state.selectedFiles);
     }
 
     DOM.btnExecuteAction.disabled = false;
@@ -856,99 +1047,201 @@ async function executeActiveToolAction() {
     console.error(err);
     DOM.btnExecuteAction.disabled = false;
     DOM.actionButtonText.textContent = state.activeTool.actionText;
-    showToast('Processing completed or check input file.');
+    showToast('Process completed or check input file.');
   }
 }
 
 // ----------------------------------------------------
-// Tool Engines Implementation
+// Specific Engine Implementations
 // ----------------------------------------------------
 
-// 1. JPG to PDF
-async function engineJpgToPdf(files) {
-  const { PDFDocument } = PDFLib;
+// 1. JPG to PDF (Respects individual rotation & layout settings)
+async function engineJpgToPdf() {
+  const { PDFDocument, PageSizes } = PDFLib;
   const pdfDoc = await PDFDocument.create();
 
-  for (const file of files) {
-    const arrayBuffer = await file.arrayBuffer();
-    let embeddedImg;
+  const activeItems = state.workspaceItems.filter(i => !i.removed);
 
-    if (file.type === 'image/jpeg' || file.name.toLowerCase().endsWith('.jpg') || file.name.toLowerCase().endsWith('.jpeg')) {
-      embeddedImg = await pdfDoc.embedJpg(arrayBuffer);
-    } else {
-      const pngBlob = await imageToPngBlob(file);
-      const pngBytes = await pngBlob.arrayBuffer();
-      embeddedImg = await pdfDoc.embedPng(pngBytes);
+  for (const item of activeItems) {
+    const pngBlob = await renderRotatedBlob(item);
+    const pngBytes = await pngBlob.arrayBuffer();
+    const embeddedImg = await pdfDoc.embedPng(pngBytes);
+
+    let imgW = embeddedImg.width;
+    let imgH = embeddedImg.height;
+
+    let pageW = imgW;
+    let pageH = imgH;
+
+    if (state.toolOptions.pageSize === 'a4') {
+      pageW = PageSizes.A4[0];
+      pageH = PageSizes.A4[1];
+    } else if (state.toolOptions.pageSize === 'letter') {
+      pageW = PageSizes.Letter[0];
+      pageH = PageSizes.Letter[1];
     }
 
-    const { width, height } = embeddedImg.scale(1);
-    const page = pdfDoc.addPage([width, height]);
-    page.drawImage(embeddedImg, { x: 0, y: 0, width, height });
+    if (state.toolOptions.orientation === 'portrait' && pageW > pageH) {
+      const t = pageW; pageW = pageH; pageH = t;
+    } else if (state.toolOptions.orientation === 'landscape' && pageH > pageW) {
+      const t = pageW; pageW = pageH; pageH = t;
+    }
+
+    let margin = 0;
+    if (state.toolOptions.margin === 'small') margin = 20;
+    if (state.toolOptions.margin === 'big') margin = 40;
+
+    const availW = Math.max(10, pageW - margin * 2);
+    const availH = Math.max(10, pageH - margin * 2);
+
+    const scale = Math.min(availW / imgW, availH / imgH);
+    const drawW = imgW * scale;
+    const drawH = imgH * scale;
+
+    const posX = (pageW - drawW) / 2;
+    const posY = (pageH - drawH) / 2;
+
+    const page = pdfDoc.addPage([pageW, pageH]);
+    page.drawImage(embeddedImg, { x: posX, y: posY, width: drawW, height: drawH });
   }
 
   const pdfBytes = await pdfDoc.save();
   downloadBlob(new Blob([pdfBytes], { type: 'application/pdf' }), `CutiPDF_Images_${Date.now()}.pdf`);
 }
 
-// 2. Merge PDF
-async function engineMergePdf(files) {
+function renderRotatedBlob(item) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const rot = (item.rotation || 0) % 360;
+
+      if (rot === 90 || rot === 270) {
+        canvas.width = img.height;
+        canvas.height = img.width;
+      } else {
+        canvas.width = img.width;
+        canvas.height = img.height;
+      }
+
+      ctx.save();
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate((rot * Math.PI) / 180);
+      ctx.drawImage(img, -img.width / 2, -img.height / 2);
+      ctx.restore();
+
+      canvas.toBlob(resolve, 'image/png');
+    };
+    img.src = item.previewUrl;
+  });
+}
+
+// 2. Merge PDF (Respects user's reordered sequence)
+async function engineMergePdf() {
   const { PDFDocument } = PDFLib;
   const mergedDoc = await PDFDocument.create();
 
-  for (const file of files) {
-    const bytes = await file.arrayBuffer();
-    const doc = await PDFDocument.load(bytes);
-    const pages = await mergedDoc.copyPages(doc, doc.getPageIndices());
-    pages.forEach(p => mergedDoc.addPage(p));
+  for (const item of state.workspaceItems) {
+    if (item.file) {
+      const bytes = await item.file.arrayBuffer();
+      const doc = await PDFDocument.load(bytes);
+      const pages = await mergedDoc.copyPages(doc, doc.getPageIndices());
+      pages.forEach(p => mergedDoc.addPage(p));
+    }
   }
 
   const mergedBytes = await mergedDoc.save();
   downloadBlob(new Blob([mergedBytes], { type: 'application/pdf' }), `Merged_CutiPDF_${Date.now()}.pdf`);
 }
 
-// 3. Split PDF
-async function engineSplitPdf(files) {
-  const { PDFDocument } = PDFLib;
-  const bytes = await files[0].arrayBuffer();
-  const sourceDoc = await PDFDocument.load(bytes);
-  const total = sourceDoc.getPageCount();
+// 3. Rotate PDF (Rotates individual or all pages)
+async function engineRotatePdf() {
+  const { PDFDocument, degrees } = PDFLib;
+  const masterFile = state.workspaceItems[0].file;
+  const bytes = await masterFile.arrayBuffer();
+  const doc = await PDFDocument.load(bytes);
 
-  const rangeInput = document.getElementById('splitRangeInput');
-  const rangeVal = rangeInput ? rangeInput.value.trim() : '';
-
-  if (rangeVal) {
-    // Extract range
-    const indices = parsePageRange(rangeVal, total);
-    const newDoc = await PDFDocument.create();
-    const copiedPages = await newDoc.copyPages(sourceDoc, indices);
-    copiedPages.forEach(p => newDoc.addPage(p));
-    const outBytes = await newDoc.save();
-    downloadBlob(new Blob([outBytes], { type: 'application/pdf' }), `Split_Pages_${rangeVal.replace(/\s+/g, '')}.pdf`);
-  } else {
-    // Extract all into ZIP using JSZip
-    const zip = new JSZip();
-    for (let i = 0; i < total; i++) {
-      const singleDoc = await PDFDocument.create();
-      const [copied] = await singleDoc.copyPages(sourceDoc, [i]);
-      singleDoc.addPage(copied);
-      const out = await singleDoc.save();
-      zip.file(`Page_${i + 1}.pdf`, out);
+  state.workspaceItems.forEach((item, idx) => {
+    if (idx < doc.getPageCount()) {
+      const p = doc.getPage(idx);
+      const curr = p.getRotation().angle;
+      p.setRotation(degrees((curr + (item.rotation || 0)) % 360));
     }
-    const zipBlob = await zip.generateAsync({ type: 'blob' });
-    downloadBlob(zipBlob, `Split_All_Pages.zip`);
-  }
+  });
+
+  const out = await doc.save();
+  downloadBlob(new Blob([out], { type: 'application/pdf' }), `Rotated_${masterFile.name}`);
 }
 
-// 4. Compress PDF (Client-side Canvas Scale Engine)
-async function engineCompressPdf(files) {
-  if (!window.pdfjsLib) {
-    showToast('PDF.js loading...');
+// 4. Split PDF & Extract Pages (Extracts selected thumbnail pages)
+async function engineSplitPdf() {
+  const { PDFDocument } = PDFLib;
+  const masterFile = state.workspaceItems[0].file;
+  const bytes = await masterFile.arrayBuffer();
+  const sourceDoc = await PDFDocument.load(bytes);
+
+  const selectedIndices = state.workspaceItems
+    .map((item, idx) => (item.selected !== false ? idx : -1))
+    .filter(i => i >= 0);
+
+  if (selectedIndices.length === 0) {
+    showToast('Please select at least one page to extract.');
     return;
   }
+
+  const newDoc = await PDFDocument.create();
+  const copied = await newDoc.copyPages(sourceDoc, selectedIndices);
+  copied.forEach(p => newDoc.addPage(p));
+
+  const out = await newDoc.save();
+  downloadBlob(new Blob([out], { type: 'application/pdf' }), `Extracted_Pages_${masterFile.name}`);
+}
+
+// 5. Remove Pages (Removes marked pages)
+async function engineRemovePages() {
+  const { PDFDocument } = PDFLib;
+  const masterFile = state.workspaceItems[0].file;
+  const bytes = await masterFile.arrayBuffer();
+  const doc = await PDFDocument.load(bytes);
+
+  const pagesToKeep = state.workspaceItems
+    .map((item, idx) => (!item.removed ? idx : -1))
+    .filter(i => i >= 0);
+
+  if (pagesToKeep.length === 0) {
+    showToast('You cannot remove all pages.');
+    return;
+  }
+
+  const newDoc = await PDFDocument.create();
+  const copied = await newDoc.copyPages(doc, pagesToKeep);
+  copied.forEach(p => newDoc.addPage(p));
+
+  const out = await newDoc.save();
+  downloadBlob(new Blob([out], { type: 'application/pdf' }), `Pages_Removed_${masterFile.name}`);
+}
+
+// 6. Organize PDF (Saves new user arrangement)
+async function engineOrganizePdf() {
+  const { PDFDocument } = PDFLib;
+  const masterFile = state.workspaceItems[0].file;
+  const bytes = await masterFile.arrayBuffer();
+  const sourceDoc = await PDFDocument.load(bytes);
+
+  const newIndices = state.workspaceItems.map(item => item.pageNum - 1);
+  const newDoc = await PDFDocument.create();
+  const copied = await newDoc.copyPages(sourceDoc, newIndices);
+  copied.forEach(p => newDoc.addPage(p));
+
+  const out = await newDoc.save();
+  downloadBlob(new Blob([out], { type: 'application/pdf' }), `Organized_${masterFile.name}`);
+}
+
+// 7. Compress PDF
+async function engineCompressPdf(files) {
   const bytes = await files[0].arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
-  const total = pdf.numPages;
-
   const { PDFDocument } = PDFLib;
   const newDoc = await PDFDocument.create();
 
@@ -958,7 +1251,7 @@ async function engineCompressPdf(files) {
   if (level === 'extreme') { quality = 0.45; scaleFactor = 1.0; }
   else if (level === 'low') { quality = 0.85; scaleFactor = 1.8; }
 
-  for (let i = 1; i <= total; i++) {
+  for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
     const viewport = page.getViewport({ scale: scaleFactor });
     const canvas = document.createElement('canvas');
@@ -973,8 +1266,7 @@ async function engineCompressPdf(files) {
 
     const pdfPage = newDoc.addPage([viewport.width / scaleFactor, viewport.height / scaleFactor]);
     pdfPage.drawImage(embedded, {
-      x: 0,
-      y: 0,
+      x: 0, y: 0,
       width: viewport.width / scaleFactor,
       height: viewport.height / scaleFactor
     });
@@ -984,14 +1276,13 @@ async function engineCompressPdf(files) {
   downloadBlob(new Blob([outBytes], { type: 'application/pdf' }), `Compressed_${files[0].name}`);
 }
 
-// 5. PDF to JPG (High Resolution Extraction with JSZip)
+// 8. PDF to JPG (ZIP export)
 async function enginePdfToJpg(files) {
   const bytes = await files[0].arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
-  const total = pdf.numPages;
   const zip = new JSZip();
 
-  for (let i = 1; i <= total; i++) {
+  for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
     const viewport = page.getViewport({ scale: 2.0 });
     const canvas = document.createElement('canvas');
@@ -1008,11 +1299,10 @@ async function enginePdfToJpg(files) {
   downloadBlob(zipBlob, `${files[0].name.replace(/\.[^/.]+$/, '')}_JPGs.zip`);
 }
 
-// 6. Word to PDF (Mammoth DOCX Parser Engine)
+// 9. Word to PDF
 async function engineWordToPdf(files) {
   const bytes = await files[0].arrayBuffer();
   let textContent = '';
-
   if (window.mammoth) {
     const res = await mammoth.extractRawText({ arrayBuffer: bytes });
     textContent = res.value;
@@ -1025,32 +1315,23 @@ async function engineWordToPdf(files) {
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-  const lines = textContent.split('\n');
   let page = pdfDoc.addPage([595, 842]);
   let y = 780;
-
   page.drawText(files[0].name.replace(/\.[^/.]+$/, ''), { x: 50, y, size: 16, font: fontBold, color: rgb(0.1, 0.1, 0.1) });
   y -= 30;
 
-  for (const line of lines) {
-    if (y < 60) {
-      page = pdfDoc.addPage([595, 842]);
-      y = 780;
-    }
-    const cleanLine = line.trim().substring(0, 85);
-    if (cleanLine) {
-      page.drawText(cleanLine, { x: 50, y, size: 11, font, color: rgb(0.2, 0.2, 0.2) });
-      y -= 16;
-    } else {
-      y -= 10;
-    }
+  for (const line of textContent.split('\n')) {
+    if (y < 60) { page = pdfDoc.addPage([595, 842]); y = 780; }
+    const cl = line.trim().substring(0, 85);
+    if (cl) { page.drawText(cl, { x: 50, y, size: 11, font, color: rgb(0.2, 0.2, 0.2) }); y -= 16; }
+    else { y -= 10; }
   }
 
   const out = await pdfDoc.save();
   downloadBlob(new Blob([out], { type: 'application/pdf' }), `${files[0].name.replace(/\.[^/.]+$/, '')}.pdf`);
 }
 
-// 7. PDF to Word (Text Stream Extraction Engine)
+// 10. PDF to Word
 async function enginePdfToWord(files) {
   const bytes = await files[0].arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
@@ -1068,7 +1349,7 @@ async function enginePdfToWord(files) {
   downloadBlob(blob, `${files[0].name.replace(/\.[^/.]+$/, '')}.doc`);
 }
 
-// 8. Excel to PDF (SheetJS Parser Engine)
+// 11. Excel to PDF
 async function engineExcelToPdf(files) {
   const bytes = await files[0].arrayBuffer();
   const workbook = XLSX.read(bytes, { type: 'array' });
@@ -1081,17 +1362,13 @@ async function engineExcelToPdf(files) {
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-  let page = pdfDoc.addPage([842, 595]); // Landscape for spreadsheets
+  let page = pdfDoc.addPage([842, 595]);
   let y = 540;
-
   page.drawText(`${files[0].name} (${sheetName})`, { x: 40, y, size: 15, font: fontBold, color: rgb(0.1, 0.1, 0.1) });
   y -= 30;
 
   for (const row of jsonData.slice(0, 50)) {
-    if (y < 40) {
-      page = pdfDoc.addPage([842, 595]);
-      y = 540;
-    }
+    if (y < 40) { page = pdfDoc.addPage([842, 595]); y = 540; }
     const rowStr = row.map(c => String(c ?? '')).join('  |  ').substring(0, 110);
     page.drawText(rowStr, { x: 40, y, size: 9.5, font, color: rgb(0.2, 0.2, 0.2) });
     y -= 15;
@@ -1101,7 +1378,7 @@ async function engineExcelToPdf(files) {
   downloadBlob(new Blob([out], { type: 'application/pdf' }), `${files[0].name.replace(/\.[^/.]+$/, '')}.pdf`);
 }
 
-// 9. PDF to Excel (SheetJS Table Exporter)
+// 12. PDF to Excel
 async function enginePdfToExcel(files) {
   const bytes = await files[0].arrayBuffer();
   const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
@@ -1110,56 +1387,55 @@ async function enginePdfToExcel(files) {
   for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
     const content = await page.getTextContent();
-    const items = content.items;
-    
-    // Group text items by Y coordinate into table rows
     const lines = {};
-    items.forEach(it => {
+    content.items.forEach(it => {
       const yCoord = Math.round(it.transform[5]);
       if (!lines[yCoord]) lines[yCoord] = [];
       lines[yCoord].push(it.str);
     });
-
-    Object.keys(lines).sort((a, b) => b - a).forEach(k => {
-      rows.push(lines[k]);
-    });
+    Object.keys(lines).sort((a, b) => b - a).forEach(k => rows.push(lines[k]));
   }
 
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.aoa_to_sheet(rows.length > 0 ? rows : [['No text found']]);
   XLSX.utils.book_append_sheet(wb, ws, 'Extracted Data');
   const wbOut = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-
   downloadBlob(new Blob([wbOut], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }), `${files[0].name.replace(/\.[^/.]+$/, '')}.xlsx`);
 }
 
-// 10. PowerPoint to PDF
+// 13. PowerPoint
 async function enginePptToPdf(files) {
-  await engineWordToPdf(files); // Formats presentation structure
+  await engineWordToPdf(files);
 }
 
-// 11. PDF to PowerPoint
-async function enginePdfToPpt(files) {
-  await enginePdfToJpg(files); // Slide decks extracted as images
-}
-
-// 12. Rotate PDF
-async function engineRotatePdf(files) {
-  const { PDFDocument, degrees } = PDFLib;
+// 14. Watermark PDF
+async function engineWatermark(files) {
+  const { PDFDocument, StandardFonts, rgb, degrees } = PDFLib;
   const bytes = await files[0].arrayBuffer();
   const doc = await PDFDocument.load(bytes);
-  const angle = state.toolOptions.rotationAngle || 90;
+  const font = await doc.embedFont(StandardFonts.HelveticaBold);
+  const textInput = document.getElementById('watermarkTextInput');
+  const text = textInput ? textInput.value.trim() || 'CONFIDENTIAL' : 'CONFIDENTIAL';
+  const opacity = state.toolOptions.wmOpacity || 0.25;
 
   doc.getPages().forEach(p => {
-    const curr = p.getRotation().angle;
-    p.setRotation(degrees((curr + angle) % 360));
+    const { width, height } = p.getSize();
+    p.drawText(text, {
+      x: width / 2 - 140,
+      y: height / 2 - 30,
+      size: 48,
+      font,
+      color: rgb(1.0, 0.3, 0.45),
+      opacity,
+      rotate: degrees(45)
+    });
   });
 
   const out = await doc.save();
-  downloadBlob(new Blob([out], { type: 'application/pdf' }), `Rotated_${files[0].name}`);
+  downloadBlob(new Blob([out], { type: 'application/pdf' }), `Watermarked_${files[0].name}`);
 }
 
-// 13. Page Numbers
+// 15. Page Numbers
 async function enginePageNumbers(files) {
   const { PDFDocument, StandardFonts, rgb } = PDFLib;
   const bytes = await files[0].arrayBuffer();
@@ -1183,34 +1459,7 @@ async function enginePageNumbers(files) {
   downloadBlob(new Blob([out], { type: 'application/pdf' }), `Numbered_${files[0].name}`);
 }
 
-// 14. Watermark PDF
-async function engineWatermark(files) {
-  const { PDFDocument, StandardFonts, rgb, degrees } = PDFLib;
-  const bytes = await files[0].arrayBuffer();
-  const doc = await PDFDocument.load(bytes);
-  const font = await doc.embedFont(StandardFonts.HelveticaBold);
-  const textInput = document.getElementById('watermarkTextInput');
-  const text = textInput ? textInput.value.trim() || 'CONFIDENTIAL' : 'CONFIDENTIAL';
-  const opacity = state.toolOptions.wmOpacity || 0.25;
-
-  doc.getPages().forEach(p => {
-    const { width, height } = p.getSize();
-    p.drawText(text, {
-      x: width / 2 - 140,
-      y: height / 2 - 30,
-      size: 48,
-      font,
-      color: rgb(0.9, 0.2, 0.3),
-      opacity,
-      rotate: degrees(45)
-    });
-  });
-
-  const out = await doc.save();
-  downloadBlob(new Blob([out], { type: 'application/pdf' }), `Watermarked_${files[0].name}`);
-}
-
-// 15. Protect PDF
+// 16. Protect PDF
 async function engineProtectPdf(files) {
   const { PDFDocument } = PDFLib;
   const bytes = await files[0].arrayBuffer();
@@ -1218,12 +1467,11 @@ async function engineProtectPdf(files) {
   const pwInput = document.getElementById('protectPasswordInput');
   const pw = pwInput ? pwInput.value.trim() : '123456';
 
-  // PDFLib standard encryption
   const out = await doc.save({ userPassword: pw, ownerPassword: pw });
   downloadBlob(new Blob([out], { type: 'application/pdf' }), `Protected_${files[0].name}`);
 }
 
-// 16. Unlock PDF
+// 17. Unlock PDF
 async function engineUnlockPdf(files) {
   const { PDFDocument } = PDFLib;
   const bytes = await files[0].arrayBuffer();
@@ -1235,78 +1483,43 @@ async function engineUnlockPdf(files) {
   downloadBlob(new Blob([out], { type: 'application/pdf' }), `Unlocked_${files[0].name}`);
 }
 
-// 17. Remove Pages
-async function engineRemovePages(files) {
+// 18. Sign PDF
+async function engineSignPdf(files) {
   const { PDFDocument } = PDFLib;
   const bytes = await files[0].arrayBuffer();
   const doc = await PDFDocument.load(bytes);
-  const input = document.getElementById('removePagesInput');
-  const pagesToRemove = input ? input.value.split(',').map(s => parseInt(s.trim()) - 1).filter(n => !isNaN(n)) : [0];
-
-  pagesToRemove.sort((a, b) => b - a).forEach(idx => {
-    if (idx >= 0 && idx < doc.getPageCount()) {
-      doc.removePage(idx);
-    }
-  });
-
-  const out = await doc.save();
-  downloadBlob(new Blob([out], { type: 'application/pdf' }), `Removed_Pages_${files[0].name}`);
-}
-
-// 18. Extract Pages
-async function engineExtractPages(files) {
-  await engineSplitPdf(files);
-}
-
-// 19. Organize PDF
-async function engineOrganizePdf(files) {
-  const { PDFDocument } = PDFLib;
-  const bytes = await files[0].arrayBuffer();
-  const source = await PDFDocument.load(bytes);
-  const total = source.getPageCount();
-
-  const newDoc = await PDFDocument.create();
-  // Reverse order or customized sequence
-  const indices = Array.from({ length: total }, (_, i) => total - 1 - i);
-  const copied = await newDoc.copyPages(source, indices);
-  copied.forEach(p => newDoc.addPage(p));
-
-  const out = await newDoc.save();
-  downloadBlob(new Blob([out], { type: 'application/pdf' }), `Organized_${files[0].name}`);
-}
-
-// 20. Text to PDF
-async function engineTextToPdf(files) {
-  const text = await files[0].text();
-  const { PDFDocument, StandardFonts, rgb } = PDFLib;
-  const doc = await PDFDocument.create();
-  const font = await doc.embedFont(StandardFonts.Helvetica);
-  const fontBold = await doc.embedFont(StandardFonts.HelveticaBold);
-
-  let page = doc.addPage([595, 842]);
-  let y = 780;
-  page.drawText(files[0].name.replace(/\.[^/.]+$/, ''), { x: 50, y, size: 16, font: fontBold, color: rgb(0.1, 0.1, 0.1) });
-  y -= 30;
-
-  for (const line of text.split('\n')) {
-    if (y < 60) {
-      page = doc.addPage([595, 842]);
-      y = 780;
-    }
-    page.drawText(line.substring(0, 85), { x: 50, y, size: 11, font, color: rgb(0.2, 0.2, 0.2) });
-    y -= 16;
+  const canvas = document.getElementById('signCanvas');
+  
+  if (canvas) {
+    const pngBlob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+    const pngBytes = await pngBlob.arrayBuffer();
+    const signImg = await doc.embedPng(pngBytes);
+    const pages = doc.getPages();
+    const lastPage = pages[pages.length - 1];
+    const { width } = lastPage.getSize();
+    lastPage.drawImage(signImg, { x: width - 180, y: 40, width: 140, height: 50 });
   }
 
   const out = await doc.save();
-  downloadBlob(new Blob([out], { type: 'application/pdf' }), `${files[0].name}.pdf`);
+  downloadBlob(new Blob([out], { type: 'application/pdf' }), `Signed_${files[0].name}`);
 }
 
-// 21. HTML to PDF
-async function engineHtmlToPdf(files) {
-  await engineWordToPdf(files);
+// 19. Redact PDF
+async function engineRedactPdf(files) {
+  const { PDFDocument, rgb } = PDFLib;
+  const bytes = await files[0].arrayBuffer();
+  const doc = await PDFDocument.load(bytes);
+
+  doc.getPages().forEach(p => {
+    const { width, height } = p.getSize();
+    p.drawRectangle({ x: 50, y: height - 120, width: width - 100, height: 25, color: rgb(0.05, 0.05, 0.05) });
+  });
+
+  const out = await doc.save();
+  downloadBlob(new Blob([out], { type: 'application/pdf' }), `Redacted_${files[0].name}`);
 }
 
-// 22. Crop PDF
+// 20. Crop PDF
 async function engineCropPdf(files) {
   const { PDFDocument } = PDFLib;
   const bytes = await files[0].arrayBuffer();
@@ -1322,62 +1535,7 @@ async function engineCropPdf(files) {
   downloadBlob(new Blob([out], { type: 'application/pdf' }), `Cropped_${files[0].name}`);
 }
 
-// 23. Sign PDF (Canvas Signature Stamp)
-async function engineSignPdf(files) {
-  const { PDFDocument } = PDFLib;
-  const bytes = await files[0].arrayBuffer();
-  const doc = await PDFDocument.load(bytes);
-  const canvas = document.getElementById('signCanvas');
-  
-  if (canvas) {
-    const pngBlob = await new Promise(res => canvas.toBlob(res, 'image/png'));
-    const pngBytes = await pngBlob.arrayBuffer();
-    const signImg = await doc.embedPng(pngBytes);
-
-    const pages = doc.getPages();
-    const lastPage = pages[pages.length - 1];
-    const { width } = lastPage.getSize();
-
-    lastPage.drawImage(signImg, {
-      x: width - 180,
-      y: 40,
-      width: 140,
-      height: 50
-    });
-  }
-
-  const out = await doc.save();
-  downloadBlob(new Blob([out], { type: 'application/pdf' }), `Signed_${files[0].name}`);
-}
-
-// 24. Redact PDF
-async function engineRedactPdf(files) {
-  const { PDFDocument, rgb } = PDFLib;
-  const bytes = await files[0].arrayBuffer();
-  const doc = await PDFDocument.load(bytes);
-
-  doc.getPages().forEach(p => {
-    const { width, height } = p.getSize();
-    // Draw privacy security block
-    p.drawRectangle({
-      x: 50,
-      y: height - 120,
-      width: width - 100,
-      height: 25,
-      color: rgb(0.05, 0.05, 0.05)
-    });
-  });
-
-  const out = await doc.save();
-  downloadBlob(new Blob([out], { type: 'application/pdf' }), `Redacted_${files[0].name}`);
-}
-
-// 25. Scan to PDF
-async function engineScanToPdf(files) {
-  await engineJpgToPdf(files);
-}
-
-// 26. Repair PDF
+// 21. Repair PDF
 async function engineRepairPdf(files) {
   const { PDFDocument } = PDFLib;
   const bytes = await files[0].arrayBuffer();
@@ -1386,12 +1544,30 @@ async function engineRepairPdf(files) {
   downloadBlob(new Blob([out], { type: 'application/pdf' }), `Repaired_${files[0].name}`);
 }
 
-// 27. OCR PDF
-async function engineOcrPdf(files) {
-  await enginePdfToWord(files);
+// 22. Text to PDF
+async function engineTextToPdf(files) {
+  const text = await files[0].text();
+  const { PDFDocument, StandardFonts, rgb } = PDFLib;
+  const doc = await PDFDocument.create();
+  const font = await doc.embedFont(StandardFonts.Helvetica);
+  const fontBold = await doc.embedFont(StandardFonts.HelveticaBold);
+
+  let page = doc.addPage([595, 842]);
+  let y = 780;
+  page.drawText(files[0].name.replace(/\.[^/.]+$/, ''), { x: 50, y, size: 16, font: fontBold, color: rgb(0.1, 0.1, 0.1) });
+  y -= 30;
+
+  for (const line of text.split('\n')) {
+    if (y < 60) { page = doc.addPage([595, 842]); y = 780; }
+    page.drawText(line.substring(0, 85), { x: 50, y, size: 11, font, color: rgb(0.2, 0.2, 0.2) });
+    y -= 16;
+  }
+
+  const out = await doc.save();
+  downloadBlob(new Blob([out], { type: 'application/pdf' }), `${files[0].name}.pdf`);
 }
 
-// 28. PDF to PDF/A
+// 23. PDF/A
 async function enginePdfToPdfa(files) {
   const { PDFDocument } = PDFLib;
   const bytes = await files[0].arrayBuffer();
@@ -1402,12 +1578,7 @@ async function enginePdfToPdfa(files) {
   downloadBlob(new Blob([out], { type: 'application/pdf' }), `PDFA_${files[0].name}`);
 }
 
-// 29. Compare PDF
-async function engineComparePdf(files) {
-  await engineMergePdf(files);
-}
-
-// 30. Edit PDF
+// 24. Edit PDF
 async function engineEditPdf(files) {
   const { PDFDocument, StandardFonts, rgb } = PDFLib;
   const bytes = await files[0].arrayBuffer();
@@ -1425,42 +1596,6 @@ async function engineEditPdf(files) {
 // ----------------------------------------------------
 // Utility Functions
 // ----------------------------------------------------
-function parsePageRange(rangeStr, maxPages) {
-  const indices = new Set();
-  const parts = rangeStr.split(',');
-  parts.forEach(p => {
-    const part = p.trim();
-    if (part.includes('-')) {
-      const [start, end] = part.split('-').map(n => parseInt(n.trim()));
-      for (let i = Math.max(1, start); i <= Math.min(maxPages, end); i++) {
-        indices.add(i - 1);
-      }
-    } else {
-      const num = parseInt(part);
-      if (!isNaN(num) && num >= 1 && num <= maxPages) {
-        indices.add(num - 1);
-      }
-    }
-  });
-  return Array.from(indices).sort((a, b) => a - b);
-}
-
-function imageToPngBlob(file) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
-      canvas.toBlob(resolve, 'image/png');
-    };
-    img.onerror = reject;
-    img.src = URL.createObjectURL(file);
-  });
-}
-
 function downloadBlob(blob, filename) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
