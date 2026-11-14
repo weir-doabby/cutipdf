@@ -421,6 +421,12 @@ function initQuickToolsModal() {
   DOM.floatingToolsBtn.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
+
+    // Trigger snappy clashing strike animation without rotation
+    DOM.floatingToolsBtn.classList.remove('clashing');
+    void DOM.floatingToolsBtn.offsetWidth; // force reflow
+    DOM.floatingToolsBtn.classList.add('clashing');
+
     toggleQuickTools();
   });
 
