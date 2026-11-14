@@ -424,10 +424,14 @@ function initQuickToolsModal() {
     e.preventDefault();
     e.stopPropagation();
 
-    // Trigger snappy clashing strike animation without rotation
+    // Trigger snappy clashing strike animation without rotation (sword clash)
     DOM.floatingToolsBtn.classList.remove('clashing');
     void DOM.floatingToolsBtn.offsetWidth; // force reflow
     DOM.floatingToolsBtn.classList.add('clashing');
+
+    setTimeout(() => {
+      DOM.floatingToolsBtn.classList.remove('clashing');
+    }, 450);
 
     toggleQuickTools();
   });
