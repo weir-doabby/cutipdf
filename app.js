@@ -404,9 +404,11 @@ function initRouting() {
   window.addEventListener('hashchange', handleRoute);
   handleRoute();
 
-  DOM.btnBackToTools.addEventListener('click', () => {
-    window.location.hash = '';
-  });
+  if (DOM.btnBackToTools) {
+    DOM.btnBackToTools.addEventListener('click', () => {
+      window.location.hash = '';
+    });
+  }
 }
 
 // ==========================================
