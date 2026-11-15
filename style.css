@@ -499,9 +499,24 @@ html.dark .brand-logo {
 }
 
 .preview-card.removed {
-  opacity: 0.35;
-  border-color: #ef4444;
-  filter: grayscale(80%);
+  border-color: #ef4444 !important;
+  background-color: rgba(254, 242, 242, 0.7) !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.35) !important;
+}
+
+html.dark .preview-card.removed {
+  background-color: rgba(69, 10, 10, 0.3) !important;
+  border-color: #ef4444 !important;
+}
+
+.preview-card.removed img {
+  opacity: 0.55;
+  filter: grayscale(40%);
+}
+
+.preview-card.removed:hover {
+  border-color: #dc2626 !important;
+  box-shadow: 0 4px 18px rgba(239, 68, 68, 0.25) !important;
 }
 
 .preview-card.selected {

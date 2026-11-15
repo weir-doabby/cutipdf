@@ -923,6 +923,20 @@ function renderToolOptionsDrawer(toolId) {
       </div>
     `;
     state.toolOptions.compressLevel = 'recommended';
+  } else if (toolId === 'remove-pages') {
+    drawer.classList.remove('hidden');
+    drawer.innerHTML = `
+      <div class="flex flex-wrap items-center justify-between gap-3 text-xs p-1">
+        <div class="flex items-center gap-2">
+          <div class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></div>
+          <span class="font-bold text-zinc-800 dark:text-zinc-200">Remove Pages:</span>
+          <span class="text-zinc-500 dark:text-zinc-400">Click any page or trash icon to mark with a cross (✕). Click again to restore.</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" class="px-3 py-1.5 rounded-xl border border-pink-200 dark:border-zinc-700 text-[#ff5277] hover:bg-pink-50 dark:hover:bg-zinc-800 font-semibold transition cursor-pointer" onclick="resetRemovedPages()">Restore All Pages</button>
+        </div>
+      </div>
+    `;
   } else if (toolId === 'sign-pdf') {
     drawer.classList.remove('hidden');
     drawer.innerHTML = `
@@ -946,6 +960,12 @@ window.setOpt = function(key, val, btn) {
     btn.parentElement.querySelectorAll('.segmented-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
   }
+};
+
+window.resetRemovedPages = function() {
+  state.workspaceItems.forEach(i => i.removed = false);
+  renderInteractiveWorkspace();
+  showToast('All pages restored');
 };
 
 // ==========================================
@@ -1267,6 +1287,9 @@ function renderInteractiveWorkspace() {
   if (statsText) {
     if (toolId === 'merge-pdf') {
       statsText.textContent = `${totalFiles} ${totalFiles === 1 ? 'file' : 'files'} • ${totalPages} pages`;
+    } else if (toolId === 'remove-pages') {
+      const removedCount = state.workspaceItems.filter(i => i.removed).length;
+      statsText.textContent = `${state.workspaceItems.length} pages • ${removedCount} marked to remove (✕)`;
     } else {
       statsText.textContent = `${state.workspaceItems.length} items`;
     }
@@ -1288,6 +1311,14 @@ function renderInteractiveWorkspace() {
     if (toolId === 'merge-pdf') {
       const modeLabel = state.workspaceViewMode === 'page' ? 'custom organized pages' : 'files';
       summaryEl.textContent = `Ready to merge ${totalFiles} ${totalFiles === 1 ? 'PDF' : 'PDFs'} (${totalPages} pages total) in ${modeLabel} order.`;
+    } else if (toolId === 'remove-pages') {
+      const removedCount = state.workspaceItems.filter(i => i.removed).length;
+      const keepCount = state.workspaceItems.length - removedCount;
+      if (removedCount === 0) {
+        summaryEl.textContent = `Click any page or its trash icon to mark it for removal (✕). Click again to restore.`;
+      } else {
+        summaryEl.textContent = `${removedCount} page(s) marked for removal (✕). The new PDF will contain ${keepCount} page(s).`;
+      }
     } else {
       summaryEl.textContent = `Ready to process ${state.workspaceItems.length} items.`;
     }
@@ -1310,13 +1341,58 @@ function renderInteractiveWorkspace() {
     card.addEventListener('dragend', (e) => handleCardDragEnd(e));
 
     // Top badges
-    let orderBadge = `<div class="absolute top-2 left-2 z-10 bg-zinc-900/80 dark:bg-black/80 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-lg border border-white/10 shadow-xs">${index + 1}</div>`;
+    let orderBadge = `<div class="absolute top-2 left-2 z-10 ${item.removed ? 'bg-red-600 text-white line-through' : 'bg-zinc-900/80 dark:bg-black/80 text-white'} backdrop-blur-md text-[10px] font-bold px-2 py-0.5 rounded-lg border border-white/10 shadow-xs">${item.removed ? `✕ ${index + 1}` : index + 1}</div>`;
 
     let infoBadge = '';
     if (item.type === 'pdf-file') {
       infoBadge = `<div class="absolute top-2 right-2 z-10 bg-[#ff5277] text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-xs">${item.pageCount || 1} pgs</div>`;
     } else if (item.type === 'pdf-page') {
-      infoBadge = `<div class="absolute top-2 right-2 z-10 bg-white/90 dark:bg-zinc-800/90 text-zinc-700 dark:text-zinc-200 text-[10px] font-bold px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-zinc-700 shadow-xs truncate max-w-[80px]" title="${item.fileName || ''}">${item.name || `P. ${item.pageNum}`}</div>`;
+      infoBadge = `<div class="absolute top-2 right-2 z-10 ${item.removed ? 'bg-red-100 text-red-700 border-red-300 dark:bg-red-950 dark:text-red-300' : 'bg-white/90 dark:bg-zinc-800/90 text-zinc-700 dark:text-zinc-200 border-zinc-200 dark:border-zinc-700'} text-[10px] font-bold px-1.5 py-0.5 rounded-md border shadow-xs truncate max-w-[80px]" title="${item.fileName || ''}">${item.name || `P. ${item.pageNum}`}</div>`;
+    }
+
+    // Dynamic delete/restore hover button
+    let deleteActionBtn = '';
+    if (toolId === 'remove-pages') {
+      if (item.removed) {
+        deleteActionBtn = `
+          <button type="button" onclick="toggleRemoveWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-emerald-600 text-white hover:bg-emerald-700 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Restore Page">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 10h10a5 5 0 0 1 5 5v2m0 0l-3-3m3 3l3-3M3 10l3 3m-3-3l3-3"/></svg>
+          </button>
+        `;
+      } else {
+        deleteActionBtn = `
+          <button type="button" onclick="toggleRemoveWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-400 hover:text-red-500 hover:bg-red-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Mark for Removal">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          </button>
+        `;
+      }
+    } else {
+      deleteActionBtn = `
+        <button type="button" onclick="removeWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-400 hover:text-red-500 hover:bg-red-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Delete">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        </button>
+      `;
+    }
+
+    // Prominent Red Cross (ضربدر) overlay for Remove Pages
+    let crossOverlayHtml = '';
+    if (toolId === 'remove-pages' && item.removed) {
+      crossOverlayHtml = `
+        <div class="removed-cross-overlay absolute inset-0 z-15 pointer-events-none flex flex-col items-center justify-center bg-red-950/20 backdrop-blur-[0.5px] transition-all">
+          <svg class="absolute inset-0 w-full h-full text-red-600/85 p-2 pointer-events-none drop-shadow-sm" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <line x1="8" y1="8" x2="92" y2="92" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+            <line x1="92" y1="8" x2="8" y2="92" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+          </svg>
+          <div class="relative z-10 flex flex-col items-center pointer-events-none">
+            <div class="w-9 h-9 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg border-2 border-white transform scale-100">
+              <svg class="w-5 h-5 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </div>
+            <span class="mt-1 text-[10px] font-bold text-white bg-red-600 px-2 py-0.5 rounded-full shadow-xs">
+              Removed (Click to Restore)
+            </span>
+          </div>
+        </div>
+      `;
     }
 
     // Thumbnail Area
@@ -1327,15 +1403,13 @@ function renderInteractiveWorkspace() {
           ${orderBadge}
           ${infoBadge}
           <img src="${item.previewUrl}" alt="${item.name}" style="transform: rotate(${item.rotation || 0}deg);" class="max-h-full max-w-full object-contain transition-transform duration-200 rounded-md shadow-xs pointer-events-none">
-          
+          ${crossOverlayHtml}
           <!-- Floating Hover Action Buttons (Smallpdf Style) -->
           <div class="card-hover-actions absolute inset-0 bg-black/35 backdrop-blur-[1px] flex items-center justify-center gap-2 z-20">
             <button type="button" onclick="rotateWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-[#ff5277] hover:bg-pink-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Rotate 90 degrees">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
             </button>
-            <button type="button" onclick="removeWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-400 hover:text-red-500 hover:bg-red-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Delete">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-            </button>
+            ${deleteActionBtn}
           </div>
         </div>
       `;
@@ -1346,6 +1420,7 @@ function renderInteractiveWorkspace() {
           <div class="w-10 h-10 rounded-xl bg-pink-100 dark:bg-zinc-700 text-[#ff5277] flex items-center justify-center font-bold text-sm mb-1.5">PDF</div>
           <p class="text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 truncate w-full px-1">${item.name}</p>
           <p class="text-[10px] text-zinc-400 mt-0.5">${item.size || ''}</p>
+          ${crossOverlayHtml}
         </div>
       `;
     }
@@ -1354,7 +1429,10 @@ function renderInteractiveWorkspace() {
     let actionsHtml = `
       <div class="p-2 bg-white dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-1 text-xs">
         <div class="truncate flex-1 min-w-0 pr-1">
-          <p class="text-[11px] font-bold text-zinc-800 dark:text-zinc-200 truncate" title="${item.name}">${item.name}</p>
+          <p class="text-[11px] font-bold ${item.removed ? 'text-red-500 line-through' : 'text-zinc-800 dark:text-zinc-200'} truncate" title="${item.name}">
+            ${item.name}
+            ${item.removed ? '<span class="ml-1 text-[9px] text-red-600 font-extrabold no-underline">[Removed]</span>' : ''}
+          </p>
           ${item.size ? `<span class="text-[10px] text-zinc-400">${item.size}</span>` : ''}
         </div>
         <div class="flex items-center gap-0.5 flex-shrink-0">
@@ -1398,8 +1476,18 @@ function renderInteractiveWorkspace() {
   container.appendChild(grid);
 
   // Update Action Button Text
-  const activeCount = state.workspaceItems.filter(i => !i.removed).length;
-  DOM.actionButtonText.textContent = `${state.activeTool.actionText} (${activeCount})`;
+  if (toolId === 'remove-pages') {
+    const removedCount = state.workspaceItems.filter(i => i.removed).length;
+    const remainingCount = state.workspaceItems.length - removedCount;
+    if (removedCount > 0) {
+      DOM.actionButtonText.textContent = `Remove ${removedCount} ${removedCount === 1 ? 'Page' : 'Pages'} (${remainingCount} remaining)`;
+    } else {
+      DOM.actionButtonText.textContent = `Remove Pages (0 marked)`;
+    }
+  } else {
+    const activeCount = state.workspaceItems.filter(i => !i.removed).length;
+    DOM.actionButtonText.textContent = `${state.activeTool.actionText} (${activeCount})`;
+  }
 }
 
 // Drag and Drop Handlers
@@ -1866,19 +1954,26 @@ async function engineSplitPdf() {
   downloadBlob(new Blob([out], { type: 'application/pdf' }), `Extracted_Pages_${masterFile.name}`);
 }
 
-// 5. Remove Pages (Removes marked pages)
+// 5. Remove Pages (Excludes pages marked with cross ✕)
 async function engineRemovePages() {
   const { PDFDocument } = PDFLib;
   const masterFile = state.workspaceItems[0].file;
   const bytes = await masterFile.arrayBuffer();
   const doc = await PDFDocument.load(bytes);
 
+  const removedCount = state.workspaceItems.filter(i => i.removed).length;
+
+  if (removedCount === 0) {
+    showToast('⚠️ Please click on at least one page to mark it for removal (✕).');
+    return;
+  }
+
   const pagesToKeep = state.workspaceItems
-    .map((item, idx) => (!item.removed ? idx : -1))
+    .map((item, idx) => (!item.removed ? (item.pageNum ? item.pageNum - 1 : idx) : -1))
     .filter(i => i >= 0);
 
   if (pagesToKeep.length === 0) {
-    showToast('You cannot remove all pages.');
+    showToast('⚠️ You cannot remove all pages. Please keep at least one page.');
     return;
   }
 
@@ -1888,6 +1983,7 @@ async function engineRemovePages() {
 
   const out = await newDoc.save();
   downloadBlob(new Blob([out], { type: 'application/pdf' }), `Pages_Removed_${masterFile.name}`);
+  showToast(`✅ Successfully removed ${removedCount} page(s)!`);
 }
 
 // 6. Organize PDF (Saves new user arrangement)
