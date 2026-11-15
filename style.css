@@ -131,52 +131,34 @@ html.dark .brand-logo {
 
 /* Floating Square Tools Button (Royal Blue Contrast - Static Button with Adobe Stock Tool Logo) */
 
-/* Wrench Tightening Inside Gear Animation (Every few seconds) */
-@keyframes wrenchTightenGear {
-  0%, 48% {
+/* Rotating 8-Tooth Gear Animation (Gear rotates, Wrench stays stationary) */
+@keyframes gearSpin {
+  from {
     transform: rotate(0deg);
   }
-  56% {
-    /* Tightening turn clockwise within the gear channel */
-    transform: rotate(8.5deg);
-  }
-  66% {
-    /* Ratchet back stroke */
-    transform: rotate(-4.5deg);
-  }
-  76% {
-    /* Final torque cinch with metallic flash */
-    transform: rotate(9.5deg);
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.9));
-  }
-  84% {
-    transform: rotate(8deg);
-    filter: none;
-  }
-  94%, 100% {
-    transform: rotate(0deg);
-    filter: none;
+  to {
+    transform: rotate(360deg);
   }
 }
 
-/* Interactive Click/Tap One-Shot Tighten Snap */
-@keyframes wrenchTightenGearSnap {
+/* Interactive Click/Tap Fast Torque Spin Snap */
+@keyframes gearSpinSnap {
   0% {
     transform: rotate(0deg);
   }
   25% {
-    transform: rotate(-5deg);
+    transform: rotate(-18deg);
   }
-  55% {
-    transform: rotate(9.5deg);
+  70% {
+    transform: rotate(198deg);
     filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.95));
   }
-  78% {
-    transform: rotate(7.5deg);
+  85% {
+    transform: rotate(176deg);
     filter: none;
   }
   100% {
-    transform: rotate(0deg);
+    transform: rotate(180deg);
     filter: none;
   }
 }
@@ -263,25 +245,36 @@ html.dark .brand-logo {
   pointer-events: none;
 }
 
+/* Rotating Gear: Spins around concentric center (50% 50% / 256, 256) */
+.tool-gear-rotator {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation: gearSpin 8s linear infinite;
+  display: block;
+}
+
+.floating-tools-btn:hover .tool-gear-rotator {
+  animation-duration: 3.5s;
+}
+
+.floating-tools-btn:active .tool-gear-rotator,
+.floating-tools-btn.clashing .tool-gear-rotator {
+  animation: gearSpinSnap 0.65s cubic-bezier(0.34, 1.3, 0.64, 1) !important;
+}
+
 /* 8-Tooth Outer Gear */
 .tool-gear {
   fill: #ffffff;
   color: #ffffff;
 }
 
-/* Wrench Inside Gear: Pivots smoothly around concentric center (50% 50% / 256, 256) */
+/* Stationary Wrench: Fixed Rock-Solid in Center, Zero Movement */
 .tool-wrench {
   fill: #ffffff;
   color: #ffffff;
-  transform-box: view-box;
-  transform-origin: 50% 50%;
-  animation: wrenchTightenGear 4.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-/* Snap tighten on click or active state */
-.floating-tools-btn:active .tool-wrench,
-.floating-tools-btn.clashing .tool-wrench {
-  animation: wrenchTightenGearSnap 0.65s cubic-bezier(0.34, 1.25, 0.64, 1) !important;
+  animation: none !important;
+  transform: none !important;
+  pointer-events: none;
 }
 
 .floating-tools-btn span {
