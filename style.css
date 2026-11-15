@@ -339,8 +339,8 @@ html.dark .brand-logo {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.15s ease;
   border: none;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
@@ -359,13 +359,13 @@ html.dark .brand-logo {
 
 .btn-primary-action:hover {
   background: linear-gradient(135deg, #ff3366 0%, #e91e63 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+  transform: none; /* Stay in place, no shadow lifting or popping out */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .btn-primary-action:active {
-  transform: translateY(0);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transform: scale(0.98);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 /* Cloud Source Buttons Wrap (Mobile: horizontal row underneath; Desktop: vertical stack beside) */
@@ -401,8 +401,8 @@ html.dark .brand-logo {
   justify-content: center;
   cursor: pointer;
   border: none;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.15s ease;
   -webkit-tap-highlight-color: transparent;
   flex-shrink: 0;
 }
@@ -418,23 +418,13 @@ html.dark .brand-logo {
 
 .btn-cloud-source:hover {
   background: linear-gradient(135deg, #ff3366 0%, #e91e63 100%);
-  transform: translateY(-1px) scale(1.05);
-  box-shadow: 0 5px 14px rgba(0, 0, 0, 0.16);
+  transform: none;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
 }
 
 .btn-cloud-source:active {
-  transform: scale(0.94);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.btn-cloud-stacked:hover {
-  background: linear-gradient(135deg, #ff3366 0%, #e91e63 100%);
-  transform: translateY(-1px) scale(1.04);
-  box-shadow: 0 6px 18px -2px rgba(255, 51, 102, 0.4);
-}
-
-.btn-cloud-stacked:active {
-  transform: scale(0.94);
+  transform: scale(0.95);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 /* Upload Dropzone (Responsive: Clean No-Box on Mobile Phones, Comfortable Dropzone on Desktop) */
@@ -457,7 +447,7 @@ html.dark .brand-logo {
 
 .tool-dropzone:hover {
   border-color: var(--color-pink-primary);
-  background: rgba(255, 82, 119, 0.04);
+  background: var(--dropzone-bg);
 }
 
 .tool-dropzone.drag-active {
