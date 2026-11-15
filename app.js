@@ -270,7 +270,7 @@ const state = {
   // Interactive Items (for Image or PDF Pages)
   workspaceItems: [], // [{ id, type: 'image'|'pdf-file'|'pdf-page', file, url, rotation, pageNum, selected, removed }]
   toolOptions: {},
-  theme: localStorage.getItem('cutipdf_theme') || 'dark'
+  theme: localStorage.getItem('cutipdf_theme_v3') || 'light'
 };
 
 // DOM Cache
@@ -333,7 +333,7 @@ function initTheme() {
   applyTheme(state.theme);
   DOM.themeToggle.addEventListener('click', () => {
     state.theme = state.theme === 'dark' ? 'light' : 'dark';
-    localStorage.setItem('cutipdf_theme', state.theme);
+    localStorage.setItem('cutipdf_theme_v3', state.theme);
     applyTheme(state.theme);
   });
 }

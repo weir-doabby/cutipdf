@@ -12,14 +12,18 @@
   <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 
-  <!-- Immediate Theme Initializer: Default to Dark Mode -->
+  <!-- Immediate Theme Initializer: Default to Light Mode -->
   <script>
     (function() {
-      const savedTheme = localStorage.getItem('cutipdf_theme');
-      if (savedTheme === 'light') {
-        document.documentElement.classList.remove('dark');
-      } else {
+      var savedTheme = localStorage.getItem('cutipdf_theme_v3');
+      if (!savedTheme) {
+        savedTheme = 'light';
+        localStorage.setItem('cutipdf_theme_v3', 'light');
+      }
+      if (savedTheme === 'dark') {
         document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
       }
     })();
   </script>
