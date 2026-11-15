@@ -75,7 +75,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=20261116b">
+  <link rel="stylesheet" href="style.css?v=20261116c">
 </head>
 <body class="watercolor-paper-bg selection:bg-pink-500/20 selection:text-[#ff5277]">
 
@@ -230,19 +230,19 @@
           </div>
 
           <!-- Right: Quick Actions (Restore All, Add More, Sort, Rotate All, Clear All) -->
-          <div class="flex items-center gap-1.5 sm:gap-2">
-            <!-- Restore All Pages Button (Round / Circular design) -->
-            <button type="button" id="btnToolbarRestoreAll" onclick="resetRemovedPages()" class="hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer" title="Restore all deleted pages">
-              <span class="w-5 h-5 rounded-full bg-emerald-200/70 dark:bg-emerald-800/60 flex items-center justify-center">
-                <svg class="w-3.5 h-3.5 stroke-[2.4]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 1 0 2.34-5.66L4 8m0 0V3m0 5h5"/></svg>
+          <div class="flex items-center gap-2 sm:gap-3">
+            <!-- Restore All Pages Button (Round / Circular design - Enriched & Centered) -->
+            <button type="button" id="btnToolbarRestoreAll" onclick="resetRemovedPages()" class="hidden inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full text-sm sm:text-base font-bold bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer" title="Restore all deleted pages">
+              <span class="w-6 h-6 rounded-full bg-emerald-200/70 dark:bg-emerald-800/60 flex items-center justify-center">
+                <svg class="w-4 h-4 stroke-[2.4]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 1 0 2.34-5.66L4 8m0 0V3m0 5h5"/></svg>
               </span>
               <span>Restore All</span>
             </button>
 
-            <!-- Add More Button (Round design) -->
-            <button type="button" id="btnToolbarAddMore" onclick="DOM.fileInput.click()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-pink-50 dark:bg-zinc-800 hover:bg-pink-100 dark:hover:bg-zinc-700 text-[#ff5277] border border-pink-200 dark:border-zinc-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer">
-              <span class="w-5 h-5 rounded-full bg-pink-200/60 dark:bg-pink-900/50 flex items-center justify-center">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+            <!-- Add More Button (Round design - Enriched & Centered) -->
+            <button type="button" id="btnToolbarAddMore" onclick="DOM.fileInput.click()" class="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full text-sm sm:text-base font-bold bg-pink-50 dark:bg-zinc-800 hover:bg-pink-100 dark:hover:bg-zinc-700 text-[#ff5277] border border-pink-200 dark:border-zinc-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer">
+              <span class="w-6 h-6 rounded-full bg-pink-200/60 dark:bg-pink-900/50 flex items-center justify-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
               </span>
               <span>Add More</span>
             </button>
@@ -428,8 +428,8 @@
   </div>
 
   <!-- Vector Illustrations Library -->
-  <script src="vectors.js?v=20261116b"></script>
+  <script src="vectors.js?v=20261116c"></script>
   <!-- Main Application Script -->
-  <script src="app.js?v=20261116b"></script>
+  <script src="app.js?v=20261116c"></script>
 </body>
 </html>

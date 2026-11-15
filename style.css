@@ -225,13 +225,29 @@ html.dark .brand-logo {
   border-color: #93c5fd;
 }
 
-/* Clean Top Actions for Remove Pages (حذف بار و پس‌زمینه و حاشیه‌ها) */
+/* Clean Top Actions for Remove Pages (حذف بار و پس‌زمینه و حاشیه‌ها، دکمه‌ها وسط و بزرگتر) */
 .workspace-toolbar.clean-actions-only {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  padding: 0 4px !important;
-  justify-content: flex-end !important;
+  padding: 4px 0 !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  margin: 0 auto !important;
+}
+
+.workspace-toolbar.clean-actions-only > div:first-child {
+  display: none !important;
+}
+
+.workspace-toolbar.clean-actions-only > .flex:last-child {
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  gap: 16px !important;
+  flex-wrap: wrap !important;
+  margin: 0 auto !important;
 }
 
 /* Floating Action Bar (Remove Pages: پایین وسط، بزرگتر، زاویه گوشه‌ها ۱۸px مثل دکمه تولز) */
@@ -294,9 +310,10 @@ html.dark .brand-logo {
     font-size: 15px !important;
   }
 
-  /* در موبایل چون دکمه ریموو کل زیر صفحه را می‌گیرد، دکمه تولز با کمی فاصله بالا می‌آید */
+  /* در موبایل دکمه تولز بالاتر و چپ‌تر می‌آید تا با دکمه ریموو هم‌راستا، شیک و مرتب دیده شود */
   .floating-tools-btn.elevated-mobile {
-    bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
+    right: calc(24px + env(safe-area-inset-right, 0px)) !important;
+    bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
 

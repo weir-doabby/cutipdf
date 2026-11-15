@@ -271,6 +271,9 @@ const state = {
   workspaceItems: [], // Current view items
   workspaceViewMode: 'file', // 'file' or 'page'
   pageLayoutMode: 'grid', // 'grid' or 'continuous'
+  removePagesProcessed: false,
+  savedOriginalFile: null,
+  savedOriginalWorkspaceItems: null,
   draggedItemIndex: null,
   toolOptions: {},
   theme: localStorage.getItem('cutipdf_theme_v3') || 'light'
@@ -501,6 +504,9 @@ function showAllToolsCatalogView() {
   state.selectedFiles = [];
   state.workspaceItems = [];
   state.toolOptions = {};
+  state.removePagesProcessed = false;
+  state.savedOriginalFile = null;
+  state.savedOriginalWorkspaceItems = null;
 
   DOM.viewToolActive.classList.remove('active');
   DOM.viewAllTools.classList.add('active');
@@ -787,6 +793,10 @@ function openToolDedicatedPage(tool) {
 
   renderToolOptionsDrawer(tool.id);
 
+  state.removePagesProcessed = false;
+  state.savedOriginalFile = null;
+  state.savedOriginalWorkspaceItems = null;
+
   DOM.filesSelectedArea.classList.add('hidden');
   DOM.toolDropzone.classList.remove('hidden');
 
@@ -963,7 +973,16 @@ window.setOpt = function(key, val, btn) {
 };
 
 window.resetRemovedPages = function() {
-  state.workspaceItems.forEach(i => i.removed = false);
+  if (state.savedOriginalWorkspaceItems && state.savedOriginalWorkspaceItems.length > 0) {
+    state.workspaceItems = state.savedOriginalWorkspaceItems.map(i => ({
+      ...i,
+      removed: false,
+      file: state.savedOriginalFile || i.file
+    }));
+  } else {
+    state.workspaceItems.forEach(i => i.removed = false);
+  }
+  state.removePagesProcessed = false;
   renderInteractiveWorkspace();
   showToast('All pages restored');
 };
@@ -1045,6 +1064,9 @@ function initDropzoneEvents() {
     state.selectedFiles = [];
     state.uploadedPdfs = [];
     state.workspaceItems = [];
+    state.removePagesProcessed = false;
+    state.savedOriginalFile = null;
+    state.savedOriginalWorkspaceItems = null;
     DOM.filesSelectedArea.classList.add('hidden');
     DOM.toolDropzone.classList.remove('hidden');
 
@@ -1145,6 +1167,9 @@ async function buildWorkspacePreview(newFiles) {
     const f = newFiles[0];
     if (f && (f.name.toLowerCase().endsWith('.pdf') || f.type === 'application/pdf')) {
       state.workspaceItems = [];
+      state.removePagesProcessed = false;
+      state.savedOriginalFile = f;
+      state.savedOriginalWorkspaceItems = null;
       try {
         const bytes = await f.arrayBuffer();
         const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
@@ -1529,15 +1554,30 @@ function renderInteractiveWorkspace() {
     }
 
     const removedCount = state.workspaceItems.filter(i => i.removed).length;
-    if (DOM.actionButtonText) {
+    if (state.removePagesProcessed) {
+      // Step 2: Selected pages were removed in-situ from workspace, button now becomes Download PDF
+      DOM.btnExecuteAction.disabled = false;
+      DOM.btnExecuteAction.classList.remove('opacity-50', 'cursor-not-allowed');
+      DOM.btnExecuteAction.innerHTML = `
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        <span id="actionButtonText">Download PDF</span>
+      `;
+    } else {
+      // Step 1: User is selecting pages to remove
       if (removedCount === 0) {
-        DOM.actionButtonText.textContent = 'Select Pages to Remove';
         DOM.btnExecuteAction.disabled = true;
         DOM.btnExecuteAction.classList.add('opacity-50', 'cursor-not-allowed');
+        DOM.btnExecuteAction.innerHTML = `
+          <svg class="w-5 h-5 mr-2 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          <span id="actionButtonText">Select Pages to Remove</span>
+        `;
       } else {
-        DOM.actionButtonText.textContent = `Remove ${removedCount} ${removedCount === 1 ? 'Page' : 'Pages'} & Download`;
         DOM.btnExecuteAction.disabled = false;
         DOM.btnExecuteAction.classList.remove('opacity-50', 'cursor-not-allowed');
+        DOM.btnExecuteAction.innerHTML = `
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          <span id="actionButtonText">Remove ${removedCount} ${removedCount === 1 ? 'Page' : 'Pages'}</span>
+        `;
       }
     }
   } else {
@@ -1545,9 +1585,11 @@ function renderInteractiveWorkspace() {
     if (toolsBtn) toolsBtn.classList.remove('elevated', 'elevated-mobile');
     DOM.btnExecuteAction.disabled = false;
     DOM.btnExecuteAction.classList.remove('opacity-50', 'cursor-not-allowed');
-    if (DOM.actionButtonText) {
-      DOM.actionButtonText.textContent = state.activeTool ? state.activeTool.actionText : 'Process';
-    }
+    const actionText = state.activeTool ? state.activeTool.actionText : 'Process';
+    DOM.btnExecuteAction.innerHTML = `
+      <span id="actionButtonText">${actionText}</span>
+      <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+    `;
   }
 
   // Update Bottom Action Summary
@@ -1583,7 +1625,7 @@ function renderInteractiveWorkspace() {
     if (isContinuous) {
       card.className = `preview-card ${item.removed ? 'removed' : ''} w-full max-w-md sm:max-w-lg shadow-sm hover:shadow-md transition-all cursor-pointer`;
     } else {
-      card.className = `preview-card ${item.removed ? 'removed' : ''} ${item.selected ? 'selected' : ''}`;
+      card.className = `preview-card ${item.removed ? 'removed' : ''} ${item.selected ? 'selected' : ''} ${toolId === 'remove-pages' ? 'min-h-[220px] sm:min-h-[250px]' : ''}`;
     }
     card.setAttribute('draggable', 'true');
 
@@ -1642,8 +1684,10 @@ function renderInteractiveWorkspace() {
       `;
     }
 
-    // Thumbnail Area
-    const thumbHeight = isContinuous ? 'h-80 sm:h-96' : 'h-44';
+    // Thumbnail Area (Proper portrait A4 proportions matching Add More card)
+    const thumbHeight = isContinuous
+      ? 'h-80 sm:h-96'
+      : (toolId === 'remove-pages' ? 'h-full min-h-[220px] sm:min-h-[250px]' : 'h-44');
     let thumbHtml = '';
     if (item.previewUrl) {
       thumbHtml = `
@@ -1706,9 +1750,9 @@ function renderInteractiveWorkspace() {
     grid.appendChild(card);
   });
 
-  // "+ Add More Files" Card at end of grid (Smallpdf Style)
+  // "+ Add More Files" Card at end of grid (Smallpdf Style - Matching Card Proportions)
   const addMoreCard = document.createElement('div');
-  addMoreCard.className = 'preview-card min-h-[210px] border-2 border-dashed border-pink-200/90 dark:border-zinc-700 hover:border-[#ff5277] bg-pink-50/20 hover:bg-pink-50/50 dark:hover:bg-zinc-800/40 flex flex-col items-center justify-center p-5 text-center cursor-pointer transition-all group';
+  addMoreCard.className = 'preview-card min-h-[220px] sm:min-h-[250px] border-2 border-dashed border-pink-200/90 dark:border-zinc-700 hover:border-[#ff5277] bg-pink-50/20 hover:bg-pink-50/50 dark:hover:bg-zinc-800/40 flex flex-col items-center justify-center p-5 text-center cursor-pointer transition-all group';
   addMoreCard.onclick = () => DOM.fileInput.click();
   addMoreCard.innerHTML = `
     <div class="w-11 h-11 rounded-full bg-pink-100 dark:bg-zinc-800 text-[#ff5277] flex items-center justify-center text-xl font-bold mb-2 group-hover:scale-110 transition-transform shadow-2xs">
@@ -1721,18 +1765,13 @@ function renderInteractiveWorkspace() {
 
   container.appendChild(grid);
 
-  // Update Action Button Text
-  if (toolId === 'remove-pages') {
-    const removedCount = state.workspaceItems.filter(i => i.removed).length;
-    const remainingCount = state.workspaceItems.length - removedCount;
-    if (removedCount > 0) {
-      DOM.actionButtonText.textContent = `Remove ${removedCount} ${removedCount === 1 ? 'Page' : 'Pages'} (${remainingCount} remaining)`;
-    } else {
-      DOM.actionButtonText.textContent = `Remove Pages (0 marked)`;
-    }
-  } else {
+  // Update Action Button Text (only for tools other than remove-pages, which is handled above)
+  if (toolId !== 'remove-pages') {
     const activeCount = state.workspaceItems.filter(i => !i.removed).length;
-    DOM.actionButtonText.textContent = `${state.activeTool.actionText} (${activeCount})`;
+    const txtSpan = DOM.btnExecuteAction.querySelector('#actionButtonText');
+    if (txtSpan && state.activeTool) {
+      txtSpan.textContent = `${state.activeTool.actionText} (${activeCount})`;
+    }
   }
 }
 
@@ -1844,6 +1883,7 @@ window.toggleRemoveWorkspaceItem = function(index) {
   const toolId = state.activeTool ? state.activeTool.id : '';
   if (toolId === 'remove-pages') {
     state.workspaceItems[index].removed = !state.workspaceItems[index].removed;
+    state.removePagesProcessed = false;
   } else if (toolId === 'split-pdf' || toolId === 'extract-pages') {
     state.workspaceItems[index].selected = !state.workspaceItems[index].selected;
   } else {
@@ -1924,9 +1964,42 @@ async function executeActiveToolAction() {
     else if (toolId === 'split-pdf' || toolId === 'extract-pages') {
       await engineSplitPdf();
     }
-    // 4. Remove Pages
+    // 4. Remove Pages (2-Step: Step 1 removes marked from workspace; Step 2 downloads final PDF)
     else if (toolId === 'remove-pages') {
-      await engineRemovePages();
+      if (!state.removePagesProcessed) {
+        const marked = state.workspaceItems.filter(i => i.removed);
+        if (marked.length === 0) {
+          showToast('⚠️ Please click on at least one page to mark it for removal (✕).');
+          DOM.btnExecuteAction.disabled = false;
+          return;
+        }
+        const remaining = state.workspaceItems.filter(i => !i.removed);
+        if (remaining.length === 0) {
+          showToast('⚠️ You cannot remove all pages. Please keep at least one page.');
+          DOM.btnExecuteAction.disabled = false;
+          return;
+        }
+
+        // Save reference to master file and original items
+        if (!state.savedOriginalFile && state.workspaceItems[0]) {
+          state.savedOriginalFile = state.workspaceItems[0].file;
+        }
+        if (!state.savedOriginalWorkspaceItems) {
+          state.savedOriginalWorkspaceItems = state.workspaceItems.map(item => ({ ...item }));
+        }
+
+        // Apply removal to workspace
+        state.workspaceItems = remaining;
+        state.removePagesProcessed = true;
+
+        // Re-render so marked pages immediately vanish from the grid
+        renderInteractiveWorkspace();
+        showToast(`✅ ${marked.length} ${marked.length === 1 ? 'page' : 'pages'} removed! Click Download PDF to save.`);
+        return;
+      } else {
+        await engineRemovePagesDownload();
+        return;
+      }
     }
     // 5. Organize PDF
     else if (toolId === 'organize-pdf') {
@@ -2200,26 +2273,27 @@ async function engineSplitPdf() {
   downloadBlob(new Blob([out], { type: 'application/pdf' }), `Extracted_Pages_${masterFile.name}`);
 }
 
-// 5. Remove Pages (Excludes pages marked with cross ✕)
-async function engineRemovePages() {
+// 5. Remove Pages (Downloads PDF with kept pages)
+async function engineRemovePagesDownload() {
   const { PDFDocument } = PDFLib;
-  const masterFile = state.workspaceItems[0].file;
-  const bytes = await masterFile.arrayBuffer();
-  const doc = await PDFDocument.load(bytes);
-
-  const removedCount = state.workspaceItems.filter(i => i.removed).length;
-
-  if (removedCount === 0) {
-    showToast('⚠️ Please click on at least one page to mark it for removal (✕).');
+  const masterFile = state.savedOriginalFile || (state.workspaceItems[0] && state.workspaceItems[0].file) || (state.selectedFiles && state.selectedFiles[0]);
+  if (!masterFile) {
+    showToast('⚠️ Original PDF file not found.');
+    DOM.btnExecuteAction.disabled = false;
     return;
   }
 
+  showToast('Generating your new PDF...');
+  const bytes = await masterFile.arrayBuffer();
+  const doc = await PDFDocument.load(bytes);
+
   const pagesToKeep = state.workspaceItems
-    .map((item, idx) => (!item.removed ? (item.pageNum ? item.pageNum - 1 : idx) : -1))
-    .filter(i => i >= 0);
+    .map(item => (item.pageNum ? item.pageNum - 1 : 0))
+    .filter(idx => idx >= 0 && idx < doc.getPageCount());
 
   if (pagesToKeep.length === 0) {
-    showToast('⚠️ You cannot remove all pages. Please keep at least one page.');
+    showToast('⚠️ No pages to keep in the new PDF.');
+    DOM.btnExecuteAction.disabled = false;
     return;
   }
 
@@ -2229,7 +2303,8 @@ async function engineRemovePages() {
 
   const out = await newDoc.save();
   downloadBlob(new Blob([out], { type: 'application/pdf' }), `Pages_Removed_${masterFile.name}`);
-  showToast(`✅ Successfully removed ${removedCount} page(s)!`);
+  showToast(`✅ Successfully downloaded! Document has ${pagesToKeep.length} page(s).`);
+  DOM.btnExecuteAction.disabled = false;
 }
 
 // 6. Organize PDF (Saves new user arrangement)
