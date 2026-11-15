@@ -75,7 +75,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=20261115g">
+  <link rel="stylesheet" href="style.css?v=20261115h">
 </head>
 <body class="watercolor-paper-bg selection:bg-pink-500/20 selection:text-[#ff5277]">
 
@@ -216,8 +216,14 @@
             </button>
           </div>
 
-          <!-- Right: Quick Actions (Add More, Sort, Rotate All, Clear All) -->
+          <!-- Right: Quick Actions (Restore All, Add More, Sort, Rotate All, Clear All) -->
           <div class="flex items-center gap-1.5 sm:gap-2">
+            <!-- Restore All Pages Button (for Remove Pages tool) -->
+            <button type="button" id="btnToolbarRestoreAll" onclick="resetRemovedPages()" class="hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 transition shadow-2xs cursor-pointer" title="Restore all deleted pages">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 10h10a5 5 0 0 1 5 5v2m0 0l-3-3m3 3l3-3M3 10l3 3m-3-3l3-3"/></svg>
+              <span>Restore All Pages</span>
+            </button>
+
             <!-- Add More Button -->
             <button type="button" id="btnToolbarAddMore" onclick="DOM.fileInput.click()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-pink-50 dark:bg-zinc-800 hover:bg-pink-100 dark:hover:bg-zinc-700 text-[#ff5277] border border-pink-200 dark:border-zinc-700 transition shadow-2xs cursor-pointer">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
@@ -306,8 +312,8 @@
   </aside>
 
   <!-- Vector Illustrations Library -->
-  <script src="vectors.js?v=20261115g"></script>
+  <script src="vectors.js?v=20261115h"></script>
   <!-- Main Application Script -->
-  <script src="app.js?v=20261115g"></script>
+  <script src="app.js?v=20261115h"></script>
 </body>
 </html>
