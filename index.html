@@ -75,7 +75,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=20261115b">
+  <link rel="stylesheet" href="style.css?v=20261115c">
 </head>
 <body class="watercolor-paper-bg selection:bg-pink-500/20 selection:text-[#ff5277]">
 
@@ -157,28 +157,28 @@
         <input type="file" id="fileInput" class="hidden" multiple>
 
         <div class="flex flex-col items-center justify-center space-y-3.5">
-          <!-- Main Action Buttons Row (iLovePDF Style: Big Button + Vertically Stacked Google Drive & Dropbox) -->
-          <div class="inline-flex items-center justify-center gap-2 sm:gap-2.5 mx-auto w-full max-w-[360px] sm:max-w-none">
+          <!-- Main Action Buttons Wrap (Responsive: Stacked on Mobile like iLovePDF, Inline with Balancer on Desktop) -->
+          <div class="action-buttons-wrap">
             <!-- Invisible Balancer on Left: balances the 48px cloud buttons on desktop to center Select button with 'or drop files here' -->
-            <div class="hidden sm:block w-[48px] flex-shrink-0 invisible pointer-events-none select-none" aria-hidden="true"></div>
+            <div class="desktop-balancer" aria-hidden="true"></div>
 
-            <!-- Big Primary Select Files Button (iLovePDF Style: Prominent, large touch target, 72px height, 20px bold font) -->
+            <!-- Big Primary Select Files Button (iLovePDF Style: Large touch target, 72px height, 20px bold font) -->
             <button id="btnSelectFiles" type="button" class="btn-primary-action shadow-lg">
               Select PDF files
             </button>
 
-            <!-- Vertical Stack of Cloud Source Buttons (Same Button Color & Height, Perfectly Aligned) -->
-            <div class="cloud-buttons-stack">
+            <!-- Cloud Source Buttons (Underneath in row on Mobile; Vertically Stacked beside Select on Desktop) -->
+            <div class="cloud-buttons-wrap">
               <!-- Google Drive Button -->
-              <button id="btnGoogleDrive" type="button" class="btn-cloud-stacked group/cloud" title="Select files from Google Drive" aria-label="Google Drive">
-                <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5 fill-white transition-transform group-hover/cloud:scale-115" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+              <button id="btnGoogleDrive" type="button" class="btn-cloud-source group/cloud" title="Select files from Google Drive" aria-label="Google Drive">
+                <svg class="w-5 h-5 fill-white transition-transform group-hover/cloud:scale-115" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
                   <path d="M339 314.9L175.4 32h161.2l163.6 282.9H339zm-137.5 23.6L120.9 480h310.5L512 338.5H201.5zM154.1 67.4L0 338.5 80.6 480 237 208.8 154.1 67.4z"/>
                 </svg>
               </button>
 
               <!-- Dropbox Button -->
-              <button id="btnDropbox" type="button" class="btn-cloud-stacked group/cloud" title="Select files from Dropbox" aria-label="Dropbox">
-                <svg class="w-4.5 h-4.5 sm:w-5 sm:h-5 fill-white transition-transform group-hover/cloud:scale-115" viewBox="0 0 528 512" xmlns="http://www.w3.org/2000/svg">
+              <button id="btnDropbox" type="button" class="btn-cloud-source group/cloud" title="Select files from Dropbox" aria-label="Dropbox">
+                <svg class="w-5 h-5 fill-white transition-transform group-hover/cloud:scale-115" viewBox="0 0 528 512" xmlns="http://www.w3.org/2000/svg">
                   <path d="M264.4 116.3l-132 84.3 132 84.3-132 84.3L0 284.1l132.3-84.3L0 116.3 132.3 32l132.1 84.3zM131.6 395.7l132-84.3 132 84.3-132 84.3-132-84.3zm132.8-111.6l132-84.3-132-83.6L395.7 32 528 116.3l-132.3 84.3L528 284.8l-132.3 84.3-131.3-85z"/>
                 </svg>
               </button>
@@ -261,8 +261,8 @@
   </aside>
 
   <!-- Vector Illustrations Library -->
-  <script src="vectors.js?v=20261115b"></script>
+  <script src="vectors.js?v=20261115c"></script>
   <!-- Main Application Script -->
-  <script src="app.js?v=20261115b"></script>
+  <script src="app.js?v=20261115c"></script>
 </body>
 </html>
