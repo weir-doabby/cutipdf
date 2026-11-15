@@ -275,6 +275,7 @@ const state = {
 
 // DOM Cache
 const DOM = {
+  brandLogoLink: document.getElementById('brandLogoLink'),
   viewAllTools: document.getElementById('view-all-tools'),
   viewToolActive: document.getElementById('view-tool-active'),
   toolsGridContainer: document.getElementById('toolsGridContainer'),
@@ -356,10 +357,32 @@ function applyTheme(theme) {
 }
 
 // ==========================================
+// Base Path & Tool Lookup
+// ==========================================
+function getBasePath() {
+  const path = window.location.pathname;
+  if (path.startsWith('/cutipdf/')) {
+    return '/cutipdf/';
+  }
+  return '/';
+}
+
+function findToolById(id) {
+  if (!id) return null;
+  const normalized = id.toLowerCase().replace(/_/g, '-').trim();
+  for (const tools of Object.values(TOOLS_CATALOG)) {
+    const found = tools.find(t => t.id === normalized);
+    if (found) return found;
+  }
+  return null;
+}
+
+// ==========================================
 // Render All Tools Catalog with Brush Headers
 // ==========================================
 function renderAllToolsCatalog() {
   DOM.toolsGridContainer.innerHTML = '';
+  const basePath = getBasePath();
 
   for (const [category, tools] of Object.entries(TOOLS_CATALOG)) {
     const section = document.createElement('section');
@@ -373,7 +396,7 @@ function renderAllToolsCatalog() {
         ${tools.map(tool => {
           const vectorSvg = VECTORS[tool.id] || '<div class="text-3xl">📄</div>';
           return `
-            <a href="#${tool.id}" class="tool-card group no-underline text-inherit block">
+            <a href="${basePath}${tool.id}" data-tool-id="${tool.id}" class="tool-card group no-underline text-inherit block">
               <div class="w-12 h-12 flex-shrink-0 group-hover:scale-105 transition-transform duration-200 mb-3">
                 ${vectorSvg}
               </div>
@@ -390,25 +413,146 @@ function renderAllToolsCatalog() {
 }
 
 // ==========================================
-// Routing & Dedicated Tool Pages
+// Routing & Dedicated Tool URLs
 // ==========================================
-function findToolById(id) {
-  for (const tools of Object.values(TOOLS_CATALOG)) {
-    const found = tools.find(t => t.id === id);
-    if (found) return found;
+function parseToolFromCurrentLocation() {
+  // 1. Check query parameter ?p= (e.g. from GitHub Pages 404.html redirect)
+  const urlParams = new URLSearchParams(window.location.search);
+  const pParam = urlParams.get('p');
+  if (pParam) {
+    const cleanP = pParam.replace(/^\/+/, '').replace(/\/+$/, '').toLowerCase().replace(/_/g, '-');
+    if (cleanP && cleanP !== 'all-tools' && cleanP !== 'tools') {
+      return cleanP;
+    }
   }
+
+  // 2. Check pathname (e.g. /cutipdf/merge-pdf or /merge-pdf)
+  const path = window.location.pathname;
+  const basePath = getBasePath();
+  if (path.startsWith(basePath)) {
+    const subPath = path.slice(basePath.length).replace(/\/+$/, '').toLowerCase().replace(/_/g, '-');
+    if (subPath && subPath !== 'index.html' && subPath !== 'all-tools' && subPath !== 'tools') {
+      return subPath;
+    }
+  }
+
+  // 3. Check hash (backward compatibility fallback: #merge-pdf or #/merge-pdf)
+  const hash = window.location.hash.replace(/^#\/?/, '').trim().toLowerCase().replace(/_/g, '-');
+  if (hash && hash !== 'all-tools' && hash !== 'tools') {
+    return hash;
+  }
+
   return null;
 }
 
-function initRouting() {
-  window.addEventListener('hashchange', handleRoute);
-  handleRoute();
+function navigateTo(toolId, replaceHistory = false) {
+  if (state.workspaceItems && state.workspaceItems.length > 0) {
+    if (!confirm('Switch tool? Current in-progress files will be cleared.')) {
+      return;
+    }
+  }
 
-  if (DOM.btnBackToTools) {
-    DOM.btnBackToTools.addEventListener('click', () => {
-      window.location.hash = '';
+  const basePath = getBasePath();
+
+  if (!toolId || toolId === 'all-tools') {
+    if (window.location.pathname !== basePath || window.location.search || window.location.hash) {
+      if (replaceHistory) {
+        window.history.replaceState({ toolId: null }, '', basePath);
+      } else {
+        window.history.pushState({ toolId: null }, '', basePath);
+      }
+    }
+    showAllToolsCatalogView();
+    return;
+  }
+
+  const tool = findToolById(toolId);
+  if (tool) {
+    const targetUrl = basePath + tool.id;
+    if (window.location.pathname !== targetUrl || window.location.search || window.location.hash) {
+      if (replaceHistory) {
+        window.history.replaceState({ toolId: tool.id }, '', targetUrl);
+      } else {
+        window.history.pushState({ toolId: tool.id }, '', targetUrl);
+      }
+    }
+    openToolDedicatedPage(tool);
+  } else {
+    // Unknown tool -> return to catalog
+    window.history.replaceState({ toolId: null }, '', basePath);
+    showAllToolsCatalogView();
+  }
+}
+
+function showAllToolsCatalogView() {
+  state.activeTool = null;
+  state.selectedFiles = [];
+  state.workspaceItems = [];
+  state.toolOptions = {};
+
+  DOM.viewToolActive.classList.remove('active');
+  DOM.viewAllTools.classList.add('active');
+  document.title = 'CutiPDF • Clean, Fast & Complete PDF Studio';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function handleRoute() {
+  const toolId = parseToolFromCurrentLocation();
+  if (toolId) {
+    const tool = findToolById(toolId);
+    if (tool) {
+      // Normalize URL in address bar if it was opened via query or hash
+      const canonicalUrl = getBasePath() + tool.id;
+      if (window.location.pathname !== canonicalUrl || window.location.search || window.location.hash) {
+        window.history.replaceState({ toolId: tool.id }, '', canonicalUrl);
+      }
+      openToolDedicatedPage(tool);
+      return;
+    }
+  }
+
+  // Default to all tools catalog
+  const basePath = getBasePath();
+  if (window.location.search || window.location.hash) {
+    window.history.replaceState({ toolId: null }, '', basePath);
+  }
+  showAllToolsCatalogView();
+}
+
+function initRouting() {
+  // Listen to browser Back / Forward history buttons
+  window.addEventListener('popstate', () => {
+    handleRoute();
+  });
+
+  // Listen to hash changes (fallback)
+  window.addEventListener('hashchange', () => {
+    handleRoute();
+  });
+
+  // Logo click returns to home catalog
+  if (DOM.brandLogoLink) {
+    DOM.brandLogoLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      navigateTo(null);
     });
   }
+
+  // Delegated click handler for tool cards in catalog (instant SPA transition + new tab support)
+  if (DOM.toolsGridContainer) {
+    DOM.toolsGridContainer.addEventListener('click', (e) => {
+      const card = e.target.closest('a[data-tool-id]');
+      if (card) {
+        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+        e.preventDefault();
+        const toolId = card.getAttribute('data-tool-id');
+        navigateTo(toolId);
+      }
+    });
+  }
+
+  // Handle initial route on page load
+  handleRoute();
 }
 
 // ==========================================
@@ -534,11 +678,12 @@ function renderQuickToolsModalGrid(query = '') {
       matchFound = true;
       const sec = document.createElement('div');
       sec.className = 'space-y-2.5';
+      const basePath = getBasePath();
       sec.innerHTML = `
         <h4 class="category-title text-xs uppercase tracking-wider">${category}</h4>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           ${filtered.map(tool => `
-            <div onclick="selectToolFromModal('${tool.id}')" class="p-2.5 rounded-xl border border-pink-100 dark:border-zinc-800 hover:border-[#ff5277] bg-white dark:bg-zinc-800/80 hover:shadow-sm cursor-pointer transition-all flex items-center gap-2.5 group">
+            <a href="${basePath}${tool.id}" onclick="selectToolFromModal(event, '${tool.id}')" class="p-2.5 rounded-xl border border-pink-100 dark:border-zinc-800 hover:border-[#ff5277] bg-white dark:bg-zinc-800/80 hover:shadow-sm cursor-pointer transition-all flex items-center gap-2.5 group no-underline text-inherit">
               <div class="w-8 h-8 flex-shrink-0 group-hover:scale-105 transition-transform flex items-center justify-center">
                 ${VECTORS[tool.id] || '<div class="text-lg">📄</div>'}
               </div>
@@ -546,7 +691,7 @@ function renderQuickToolsModalGrid(query = '') {
                 <h5 class="font-bold text-xs text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff5277] transition-colors truncate">${tool.title}</h5>
                 <p class="text-[10px] text-zinc-400 truncate">${tool.desc}</p>
               </div>
-            </div>
+            </a>
           `).join('')}
         </div>
       `;
@@ -563,34 +708,14 @@ function renderQuickToolsModalGrid(query = '') {
   }
 }
 
-window.selectToolFromModal = function(toolId) {
+window.selectToolFromModal = function(e, toolId) {
+  if (e) {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+    e.preventDefault();
+  }
   closeQuickTools();
-  if (state.workspaceItems && state.workspaceItems.length > 0) {
-    if (!confirm('Switch tool? Current in-progress files will be cleared.')) {
-      return;
-    }
-  }
-  window.location.hash = '#' + toolId;
+  navigateTo(toolId);
 };
-
-function handleRoute() {
-  const hash = window.location.hash.replace('#', '').trim();
-
-  if (!hash || hash === 'all-tools' || hash === 'tools') {
-    DOM.viewToolActive.classList.remove('active');
-    DOM.viewAllTools.classList.add('active');
-    document.title = 'CutiPDF • Clean, Fast & Complete PDF Studio';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    return;
-  }
-
-  const tool = findToolById(hash);
-  if (tool) {
-    openToolDedicatedPage(tool);
-  } else {
-    window.location.hash = '';
-  }
-}
 
 function openToolDedicatedPage(tool) {
   state.activeTool = tool;
@@ -598,7 +723,27 @@ function openToolDedicatedPage(tool) {
   state.workspaceItems = [];
   state.toolOptions = {};
 
-  document.title = `${tool.title} • CutiPDF`;
+  // Dedicated SEO Title & Canonical URL for each tool
+  const seoTitles = {
+    'merge-pdf': 'Merge PDF - Combine PDF Files Online for Free',
+    'split-pdf': 'Split PDF - Separate PDF Pages Online',
+    'compress-pdf': 'Compress PDF - Reduce PDF File Size Online',
+    'jpg-to-pdf': 'JPG to PDF - Convert JPG Images to PDF Online',
+    'pdf-to-jpg': 'PDF to JPG - Extract Images from PDF Online',
+    'word-to-pdf': 'Word to PDF - Convert DOCX to PDF Online',
+    'pdf-to-word': 'PDF to Word - Convert PDF to DOCX Online',
+    'protect-pdf': 'Protect PDF - Encrypt PDF with Password',
+    'unlock-pdf': 'Unlock PDF - Remove Password from PDF',
+    'rotate-pdf': 'Rotate PDF - Rotate PDF Pages Online',
+    'watermark-pdf': 'Watermark PDF - Add Stamp & Watermark to PDF',
+    'page-numbers': 'Page Numbers - Number PDF Pages Online',
+    'organize-pdf': 'Organize PDF - Reorder, Sort and Delete Pages',
+    'repair-pdf': 'Repair PDF - Recover Damaged PDF Files',
+    'ocr-pdf': 'OCR PDF - Convert Scanned PDF to Searchable Text'
+  };
+
+  const titlePrefix = seoTitles[tool.id] || `${tool.title} Online`;
+  document.title = `${titlePrefix} • CutiPDF`;
 
   // Track visit to prioritize tools by traffic and user demand
   recordToolVisit(tool.id);

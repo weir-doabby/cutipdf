@@ -24,6 +24,20 @@
     })();
   </script>
 
+  <!-- GitHub Pages SPA Path Restorer -->
+  <script>
+    (function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const p = urlParams.get('p');
+      if (p) {
+        const isRepo = window.location.pathname.startsWith('/cutipdf');
+        const basePath = isRepo ? '/cutipdf/' : '/';
+        const cleanPath = p.replace(/^\/+/, '').replace(/\/+$/, '');
+        window.history.replaceState(null, '', basePath + cleanPath + window.location.hash);
+      }
+    })();
+  </script>
+
   <!-- Google Fonts: Kaushan Script (Brush), Caveat & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -72,7 +86,7 @@
   <!-- Clean Top Header (Corner-Aligned with Tools Button) -->
   <header class="w-full px-6 py-4 flex items-center justify-between border-b border-zinc-200/80 dark:border-zinc-800/80">
     <!-- Brand: Left Corner (Cuti in dark/light, PDF in Pink) -->
-    <a href="#all-tools" class="flex items-center cursor-pointer no-underline text-inherit group" title="CutiPDF Home">
+    <a id="brandLogoLink" href="./" class="flex items-center cursor-pointer no-underline text-inherit group" title="CutiPDF Home">
       <span class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:opacity-90 transition-opacity font-brush">
         Cuti<span class="text-[#ff5277] drop-shadow-xs">PDF</span>
       </span>
