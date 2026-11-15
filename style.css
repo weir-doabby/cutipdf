@@ -129,60 +129,99 @@ html.dark .brand-logo {
   box-shadow: var(--shadow-watercolor-hover);
 }
 
-/* Floating Square Tools Button (Royal Blue Contrast - Static Button with Smooth Parallel Tools) */
+/* Floating Square Tools Button (Royal Blue Contrast - Static Button with Wrench Tightening Nut) */
 
-/* Smooth Parallel Vertical Transition for Wrench */
-@keyframes wrenchParallelCycle {
+/* Wrench Tightening Hex Nut Animation (Every few seconds) */
+@keyframes wrenchTightenCycle {
   0%, 48% {
-    transform: rotate(0deg) translate(0, 0);
+    transform: rotate(0deg);
   }
-  62%, 80% {
-    /* Straightens into vertical position on the left */
-    transform: rotate(-39deg) translate(-5.5px, 0);
+  58% {
+    /* First firm pull: tightening the nut */
+    transform: rotate(20deg);
   }
-  94%, 100% {
-    /* Glides smoothly back across screwdriver into crossed X */
-    transform: rotate(0deg) translate(0, 0);
+  68% {
+    /* Ratchet back stroke */
+    transform: rotate(-6deg);
+  }
+  78% {
+    /* Final torque cinch / tight lock snap! */
+    transform: rotate(25deg);
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.85));
+  }
+  85% {
+    /* Torque recoil */
+    transform: rotate(22deg);
+    filter: none;
+  }
+  95%, 100% {
+    /* Settle back to resting angle */
+    transform: rotate(0deg);
+    filter: none;
   }
 }
 
-/* Smooth Parallel Vertical Transition for Screwdriver */
-@keyframes screwdriverParallelCycle {
+@keyframes nutTurnCycle {
   0%, 48% {
-    transform: scaleX(-1) rotate(0deg) translate(0, 0);
+    transform: rotate(0deg);
   }
-  62%, 80% {
-    /* Straightens into vertical position on the right */
-    transform: scaleX(-1) rotate(-39deg) translate(-5.5px, 0);
+  58% {
+    /* Nut turns with wrench */
+    transform: rotate(18deg);
   }
-  94%, 100% {
-    /* Glides smoothly back across wrench into crossed X */
-    transform: scaleX(-1) rotate(0deg) translate(0, 0);
+  68% {
+    /* Nut stays tightened in place while wrench ratchets */
+    transform: rotate(18deg);
+  }
+  78% {
+    /* Nut turns further with the final torque lock */
+    transform: rotate(25deg);
+  }
+  85% {
+    transform: rotate(24deg);
+  }
+  95%, 100% {
+    transform: rotate(0deg);
   }
 }
 
-/* Interactive Click/Tap One-Shot Parallel Animation */
-@keyframes wrenchParallelSnap {
+/* Interactive Click/Tap One-Shot Tighten Animation */
+@keyframes wrenchTightenSnap {
   0% {
-    transform: rotate(0deg) translate(0, 0);
+    transform: rotate(0deg);
   }
-  35%, 68% {
-    transform: rotate(-39deg) translate(-5.5px, 0);
+  25% {
+    transform: rotate(-8deg);
+  }
+  55% {
+    transform: rotate(26deg);
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.9));
+  }
+  78% {
+    transform: rotate(22deg);
+    filter: none;
   }
   100% {
-    transform: rotate(0deg) translate(0, 0);
+    transform: rotate(0deg);
+    filter: none;
   }
 }
 
-@keyframes screwdriverParallelSnap {
+@keyframes nutTurnSnap {
   0% {
-    transform: scaleX(-1) rotate(0deg) translate(0, 0);
+    transform: rotate(0deg);
   }
-  35%, 68% {
-    transform: scaleX(-1) rotate(-39deg) translate(-5.5px, 0);
+  25% {
+    transform: rotate(0deg);
+  }
+  55% {
+    transform: rotate(25deg);
+  }
+  78% {
+    transform: rotate(23deg);
   }
   100% {
-    transform: scaleX(-1) rotate(0deg) translate(0, 0);
+    transform: rotate(0deg);
   }
 }
 
@@ -257,36 +296,39 @@ html.dark .brand-logo {
 
 .tool-svg {
   position: absolute;
-  width: 24px;
-  height: 24px;
-  min-width: 24px;
-  min-height: 24px;
+  width: 25px;
+  height: 25px;
+  min-width: 25px;
+  min-height: 25px;
   fill: #ffffff;
   color: #ffffff;
-  top: 1px;
-  left: 1px;
-  transform-origin: 50% 50%;
+  top: 0;
+  left: 0;
   pointer-events: none;
 }
 
-/* Idle periodic loop (every 4.2s) */
+/* Hex Nut inside Jaws */
+.tool-nut {
+  transform-origin: 75.2% 27.3%;
+  animation: nutTurnCycle 4.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  opacity: 0.95;
+}
+
+/* Wrench rotating around the Nut */
 .tool-wrench {
-  animation: wrenchParallelCycle 4.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  transform-origin: 75.2% 27.3%;
+  animation: wrenchTightenCycle 4.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
-.tool-screwdriver {
-  animation: screwdriverParallelCycle 4.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-/* Snap to parallel and back on click or active state */
+/* Snap tighten on click or active state */
 .floating-tools-btn:active .tool-wrench,
 .floating-tools-btn.clashing .tool-wrench {
-  animation: wrenchParallelSnap 0.75s cubic-bezier(0.34, 1.25, 0.64, 1) !important;
+  animation: wrenchTightenSnap 0.65s cubic-bezier(0.34, 1.25, 0.64, 1) !important;
 }
 
-.floating-tools-btn:active .tool-screwdriver,
-.floating-tools-btn.clashing .tool-screwdriver {
-  animation: screwdriverParallelSnap 0.75s cubic-bezier(0.34, 1.25, 0.64, 1) !important;
+.floating-tools-btn:active .tool-nut,
+.floating-tools-btn.clashing .tool-nut {
+  animation: nutTurnSnap 0.65s cubic-bezier(0.34, 1.25, 0.64, 1) !important;
 }
 
 .floating-tools-btn span {
@@ -328,39 +370,33 @@ html.dark .brand-logo {
   transform: translateY(0);
 }
 
-/* Cloud Storage Source Buttons (iLovePDF Style: Google Drive & Dropbox) */
-.cloud-source-btn {
-  width: 54px;
-  height: 54px;
-  min-width: 54px;
-  min-height: 54px;
-  border-radius: 16px;
-  background: #ffffff;
-  border: 1.5px solid var(--border-color);
-  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.06);
+/* Vertically Stacked Cloud Storage Source Buttons (iLovePDF Style: Same Pink Color & Aligned) */
+.btn-cloud-stacked {
+  height: calc(50% - 3px);
+  width: 44px;
+  min-width: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ff5277 0%, #ff3366 50%, #e91e63 100%);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  border: none;
+  box-shadow: 0 4px 14px -2px var(--color-pink-glow);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   -webkit-tap-highlight-color: transparent;
   flex-shrink: 0;
 }
 
-html.dark .cloud-source-btn {
-  background: #18181b;
-  border-color: #27272a;
-  box-shadow: 0 4px 14px -2px rgba(0, 0, 0, 0.3);
+.btn-cloud-stacked:hover {
+  background: linear-gradient(135deg, #ff3366 0%, #e91e63 100%);
+  transform: translateY(-1px) scale(1.04);
+  box-shadow: 0 6px 18px -2px rgba(255, 51, 102, 0.4);
 }
 
-.cloud-source-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px -2px rgba(0, 0, 0, 0.12);
-  border-color: var(--color-pink-primary);
-}
-
-.cloud-source-btn:active {
-  transform: scale(0.92);
+.btn-cloud-stacked:active {
+  transform: scale(0.94);
 }
 
 /* Upload Dropzone (Responsive: Clean No-Box on Mobile Phones, Comfortable Dropzone on Desktop) */

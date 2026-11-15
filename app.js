@@ -374,13 +374,8 @@ function renderAllToolsCatalog() {
           const vectorSvg = VECTORS[tool.id] || '<div class="text-3xl">📄</div>';
           return `
             <a href="#${tool.id}" class="tool-card group no-underline text-inherit block">
-              <div class="flex items-start justify-between mb-3">
-                <div class="w-12 h-12 flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
-                  ${vectorSvg}
-                </div>
-                <span class="text-[10px] font-semibold text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-md border border-zinc-200/80 dark:border-zinc-700/80">
-                  Not Available
-                </span>
+              <div class="w-12 h-12 flex-shrink-0 group-hover:scale-105 transition-transform duration-200 mb-3">
+                ${vectorSvg}
               </div>
               <h3 class="font-bold text-sm text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff5277] transition-colors">${tool.title}</h3>
               <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-2 leading-relaxed">${tool.desc}</p>
@@ -429,14 +424,14 @@ function initQuickToolsModal() {
     e.preventDefault();
     e.stopPropagation();
 
-    // Trigger smooth parallel vertical animation
+    // Trigger wrench tightening nut animation
     DOM.floatingToolsBtn.classList.remove('clashing');
     void DOM.floatingToolsBtn.offsetWidth; // force reflow
     DOM.floatingToolsBtn.classList.add('clashing');
 
     setTimeout(() => {
       DOM.floatingToolsBtn.classList.remove('clashing');
-    }, 800);
+    }, 650);
 
     toggleQuickTools();
   });
@@ -548,10 +543,7 @@ function renderQuickToolsModalGrid(query = '') {
                 ${VECTORS[tool.id] || '<div class="text-lg">📄</div>'}
               </div>
               <div class="overflow-hidden min-w-0 flex-1">
-                <div class="flex items-center justify-between gap-1">
-                  <h5 class="font-bold text-xs text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff5277] transition-colors truncate">${tool.title}</h5>
-                  <span class="text-[9px] font-semibold text-zinc-400 dark:text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded flex-shrink-0">Not Available</span>
-                </div>
+                <h5 class="font-bold text-xs text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff5277] transition-colors truncate">${tool.title}</h5>
                 <p class="text-[10px] text-zinc-400 truncate">${tool.desc}</p>
               </div>
             </div>

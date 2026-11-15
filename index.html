@@ -129,23 +129,6 @@
         </p>
       </div>
 
-      <!-- Not Available / Prioritization Notice -->
-      <div id="toolNotAvailableNotice" class="cuti-card p-4 sm:p-5 text-center bg-zinc-50/90 dark:bg-zinc-900/80 border border-zinc-200/80 dark:border-zinc-800 rounded-2xl space-y-2 max-w-xl mx-auto shadow-2xs">
-        <div class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/80">
-          <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-          <span>Not Available • In Active Development</span>
-        </div>
-        <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-          We are rolling out tools one by one based on user demand and traffic. Request priority below to bump this tool to the top of our queue!
-        </p>
-        <div class="pt-1">
-          <button id="btnVotePriority" type="button" class="inline-flex items-center gap-1.5 text-xs font-bold text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 py-1.5 px-3 rounded-lg bg-pink-50 dark:bg-pink-950/50 border border-pink-200 dark:border-pink-800 transition-all cursor-pointer">
-            <span>🚀 Request Priority</span>
-            <span class="text-[10px] text-zinc-400 font-normal">(<span id="toolVoteCount">0</span> views)</span>
-          </button>
-        </div>
-      </div>
-
       <!-- Tool Options Drawer (Dynamic for tools like Watermark, Password, Page Numbers, Layout) -->
       <div id="toolOptionsDrawer" class="hidden cuti-card p-4 sm:p-5 bg-white dark:bg-zinc-900 border border-pink-200 dark:border-zinc-800 rounded-2xl space-y-3">
         <!-- Injected options -->
@@ -156,31 +139,29 @@
         <input type="file" id="fileInput" class="hidden" multiple>
 
         <div class="flex flex-col items-center justify-center space-y-3.5">
-          <!-- Main Action Buttons Row (iLovePDF Style: Big Button + Google Drive + Dropbox) -->
-          <div class="flex items-center justify-center gap-2.5 sm:gap-3 w-full max-w-md">
+          <!-- Main Action Buttons Row (iLovePDF Style: Big Button + Vertically Stacked Google Drive & Dropbox) -->
+          <div class="inline-flex items-center justify-center gap-2 sm:gap-2.5 mx-auto max-w-full">
             <!-- Big Primary Select Files Button -->
-            <button id="btnSelectFiles" type="button" class="btn-primary-action flex-1 py-4 sm:py-4 px-6 sm:px-10 text-base sm:text-lg font-bold shadow-lg">
+            <button id="btnSelectFiles" type="button" class="btn-primary-action h-[58px] sm:h-[64px] px-8 sm:px-12 text-base sm:text-lg font-bold shadow-lg">
               Select PDF files
             </button>
 
-            <!-- Google Drive Cloud Button -->
-            <button id="btnGoogleDrive" type="button" class="cloud-source-btn group/cloud" title="Select files from Google Drive" aria-label="Google Drive">
-              <svg class="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover/cloud:scale-110" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">
-                <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
-                <path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"/>
-                <path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/>
-                <path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/>
-                <path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/>
-                <path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
-              </svg>
-            </button>
+            <!-- Vertical Stack of Cloud Source Buttons (Same Button Color & Height, Perfectly Aligned) -->
+            <div class="flex flex-col justify-between h-[58px] sm:h-[64px] gap-1.5 flex-shrink-0">
+              <!-- Google Drive Button -->
+              <button id="btnGoogleDrive" type="button" class="btn-cloud-stacked group/cloud" title="Select files from Google Drive" aria-label="Google Drive">
+                <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5 fill-white transition-transform group-hover/cloud:scale-115" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M339 314.9L175.4 32h161.2l163.6 282.9H339zm-137.5 23.6L120.9 480h310.5L512 338.5H201.5zM154.1 67.4L0 338.5 80.6 480 237 208.8 154.1 67.4z"/>
+                </svg>
+              </button>
 
-            <!-- Dropbox Cloud Button -->
-            <button id="btnDropbox" type="button" class="cloud-source-btn group/cloud" title="Select files from Dropbox" aria-label="Dropbox">
-              <svg class="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover/cloud:scale-110" viewBox="0 0 24 24" fill="#0061ff" xmlns="http://www.w3.org/2000/svg">
-                <path d="M6 2L0 6.5L6 11L12 6.5L6 2ZM18 2L12 6.5L18 11L24 6.5L18 2ZM0 15.5L6 20L12 15.5L6 11L0 15.5ZM18 11L12 15.5L18 20L24 15.5L18 11ZM6.02 21.05L12 17.5L17.98 21.05L12 24.5L6.02 21.05Z"/>
-              </svg>
-            </button>
+              <!-- Dropbox Button -->
+              <button id="btnDropbox" type="button" class="btn-cloud-stacked group/cloud" title="Select files from Dropbox" aria-label="Dropbox">
+                <svg class="w-4 h-4 sm:w-4.5 sm:h-4.5 fill-white transition-transform group-hover/cloud:scale-115" viewBox="0 0 528 512" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M264.4 116.3l-132 84.3 132 84.3-132 84.3L0 284.1l132.3-84.3L0 116.3 132.3 32l132.1 84.3zM131.6 395.7l132-84.3 132 84.3-132 84.3-132-84.3zm132.8-111.6l132-84.3-132-83.6L395.7 32 528 116.3l-132.3 84.3L528 284.8l-132.3 84.3-131.3-85z"/>
+                </svg>
+              </button>
+            </div>
           </div>
 
           <!-- Drop text only on desktop -->
@@ -221,18 +202,18 @@
   </main>
 
   <!-- ============================================================ -->
-  <!-- FLOATING ROYAL BLUE TOOLS BUTTON (Crossed Screwdriver & Wrench) -->
+  <!-- FLOATING ROYAL BLUE TOOLS BUTTON (Wrench Tightening Hex Nut) -->
   <!-- ============================================================ -->
   <button id="floatingToolsBtn" class="floating-tools-btn" aria-label="Toggle Quick Tools Preview" title="Quick Tools Preview">
-    <!-- Animated Independent Tools Box (Smooth Parallel Vertical Transition) -->
+    <!-- Animated Wrench Tightening Nut Box -->
     <div class="tools-btn-icon-box">
-      <!-- Full Solid Wrench -->
+      <!-- Hexagonal Nut with Center Hole (Inside Wrench Jaws) -->
+      <svg class="tool-svg tool-nut" viewBox="0 0 512 512" fill="currentColor">
+        <path fill-rule="evenodd" d="M 429.4 151.9 L 396.9 184.4 L 352.5 172.5 L 340.6 128.1 L 373.1 95.6 L 417.5 107.5 Z M 385 120.0 a 20 20 0 1 0 0.1 0 Z"/>
+      </svg>
+      <!-- Complete Solid Wrench -->
       <svg class="tool-svg tool-wrench" viewBox="0 0 512 512" fill="currentColor">
         <path d="M352 320c88.4 0 160-71.6 160-160c0-15.3-2.2-30.1-6.2-44.2c-3.1-10.8-16.4-13.2-24.3-5.3l-76.8 76.8c-3 3-7.1 4.7-11.3 4.7L336 192c-8.8 0-16-7.2-16-16l0-57.4c0-4.2 1.7-8.3 4.7-11.3l76.8-76.8c7.9-7.9 5.4-21.2-5.3-24.3C382.1 2.2 367.3 0 352 0C263.6 0 192 71.6 192 160c0 19.1 3.4 37.5 9.5 54.5L19.9 396.1C7.2 408.8 0 426.1 0 444.1C0 481.6 30.4 512 67.9 512c18 0 35.3-7.2 48-19.9L297.5 310.5c17 6.2 35.4 9.5 54.5 9.5zM80 408a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/>
-      </svg>
-      <!-- Full Solid Screwdriver -->
-      <svg class="tool-svg tool-screwdriver" viewBox="0 0 512 512" fill="currentColor">
-        <path d="M465 7c-8.5-8.5-22-9.4-31.6-2.1l-104 80c-5.9 4.5-9.4 11.6-9.4 19l0 54.1-85.6 85.6c6.7 4.2 13 9.3 18.8 15.1s10.9 12.2 15.1 18.8L353.9 192l54.1 0c7.5 0 14.5-3.5 19-9.4l80-104c7.4-9.6 6.5-23.1-2.1-31.6L465 7zM121.4 281.4l-112 112c-12.5 12.5-12.5 32.8 0 45.3l64 64c12.5 12.5 32.8 12.5 45.3 0l112-112c30.2-30.2 30.2-79.1 0-109.3s-79.1-30.2-109.3 0z"/>
       </svg>
     </div>
     <span>Tools</span>
