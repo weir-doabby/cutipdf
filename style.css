@@ -291,7 +291,7 @@ html.dark .brand-logo {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 8px;
   width: 100%;
   max-width: 320px;
   margin: 0 auto;
@@ -328,8 +328,8 @@ html.dark .brand-logo {
   color: #ffffff;
   font-weight: 700;
   border-radius: 16px;
-  min-height: 72px;
-  height: 72px;
+  min-height: 70px;
+  height: 70px;
   width: 100%;
   max-width: 320px;
   padding: 16px 24px;
@@ -348,12 +348,12 @@ html.dark .brand-logo {
 
 @media (min-width: 640px) {
   .btn-primary-action {
-    min-height: 76px;
-    height: 76px;
+    min-height: 74px;
+    height: 74px;
     width: auto;
     max-width: none;
-    padding: 20px 52px;
-    font-size: 22px;
+    padding: 18px 48px;
+    font-size: 21px;
   }
 }
 
@@ -368,21 +368,24 @@ html.dark .brand-logo {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-/* Cloud Source Buttons Wrap (Mobile: horizontal row underneath; Desktop: vertical stack beside) */
+/* Cloud Source Buttons Wrap (Mobile: horizontal row underneath, ALIGNED RIGHT CORNER; Desktop: vertical stack beside) */
 .cloud-buttons-wrap {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 14px;
+  justify-content: flex-end; /* Flush with right edge under Select button on Mobile like iLovePDF */
+  width: 100%;
+  max-width: 320px;
+  gap: 8px;
 }
 
 @media (min-width: 640px) {
   .cloud-buttons-wrap {
     flex-direction: column;
     justify-content: space-between;
-    height: 76px;
+    height: 74px;
     width: 48px;
+    max-width: 48px;
     gap: 8px;
     flex-shrink: 0;
   }
@@ -390,9 +393,9 @@ html.dark .brand-logo {
 
 /* Cloud Source Button (Google Drive & Dropbox) */
 .btn-cloud-source {
-  width: 48px;
-  height: 48px;
-  min-width: 48px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
   border-radius: 50%;
   background: linear-gradient(135deg, #ff5277 0%, #ff3366 50%, #e91e63 100%);
   color: #ffffff;
@@ -431,7 +434,8 @@ html.dark .brand-logo {
 .tool-dropzone {
   border: 2px dashed var(--border-color);
   background: var(--dropzone-bg);
-  border-radius: 26px;
+  border-radius: 24px;
+  padding: 1.5rem 1.5rem;
   transition: all 0.2s ease;
 }
 
@@ -439,7 +443,7 @@ html.dark .brand-logo {
   .tool-dropzone {
     border: none !important;
     background: transparent !important;
-    padding: 0.75rem 0 !important;
+    padding: 0.25rem 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
   }

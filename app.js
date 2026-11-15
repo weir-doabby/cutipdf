@@ -962,16 +962,16 @@ function initDropzoneEvents() {
   if (DOM.btnGoogleDrive) {
     DOM.btnGoogleDrive.addEventListener('click', (e) => {
       e.stopPropagation();
-      showToast('☁️ Google Drive: Pick your file via your device files browser!');
-      DOM.fileInput.click();
+      e.preventDefault();
+      window.open('https://drive.google.com/', '_blank', 'noopener,noreferrer');
     });
   }
 
   if (DOM.btnDropbox) {
     DOM.btnDropbox.addEventListener('click', (e) => {
       e.stopPropagation();
-      showToast('📦 Dropbox: Pick your file via your device files browser!');
-      DOM.fileInput.click();
+      e.preventDefault();
+      window.open('https://www.dropbox.com/', '_blank', 'noopener,noreferrer');
     });
   }
 

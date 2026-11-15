@@ -75,7 +75,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=20261115e">
+  <link rel="stylesheet" href="style.css?v=20261115f">
 </head>
 <body class="watercolor-paper-bg selection:bg-pink-500/20 selection:text-[#ff5277]">
 
@@ -102,8 +102,8 @@
     </button>
   </header>
 
-  <!-- Main Content Area -->
-  <main class="w-full max-w-6xl mx-auto px-5 py-8 flex-1">
+  <!-- Main Content Area (Snug & Cohesive Spacing to Header) -->
+  <main class="w-full max-w-6xl mx-auto px-5 pt-3 sm:pt-6 pb-8 flex-1">
 
     <!-- ============================================================ -->
     <!-- VIEW 1: ALL TOOLS CATALOG (Full iLovePDF Suite) -->
@@ -130,19 +130,19 @@
     <!-- ============================================================ -->
     <!-- VIEW 2: DEDICATED TOOL PAGE FOR EACH TOOL -->
     <!-- ============================================================ -->
-    <div id="view-tool-active" class="view-container max-w-4xl mx-auto space-y-8">
+    <div id="view-tool-active" class="view-container max-w-4xl mx-auto space-y-4 sm:space-y-5">
 
-      <!-- Tool Header with Gorgeous Vector (Centered) -->
-      <div class="text-center space-y-3">
-        <div id="toolVectorContainer" class="w-20 h-20 sm:w-24 sm:h-24 mx-auto flex items-center justify-center drop-shadow-sm">
+      <!-- Tool Header with Gorgeous Vector (Centered, Lower & Closer to Title) -->
+      <div class="text-center flex flex-col items-center space-y-1 sm:space-y-1.5">
+        <div id="toolVectorContainer" class="w-16 h-16 sm:w-20 sm:h-20 mx-auto flex items-center justify-center drop-shadow-xs">
           <!-- Injected SVG Vector -->
         </div>
 
         <div>
-          <h2 id="toolTitle" class="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-100">Tool Name</h2>
+          <h2 id="toolTitle" class="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight">Tool Name</h2>
         </div>
 
-        <p id="toolDesc" class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto leading-relaxed">
+        <p id="toolDesc" class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto leading-normal">
           Description
         </p>
       </div>
@@ -153,16 +153,16 @@
       </div>
 
       <!-- Upload Section (Responsive: Large Touch Button on Mobile, Comfortable Dropzone on Desktop) -->
-      <div id="toolDropzone" class="tool-dropzone p-4 sm:p-14 text-center cursor-pointer group">
+      <div id="toolDropzone" class="tool-dropzone text-center cursor-pointer group">
         <input type="file" id="fileInput" class="hidden" multiple>
 
-        <div class="flex flex-col items-center justify-center space-y-3.5">
+        <div class="flex flex-col items-center justify-center space-y-2.5">
           <!-- Main Action Buttons Wrap (Responsive: Stacked on Mobile like iLovePDF, Inline with Balancer on Desktop) -->
           <div class="action-buttons-wrap">
             <!-- Invisible Balancer on Left: balances the 48px cloud buttons on desktop to center Select button with 'or drop files here' -->
             <div class="desktop-balancer" aria-hidden="true"></div>
 
-            <!-- Big Primary Select Files Button (iLovePDF Style: Large touch target, 72px height, 20px bold font) -->
+            <!-- Big Primary Select Files Button (iLovePDF Style: Large touch target, 70px height, 20px bold font) -->
             <button id="btnSelectFiles" type="button" class="btn-primary-action">
               Select PDF files
             </button>
@@ -261,8 +261,8 @@
   </aside>
 
   <!-- Vector Illustrations Library -->
-  <script src="vectors.js?v=20261115e"></script>
+  <script src="vectors.js?v=20261115f"></script>
   <!-- Main Application Script -->
-  <script src="app.js?v=20261115e"></script>
+  <script src="app.js?v=20261115f"></script>
 </body>
 </html>
