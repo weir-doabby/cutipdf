@@ -504,6 +504,10 @@ function showAllToolsCatalogView() {
 
   DOM.viewToolActive.classList.remove('active');
   DOM.viewAllTools.classList.add('active');
+  const actionBar = document.getElementById('workspaceActionBar');
+  if (actionBar) actionBar.classList.remove('floating-mode');
+  const toolsBtn = document.getElementById('floatingToolsBtn');
+  if (toolsBtn) toolsBtn.classList.remove('elevated');
   document.title = 'CutiPDF • Clean, Fast & Complete PDF Studio';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -784,6 +788,11 @@ function openToolDedicatedPage(tool) {
   DOM.filesSelectedArea.classList.add('hidden');
   DOM.toolDropzone.classList.remove('hidden');
 
+  const actionBar = document.getElementById('workspaceActionBar');
+  if (actionBar) actionBar.classList.remove('floating-mode');
+  const toolsBtn = document.getElementById('floatingToolsBtn');
+  if (toolsBtn) toolsBtn.classList.remove('elevated');
+
   DOM.viewAllTools.classList.remove('active');
   DOM.viewToolActive.classList.add('active');
 
@@ -1030,9 +1039,15 @@ function initDropzoneEvents() {
 
   DOM.btnClearFiles.addEventListener('click', () => {
     state.selectedFiles = [];
+    state.uploadedPdfs = [];
     state.workspaceItems = [];
     DOM.filesSelectedArea.classList.add('hidden');
     DOM.toolDropzone.classList.remove('hidden');
+
+    const actionBar = document.getElementById('workspaceActionBar');
+    if (actionBar) actionBar.classList.remove('floating-mode');
+    const toolsBtn = document.getElementById('floatingToolsBtn');
+    if (toolsBtn) toolsBtn.classList.remove('elevated');
   });
 
   DOM.btnExecuteAction.addEventListener('click', executeActiveToolAction);
@@ -1127,6 +1142,7 @@ async function buildWorkspacePreview(newFiles) {
       try {
         const bytes = await f.arrayBuffer();
         const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+        showPdfLoadingModal(pdf.numPages, f.name);
         for (let i = 1; i <= pdf.numPages; i++) {
           const thumb = await renderPdfPageThumb(pdf, i);
           state.workspaceItems.push({
@@ -1140,9 +1156,14 @@ async function buildWorkspacePreview(newFiles) {
             selected: true,
             removed: false
           });
+          const pct = Math.round((i / pdf.numPages) * 100);
+          updatePdfLoadingProgress(i, pdf.numPages, pct);
+          await new Promise(r => setTimeout(r, 0));
         }
       } catch (e) {
         console.warn('PDF pages render error:', e);
+      } finally {
+        hidePdfLoadingModal();
       }
     }
   }
@@ -1185,6 +1206,9 @@ async function ensurePdfPagesRendered(fileRecord) {
       pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
       fileRecord.pdfDoc = pdf;
     }
+    if (fileRecord.pageCount > 2) {
+      showPdfLoadingModal(fileRecord.pageCount, fileRecord.name);
+    }
     for (let i = 1; i <= fileRecord.pageCount; i++) {
       const thumb = await renderPdfPageThumb(pdf, i);
       fileRecord.pages.push({
@@ -1199,9 +1223,18 @@ async function ensurePdfPagesRendered(fileRecord) {
         rotation: fileRecord.rotation || 0,
         removed: false
       });
+      if (fileRecord.pageCount > 2) {
+        const pct = Math.round((i / fileRecord.pageCount) * 100);
+        updatePdfLoadingProgress(i, fileRecord.pageCount, pct);
+        await new Promise(r => setTimeout(r, 0));
+      }
     }
   } catch (e) {
     console.warn('Error rendering pages for', fileRecord.name, e);
+  } finally {
+    if (fileRecord.pageCount > 2) {
+      hidePdfLoadingModal();
+    }
   }
 }
 
@@ -1260,6 +1293,139 @@ window.setPageLayoutMode = function(mode) {
 };
 
 // ==========================================
+// Cute PDF Loading Modal with Realtime Percentage (صفحه کیوت لودینگ با درصد)
+// ==========================================
+function showPdfLoadingModal(totalPages = 1, fileName = '') {
+  const modal = document.getElementById('pdfLoadingModal');
+  const status = document.getElementById('pdfLoadingStatusText');
+  const percent = document.getElementById('pdfLoadingPercent');
+  const bar = document.getElementById('pdfLoadingProgressBar');
+  if (modal) {
+    if (status) status.textContent = `Preparing ${totalPages} pages in browser...`;
+    if (percent) percent.textContent = '0%';
+    if (bar) bar.style.width = '0%';
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    modal.classList.add('opacity-100');
+  }
+}
+
+function updatePdfLoadingProgress(current, total, pct) {
+  const status = document.getElementById('pdfLoadingStatusText');
+  const percent = document.getElementById('pdfLoadingPercent');
+  const bar = document.getElementById('pdfLoadingProgressBar');
+  if (status) status.textContent = `Rendering page ${current} of ${total}...`;
+  if (percent) percent.textContent = `${pct}%`;
+  if (bar) bar.style.width = `${pct}%`;
+}
+
+function hidePdfLoadingModal() {
+  const modal = document.getElementById('pdfLoadingModal');
+  if (modal) {
+    modal.classList.remove('opacity-100');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+  }
+}
+
+// ==========================================
+// High Resolution Page Preview Lightbox Modal (پریویو و بزرگنمایی صفحه)
+// ==========================================
+state.previewModalIndex = null;
+
+window.openPagePreviewModal = function(index) {
+  const item = state.workspaceItems[index];
+  if (!item) return;
+
+  state.previewModalIndex = index;
+  const modal = document.getElementById('pagePreviewModal');
+  const title = document.getElementById('previewModalTitle');
+  const statusBadge = document.getElementById('previewModalStatusBadge');
+  const img = document.getElementById('previewModalImage');
+  const overlay = document.getElementById('previewModalRemovedOverlay');
+  const btnPrev = document.getElementById('btnPreviewPrev');
+  const btnNext = document.getElementById('btnPreviewNext');
+  const btnToggle = document.getElementById('btnPreviewToggleRemove');
+
+  if (title) title.textContent = `Page ${item.pageNum || (index + 1)} of ${state.workspaceItems.length}`;
+  if (img) {
+    img.src = item.previewUrl;
+    img.style.transform = `rotate(${item.rotation || 0}deg)`;
+  }
+
+  if (item.removed) {
+    if (statusBadge) {
+      statusBadge.textContent = 'Marked to Remove';
+      statusBadge.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800';
+    }
+    if (overlay) overlay.classList.remove('hidden');
+    if (btnToggle) {
+      btnToggle.className = 'px-4 py-2 rounded-xl text-xs font-bold shadow-sm inline-flex items-center gap-1.5 transition bg-emerald-500 hover:bg-emerald-600 text-white cursor-pointer active:scale-95';
+      btnToggle.innerHTML = `
+        <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 1 0 2.34-5.66L4 8m0 0V3m0 5h5"/></svg>
+        <span>Restore Page</span>
+      `;
+    }
+  } else {
+    if (statusBadge) {
+      statusBadge.textContent = 'Keep';
+      statusBadge.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800';
+    }
+    if (overlay) overlay.classList.add('hidden');
+    if (btnToggle) {
+      btnToggle.className = 'px-4 py-2 rounded-xl text-xs font-bold shadow-sm inline-flex items-center gap-1.5 transition bg-red-500 hover:bg-red-600 text-white cursor-pointer active:scale-95';
+      btnToggle.innerHTML = `
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+        <span>Mark to Remove</span>
+      `;
+    }
+  }
+
+  if (btnPrev) btnPrev.disabled = (index === 0);
+  if (btnNext) btnNext.disabled = (index === state.workspaceItems.length - 1);
+
+  if (modal) {
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    modal.classList.add('opacity-100');
+  }
+};
+
+window.closePagePreviewModal = function() {
+  const modal = document.getElementById('pagePreviewModal');
+  if (modal) {
+    modal.classList.remove('opacity-100');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+  }
+  state.previewModalIndex = null;
+};
+
+window.navigatePagePreview = function(delta) {
+  if (state.previewModalIndex === null) return;
+  const newIdx = state.previewModalIndex + delta;
+  if (newIdx >= 0 && newIdx < state.workspaceItems.length) {
+    openPagePreviewModal(newIdx);
+  }
+};
+
+window.toggleRemoveInPreviewModal = function() {
+  if (state.previewModalIndex === null) return;
+  const idx = state.previewModalIndex;
+  toggleRemoveWorkspaceItem(idx);
+  openPagePreviewModal(idx);
+};
+
+// Keyboard listener for Page Preview Modal
+document.addEventListener('keydown', (e) => {
+  const modal = document.getElementById('pagePreviewModal');
+  if (!modal || modal.classList.contains('pointer-events-none')) return;
+  if (e.key === 'Escape') {
+    closePagePreviewModal();
+  } else if (e.key === 'ArrowLeft') {
+    navigatePagePreview(-1);
+  } else if (e.key === 'ArrowRight') {
+    navigatePagePreview(1);
+  }
+});
+
+// ==========================================
 // Render Interactive Workspace Cards (Smallpdf Style)
 // ==========================================
 function renderInteractiveWorkspace() {
@@ -1313,7 +1479,7 @@ function renderInteractiveWorkspace() {
   const btnClear = document.getElementById('btnClearFiles');
 
   if (toolId === 'remove-pages') {
-    if (layoutSwitcher) layoutSwitcher.classList.remove('hidden');
+    if (layoutSwitcher) layoutSwitcher.classList.add('hidden');
     if (modeSwitcher) modeSwitcher.classList.add('hidden');
     if (btnRestoreAll) btnRestoreAll.classList.remove('hidden');
     if (btnAddMore) btnAddMore.classList.remove('hidden');
@@ -1333,6 +1499,36 @@ function renderInteractiveWorkspace() {
       } else {
         modeSwitcher.classList.add('hidden');
       }
+    }
+  }
+
+  // Floating Action Bar & Elevating Floating Tools Button for remove-pages
+  const actionBar = document.getElementById('workspaceActionBar');
+  const toolsBtn = document.getElementById('floatingToolsBtn');
+
+  if (toolId === 'remove-pages') {
+    if (actionBar) actionBar.classList.add('floating-mode');
+    if (toolsBtn) toolsBtn.classList.add('elevated');
+
+    const removedCount = state.workspaceItems.filter(i => i.removed).length;
+    if (DOM.actionButtonText) {
+      if (removedCount === 0) {
+        DOM.actionButtonText.textContent = 'Select Pages to Remove';
+        DOM.btnExecuteAction.disabled = true;
+        DOM.btnExecuteAction.classList.add('opacity-50', 'cursor-not-allowed');
+      } else {
+        DOM.actionButtonText.textContent = `Remove ${removedCount} ${removedCount === 1 ? 'Page' : 'Pages'} & Download`;
+        DOM.btnExecuteAction.disabled = false;
+        DOM.btnExecuteAction.classList.remove('opacity-50', 'cursor-not-allowed');
+      }
+    }
+  } else {
+    if (actionBar) actionBar.classList.remove('floating-mode');
+    if (toolsBtn) toolsBtn.classList.remove('elevated');
+    DOM.btnExecuteAction.disabled = false;
+    DOM.btnExecuteAction.classList.remove('opacity-50', 'cursor-not-allowed');
+    if (DOM.actionButtonText) {
+      DOM.actionButtonText.textContent = state.activeTool ? state.activeTool.actionText : 'Process';
     }
   }
 
@@ -1380,57 +1576,48 @@ function renderInteractiveWorkspace() {
     card.addEventListener('drop', (e) => handleCardDrop(e, index));
     card.addEventListener('dragend', (e) => handleCardDragEnd(e));
 
-    // Top badges
-    let orderBadge = `<div class="absolute top-2 left-2 z-10 bg-zinc-900/80 dark:bg-black/80 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-lg border border-white/10 shadow-xs">${index + 1}</div>`;
+    // Top badges: For remove-pages, Page Number on Left and Zoom Preview on Right
+    let orderBadge = `<div class="absolute top-2 left-2 z-10 bg-zinc-900/80 dark:bg-black/80 backdrop-blur-md text-white text-[11px] font-bold px-2 py-0.5 rounded-lg border border-white/10 shadow-xs">${index + 1}</div>`;
 
     let infoBadge = '';
-    if (item.type === 'pdf-file') {
-      infoBadge = `<div class="absolute top-2 right-2 z-10 bg-[#ff5277] text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-xs">${item.pageCount || 1} pgs</div>`;
-    } else if (item.type === 'pdf-page') {
-      infoBadge = `<div class="absolute top-2 right-2 z-10 bg-white/90 dark:bg-zinc-800/90 text-zinc-700 dark:text-zinc-200 text-[10px] font-bold px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-zinc-700 shadow-xs truncate max-w-[80px]" title="${item.fileName || ''}">${item.name || `P. ${item.pageNum}`}</div>`;
+    let zoomPreviewBtn = '';
+
+    if (toolId === 'remove-pages') {
+      zoomPreviewBtn = `
+        <button type="button" onclick="openPagePreviewModal(${index}); event.stopPropagation();" class="absolute top-2 right-2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white/95 dark:bg-zinc-800/95 text-zinc-700 dark:text-zinc-200 hover:text-[#ff5277] hover:bg-pink-50 dark:hover:bg-zinc-700 shadow-sm border border-zinc-200/80 dark:border-zinc-700 flex items-center justify-center transition-all hover:scale-110 active:scale-95 cursor-pointer" title="Zoom & Preview Page">
+          <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
+        </button>
+      `;
+    } else {
+      if (item.type === 'pdf-file') {
+        infoBadge = `<div class="absolute top-2 right-2 z-10 bg-[#ff5277] text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-xs">${item.pageCount || 1} pgs</div>`;
+      } else if (item.type === 'pdf-page') {
+        infoBadge = `<div class="absolute top-2 right-2 z-10 bg-white/90 dark:bg-zinc-800/90 text-zinc-700 dark:text-zinc-200 text-[10px] font-bold px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-zinc-700 shadow-xs truncate max-w-[80px]" title="${item.fileName || ''}">${item.name || `P. ${item.pageNum}`}</div>`;
+      }
     }
 
-    // Bold Permanent Marker Cross (انگار با ماژیک قرمز کشیده شده) + Hollow Green Circle Restore Button
+    // Flat Style Red Cross (iStock Reference: gm1210969290) - Simple & Flat
     let removedOverlayHtml = '';
     if (item.removed) {
       removedOverlayHtml = `
-        <!-- Permanent Red Marker Cross (انگار با ماژیک قرمز کشیده شده) -->
-        <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-15 bg-red-950/10 backdrop-blur-[0.5px]">
-          <svg viewBox="0 0 100 100" class="${isContinuous ? 'w-32 h-32 sm:w-40 sm:h-40' : 'w-24 h-24 sm:w-28 sm:h-28'} pointer-events-none" style="filter: drop-shadow(0 2px 5px rgba(225, 29, 72, 0.35));">
-            <g stroke-linecap="round" stroke-linejoin="round">
-              <!-- Marker Stroke 1: Top-Left to Bottom-Right (natural fluid hand curve) -->
-              <path d="M 19 21 C 36 38, 62 60, 81 79" fill="none" stroke="#e11d48" stroke-width="13" opacity="0.88" />
-              <path d="M 20 22 C 37 38, 61 59, 80 78" fill="none" stroke="#be123c" stroke-width="7.5" opacity="0.5" />
-
-              <!-- Marker Stroke 2: Top-Right to Bottom-Left (natural cross hand curve) -->
-              <path d="M 81 21 C 63 39, 37 61, 19 79" fill="none" stroke="#e11d48" stroke-width="13" opacity="0.88" />
-              <path d="M 80 22 C 62 39, 38 60, 20 78" fill="none" stroke="#be123c" stroke-width="7.5" opacity="0.5" />
-            </g>
-            <!-- Ink Overlap Concentration (جذب دوبل جوهر ماژیک روی تقاطع) -->
-            <ellipse cx="50" cy="50" rx="8" ry="7.5" fill="#881337" opacity="0.45" />
+        <!-- Flat Red X Symbol (Clean & bold flat cross) -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-15 bg-black/10 dark:bg-black/30 backdrop-blur-[0.5px]">
+          <svg viewBox="0 0 100 100" class="${isContinuous ? 'w-28 h-28 sm:w-36 sm:h-36' : 'w-20 h-20 sm:w-24 sm:h-24'} pointer-events-none drop-shadow-md text-red-500" fill="none" stroke="currentColor">
+            <path d="M22 22 L78 78 M78 22 L22 78" stroke="#ef4444" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
-        </div>
-
-        <!-- Hollow Green Circle Restore Button (دایره سبز توخالی ساده) slightly below -->
-        <div class="absolute ${isContinuous ? 'bottom-4' : 'bottom-3'} left-1/2 -translate-x-1/2 z-25">
-          <button type="button" onclick="toggleRemoveWorkspaceItem(${index}); event.stopPropagation();" class="${isContinuous ? 'w-10 h-10' : 'w-8 h-8'} rounded-full border-2 border-emerald-500 bg-white/95 dark:bg-zinc-900/95 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 text-emerald-500 hover:text-emerald-600 shadow-sm flex items-center justify-center transition-all hover:scale-110 active:scale-95 cursor-pointer" title="Restore Page">
-            <svg class="${isContinuous ? 'w-5 h-5' : 'w-4 h-4'} stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 1 0 2.34-5.66L4 8m0 0V3m0 5h5"/>
-            </svg>
-          </button>
         </div>
       `;
     }
 
-    // Hover Action Buttons (shown only when NOT removed)
+    // Hover Action Buttons (shown only when NOT removed and NOT remove-pages)
     let hoverActionsHtml = '';
-    if (!item.removed) {
+    if (!item.removed && toolId !== 'remove-pages') {
       hoverActionsHtml = `
         <div class="card-hover-actions absolute inset-0 bg-black/35 backdrop-blur-[1px] flex items-center justify-center gap-2 z-20">
           <button type="button" onclick="rotateWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-[#ff5277] hover:bg-pink-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Rotate 90 degrees">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
           </button>
-          <button type="button" onclick="${toolId === 'remove-pages' ? `toggleRemoveWorkspaceItem(${index})` : `removeWorkspaceItem(${index})`}; event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-400 hover:text-red-500 hover:bg-red-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="${toolId === 'remove-pages' ? 'Mark for Removal' : 'Delete'}">
+          <button type="button" onclick="removeWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-400 hover:text-red-500 hover:bg-red-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Delete">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
           </button>
         </div>
@@ -1445,6 +1632,7 @@ function renderInteractiveWorkspace() {
         <div class="${thumbHeight} bg-zinc-100 dark:bg-zinc-800/60 flex items-center justify-center overflow-hidden p-2 relative group/thumb">
           ${orderBadge}
           ${infoBadge}
+          ${zoomPreviewBtn}
           <img src="${item.previewUrl}" alt="${item.name}" style="transform: rotate(${item.rotation || 0}deg);" class="max-h-full max-w-full object-contain transition-transform duration-200 rounded-md shadow-xs pointer-events-none">
           ${removedOverlayHtml}
           ${hoverActionsHtml}
@@ -1454,6 +1642,8 @@ function renderInteractiveWorkspace() {
       thumbHtml = `
         <div class="${thumbHeight} bg-pink-50/50 dark:bg-zinc-800/50 flex flex-col items-center justify-center p-3 text-center relative">
           ${orderBadge}
+          ${infoBadge}
+          ${zoomPreviewBtn}
           <div class="w-10 h-10 rounded-xl bg-pink-100 dark:bg-zinc-700 text-[#ff5277] flex items-center justify-center font-bold text-sm mb-1.5">PDF</div>
           <p class="text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 truncate w-full px-1">${item.name}</p>
           <p class="text-[10px] text-zinc-400 mt-0.5">${item.size || ''}</p>
@@ -1463,23 +1653,26 @@ function renderInteractiveWorkspace() {
       `;
     }
 
-    // Card Footer with Name and Touch Arrows (clean, no extra labels)
-    let actionsHtml = `
-      <div class="p-2 bg-white dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-1 text-xs">
-        <div class="truncate flex-1 min-w-0 pr-1">
-          <p class="text-[11px] font-bold text-zinc-800 dark:text-zinc-200 truncate" title="${item.name}">${item.name}</p>
-          ${item.size ? `<span class="text-[10px] text-zinc-400">${item.size}</span>` : ''}
+    // Card Footer with Name and Touch Arrows (omitted for remove-pages for clean look)
+    let actionsHtml = '';
+    if (toolId !== 'remove-pages') {
+      actionsHtml = `
+        <div class="p-2 bg-white dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-1 text-xs">
+          <div class="truncate flex-1 min-w-0 pr-1">
+            <p class="text-[11px] font-bold text-zinc-800 dark:text-zinc-200 truncate" title="${item.name}">${item.name}</p>
+            ${item.size ? `<span class="text-[10px] text-zinc-400">${item.size}</span>` : ''}
+          </div>
+          <div class="flex items-center gap-0.5 flex-shrink-0">
+            <button type="button" onclick="moveWorkspaceItem(${index}, -1); event.stopPropagation();" ${index === 0 ? 'disabled' : ''} class="w-6 h-6 rounded-md hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff5277] flex items-center justify-center disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer" title="Move Left">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <button type="button" onclick="moveWorkspaceItem(${index}, 1); event.stopPropagation();" ${index === state.workspaceItems.length - 1 ? 'disabled' : ''} class="w-6 h-6 rounded-md hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff5277] flex items-center justify-center disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer" title="Move Right">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
         </div>
-        <div class="flex items-center gap-0.5 flex-shrink-0">
-          <button type="button" onclick="moveWorkspaceItem(${index}, -1); event.stopPropagation();" ${index === 0 ? 'disabled' : ''} class="w-6 h-6 rounded-md hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff5277] flex items-center justify-center disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer" title="Move Left">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
-          </button>
-          <button type="button" onclick="moveWorkspaceItem(${index}, 1); event.stopPropagation();" ${index === state.workspaceItems.length - 1 ? 'disabled' : ''} class="w-6 h-6 rounded-md hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff5277] flex items-center justify-center disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer" title="Move Right">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-          </button>
-        </div>
-      </div>
-    `;
+      `;
+    }
 
     // Click toggle for Split / Remove Pages tools
     if (toolId === 'remove-pages' || toolId === 'split-pdf' || toolId === 'extract-pages') {
