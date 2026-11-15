@@ -683,6 +683,43 @@ function closeQuickTools() {
   document.body.classList.remove('overflow-hidden');
 }
 
+// Dynamically align floating tools button right edge with bottom action button (Responsive Mobile & Tablet)
+function alignFloatingToolsButton() {
+  const toolsBtn = document.getElementById('floatingToolsBtn');
+  const actionBtn = document.getElementById('btnExecuteAction');
+  const actionBar = document.getElementById('workspaceActionBar');
+  if (!toolsBtn || !actionBtn || !actionBar) return;
+
+  const toolId = state.activeTool ? state.activeTool.id : '';
+  const isRemovePagesFloating = (toolId === 'remove-pages' && state.workspaceItems && state.workspaceItems.length > 0 && !DOM.filesSelectedArea.classList.contains('hidden'));
+
+  if (isRemovePagesFloating) {
+    const rect = actionBtn.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0) {
+      // The rightmost edge of actionBtn is at rect.right.
+      // The exact distance from the right edge of viewport to the rightmost edge of actionBtn:
+      const rightFromViewport = Math.max(16, Math.round(window.innerWidth - rect.right));
+      // Distance from bottom of viewport to the top of actionBtn + 12px gap:
+      const bottomFromViewport = Math.round(window.innerHeight - rect.top) + 12;
+
+      toolsBtn.style.setProperty('right', `${rightFromViewport}px`, 'important');
+      toolsBtn.style.setProperty('bottom', `${bottomFromViewport}px`, 'important');
+      toolsBtn.style.setProperty('left', 'auto', 'important');
+      toolsBtn.classList.add('elevated-mobile');
+      return;
+    }
+  }
+
+  // Reset to default CSS positioning
+  toolsBtn.style.removeProperty('right');
+  toolsBtn.style.removeProperty('bottom');
+  toolsBtn.style.removeProperty('left');
+  toolsBtn.classList.remove('elevated-mobile');
+}
+
+window.addEventListener('resize', alignFloatingToolsButton);
+window.addEventListener('scroll', alignFloatingToolsButton, { passive: true });
+
 function renderQuickToolsModalGrid(query = '') {
   const container = DOM.quickToolsModalGrid;
   if (!container) return;
@@ -1563,20 +1600,19 @@ function renderInteractiveWorkspace() {
         <span id="actionButtonText">Download PDF</span>
       `;
     } else {
-      // Step 1: User is selecting pages to remove
+      // Step 1: User is selecting pages to remove (NO icons on pink button as requested)
+      const remainingCount = state.workspaceItems.length - removedCount;
       if (removedCount === 0) {
         DOM.btnExecuteAction.disabled = true;
         DOM.btnExecuteAction.classList.add('opacity-50', 'cursor-not-allowed');
         DOM.btnExecuteAction.innerHTML = `
-          <svg class="w-5 h-5 mr-2 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-          <span id="actionButtonText">Select Pages to Remove</span>
+          <span id="actionButtonText">Remove Pages (0 marked)</span>
         `;
       } else {
         DOM.btnExecuteAction.disabled = false;
         DOM.btnExecuteAction.classList.remove('opacity-50', 'cursor-not-allowed');
         DOM.btnExecuteAction.innerHTML = `
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-          <span id="actionButtonText">Remove ${removedCount} ${removedCount === 1 ? 'Page' : 'Pages'}</span>
+          <span id="actionButtonText">Remove ${removedCount} ${removedCount === 1 ? 'Page' : 'Pages'} (${remainingCount} remaining)</span>
         `;
       }
     }
@@ -1773,6 +1809,10 @@ function renderInteractiveWorkspace() {
       txtSpan.textContent = `${state.activeTool.actionText} (${activeCount})`;
     }
   }
+
+  // Ensure floating tools button right edge matches bottom action button
+  requestAnimationFrame(alignFloatingToolsButton);
+  setTimeout(alignFloatingToolsButton, 100);
 }
 
 // Drag and Drop Handlers
@@ -1980,6 +2020,19 @@ async function executeActiveToolAction() {
           return;
         }
 
+        // Show Processing in Browser... on the button as requested
+        DOM.btnExecuteAction.disabled = true;
+        DOM.btnExecuteAction.innerHTML = `
+          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span id="actionButtonText">Processing in Browser...</span>
+        `;
+
+        // Brief delay so user clearly sees "Processing in Browser..." on the button
+        await new Promise(r => setTimeout(r, 450));
+
         // Save reference to master file and original items
         if (!state.savedOriginalFile && state.workspaceItems[0]) {
           state.savedOriginalFile = state.workspaceItems[0].file;
@@ -1992,7 +2045,7 @@ async function executeActiveToolAction() {
         state.workspaceItems = remaining;
         state.removePagesProcessed = true;
 
-        // Re-render so marked pages immediately vanish from the grid
+        // Re-render so marked pages immediately vanish from the grid and button turns into Download PDF
         renderInteractiveWorkspace();
         showToast(`✅ ${marked.length} ${marked.length === 1 ? 'page' : 'pages'} removed! Click Download PDF to save.`);
         return;
@@ -2283,6 +2336,15 @@ async function engineRemovePagesDownload() {
     return;
   }
 
+  DOM.btnExecuteAction.disabled = true;
+  DOM.btnExecuteAction.innerHTML = `
+    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+    <span id="actionButtonText">Processing in Browser...</span>
+  `;
+
   showToast('Generating your new PDF...');
   const bytes = await masterFile.arrayBuffer();
   const doc = await PDFDocument.load(bytes);
@@ -2294,6 +2356,10 @@ async function engineRemovePagesDownload() {
   if (pagesToKeep.length === 0) {
     showToast('⚠️ No pages to keep in the new PDF.');
     DOM.btnExecuteAction.disabled = false;
+    DOM.btnExecuteAction.innerHTML = `
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+      <span id="actionButtonText">Download PDF</span>
+    `;
     return;
   }
 
@@ -2304,7 +2370,12 @@ async function engineRemovePagesDownload() {
   const out = await newDoc.save();
   downloadBlob(new Blob([out], { type: 'application/pdf' }), `Pages_Removed_${masterFile.name}`);
   showToast(`✅ Successfully downloaded! Document has ${pagesToKeep.length} page(s).`);
+
   DOM.btnExecuteAction.disabled = false;
+  DOM.btnExecuteAction.innerHTML = `
+    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+    <span id="actionButtonText">Download PDF</span>
+  `;
 }
 
 // 6. Organize PDF (Saves new user arrangement)

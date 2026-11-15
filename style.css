@@ -310,10 +310,10 @@ html.dark .brand-logo {
     font-size: 15px !important;
   }
 
-  /* در موبایل دکمه تولز بالاتر و چپ‌تر می‌آید تا با دکمه ریموو هم‌راستا، شیک و مرتب دیده شود */
+  /* در موبایل و تبلت سمت راست دکمه تولز دقیقا هم‌راستای خط سمت راست دکمه ریموو/دانلود قرار می‌گیرد */
   .floating-tools-btn.elevated-mobile {
-    right: calc(24px + env(safe-area-inset-right, 0px)) !important;
-    bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+    right: calc(16px + env(safe-area-inset-right, 0px)) !important;
+    bottom: calc(88px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
 
