@@ -141,8 +141,11 @@
         <div class="flex flex-col items-center justify-center space-y-3.5">
           <!-- Main Action Buttons Row (iLovePDF Style: Big Button + Vertically Stacked Google Drive & Dropbox) -->
           <div class="inline-flex items-center justify-center gap-2 sm:gap-2.5 mx-auto max-w-full">
-            <!-- Big Primary Select Files Button -->
-            <button id="btnSelectFiles" type="button" class="btn-primary-action h-[58px] sm:h-[64px] px-8 sm:px-12 text-base sm:text-lg font-bold shadow-lg">
+            <!-- Invisible Balancer on Left: balances the 44px cloud buttons to center Select button with 'or drop files here' -->
+            <div class="w-[44px] flex-shrink-0 invisible pointer-events-none select-none" aria-hidden="true"></div>
+
+            <!-- Big Primary Select Files Button (Now centered right over 'or drop files here') -->
+            <button id="btnSelectFiles" type="button" class="btn-primary-action h-[58px] sm:h-[64px] px-6 sm:px-12 text-base sm:text-lg font-bold shadow-lg">
               Select PDF files
             </button>
 
@@ -205,9 +208,9 @@
   <!-- FLOATING ROYAL BLUE TOOLS BUTTON (Adobe Stock Gear & Wrench Logo) -->
   <!-- ============================================================ -->
   <button id="floatingToolsBtn" class="floating-tools-btn" aria-label="Toggle Quick Tools Preview" title="Quick Tools Preview">
-    <!-- Animated Wrench Inside Gear (Exact Adobe Stock Tool Logo) -->
+    <!-- Animated Wrench Inside Gear (Exact Adobe Stock Tool Logo - Zoomed In) -->
     <div class="tools-btn-icon-box">
-      <svg class="tool-svg" viewBox="0 0 512 512" fill="currentColor">
+      <svg class="tool-svg" viewBox="100 100 312 312" fill="currentColor">
         <!-- 8-Tooth Outer Gear with Channel -->
         <path class="tool-gear" d="M 237.5 112.4 L 273.1 112.4 L 275.9 113.8 L 277.3 120.9 L 278.8 122.3 L 278.8 130.8 L 280.2 132.3 L 280.2 139.4 L 281.6 142.2 L 284.4 145.1 L 302.9 150.8 L 311.5 155.0 L 314.3 157.9 L 320.0 155.0 L 338.5 140.8 L 344.2 140.8 L 347.0 142.2 L 368.4 163.6 L 369.8 166.4 L 369.8 172.1 L 352.7 194.8 L 361.2 210.5 L 365.5 226.1 L 371.2 230.4 L 378.3 230.4 L 379.7 231.8 L 394.0 233.2 L 396.8 234.7 L 398.2 237.5 L 398.2 273.1 L 396.8 275.9 L 389.7 277.3 L 388.3 278.8 L 379.7 278.8 L 378.3 280.2 L 371.2 280.2 L 368.4 281.6 L 365.5 284.4 L 362.7 294.4 L 361.2 294.4 L 338.5 271.6 L 339.9 270.2 L 339.9 258.8 L 341.3 257.4 L 341.3 253.2 L 339.9 251.7 L 339.9 240.4 L 338.5 238.9 L 335.6 224.7 L 330.0 213.3 L 320.0 199.1 L 311.5 190.6 L 300.1 182.0 L 285.9 174.9 L 271.6 172.1 L 270.2 170.7 L 258.8 170.7 L 257.4 169.2 L 253.2 169.2 L 251.7 170.7 L 240.4 170.7 L 238.9 172.1 L 224.7 174.9 L 210.5 182.0 L 199.1 190.6 L 190.6 199.1 L 180.6 213.3 L 174.9 224.7 L 172.1 238.9 L 170.7 240.4 L 170.7 251.7 L 169.2 253.2 L 169.2 257.4 L 170.7 258.8 L 170.7 270.2 L 172.1 271.6 L 174.9 285.9 L 180.6 297.2 L 190.6 311.5 L 199.1 320.0 L 210.5 328.5 L 224.7 335.6 L 238.9 338.5 L 240.4 339.9 L 251.7 339.9 L 253.2 341.3 L 257.4 341.3 L 258.8 339.9 L 270.2 339.9 L 293.0 362.7 L 291.6 364.1 L 284.4 365.5 L 281.6 368.4 L 280.2 371.2 L 280.2 378.3 L 278.8 379.7 L 277.3 394.0 L 275.9 396.8 L 273.1 398.2 L 237.5 398.2 L 234.7 396.8 L 233.2 389.7 L 231.8 388.3 L 231.8 379.7 L 230.4 378.3 L 230.4 371.2 L 229.0 368.4 L 226.1 365.5 L 207.6 359.8 L 199.1 355.6 L 196.3 352.7 L 190.6 355.6 L 172.1 369.8 L 166.4 369.8 L 163.6 368.4 L 142.2 347.0 L 140.8 344.2 L 140.8 338.5 L 157.9 315.7 L 149.3 300.1 L 145.1 284.4 L 139.4 280.2 L 132.3 280.2 L 130.8 278.8 L 116.6 277.3 L 113.8 275.9 L 112.4 273.1 L 112.4 237.5 L 113.8 234.7 L 120.9 233.2 L 122.3 231.8 L 130.8 231.8 L 132.3 230.4 L 139.4 230.4 L 142.2 229.0 L 145.1 226.1 L 149.3 210.5 L 155.0 199.1 L 157.9 196.3 L 155.0 190.6 L 140.8 172.1 L 140.8 166.4 L 142.2 163.6 L 163.6 142.2 L 166.4 140.8 L 172.1 140.8 L 194.8 157.9 L 207.6 150.8 L 226.1 145.1 L 230.4 139.4 L 230.4 130.8 L 231.8 129.4 L 233.2 116.6 L 234.7 113.8 L 237.5 112.4 Z" />
         <!-- Concentric Wrench -->

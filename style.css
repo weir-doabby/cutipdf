@@ -239,11 +239,11 @@ html.dark .brand-logo {
   border-color: #93c5fd;
 }
 
-/* Tools Icon Stage (Exact Adobe Stock Tool Logo: Gear & Concentric Wrench) */
+/* Tools Icon Stage (Exact Adobe Stock Tool Logo: Gear & Concentric Wrench - Zoomed In) */
 .tools-btn-icon-box {
   position: relative;
-  width: 28px;
-  height: 28px;
+  width: 35px;
+  height: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -252,10 +252,10 @@ html.dark .brand-logo {
 
 .tool-svg {
   position: absolute;
-  width: 28px;
-  height: 28px;
-  min-width: 28px;
-  min-height: 28px;
+  width: 35px;
+  height: 35px;
+  min-width: 35px;
+  min-height: 35px;
   top: 0;
   left: 0;
   fill: #ffffff;
@@ -269,12 +269,12 @@ html.dark .brand-logo {
   color: #ffffff;
 }
 
-/* Wrench Inside Gear: Pivots smoothly around concentric center (256, 256) */
+/* Wrench Inside Gear: Pivots smoothly around concentric center (50% 50% / 256, 256) */
 .tool-wrench {
   fill: #ffffff;
   color: #ffffff;
   transform-box: view-box;
-  transform-origin: 256px 256px;
+  transform-origin: 50% 50%;
   animation: wrenchTightenGear 4.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
