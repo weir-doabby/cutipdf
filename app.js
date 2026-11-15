@@ -270,6 +270,7 @@ const state = {
   uploadedPdfs: [], // Structured PDF metadata: [{ id, file, name, size, pageCount, coverUrl, rotation, pdfDoc, pages }]
   workspaceItems: [], // Current view items
   workspaceViewMode: 'file', // 'file' or 'page'
+  pageLayoutMode: 'grid', // 'grid' or 'continuous'
   draggedItemIndex: null,
   toolOptions: {},
   theme: localStorage.getItem('cutipdf_theme_v3') || 'light'
@@ -1242,6 +1243,22 @@ window.setWorkspaceViewMode = async function(mode) {
   renderInteractiveWorkspace();
 };
 
+window.setPageLayoutMode = function(mode) {
+  state.pageLayoutMode = mode;
+  const btnGrid = document.getElementById('btnLayoutGrid');
+  const btnCont = document.getElementById('btnLayoutContinuous');
+  if (btnGrid && btnCont) {
+    if (mode === 'grid') {
+      btnGrid.className = 'px-2.5 sm:px-3 py-1.5 rounded-lg transition-all active-mode bg-white dark:bg-zinc-800 shadow-xs text-zinc-900 dark:text-white font-bold inline-flex items-center gap-1.5 cursor-pointer';
+      btnCont.className = 'px-2.5 sm:px-3 py-1.5 rounded-lg transition-all text-zinc-500 hover:text-zinc-900 dark:hover:text-white font-semibold inline-flex items-center gap-1.5 cursor-pointer';
+    } else {
+      btnCont.className = 'px-2.5 sm:px-3 py-1.5 rounded-lg transition-all active-mode bg-white dark:bg-zinc-800 shadow-xs text-zinc-900 dark:text-white font-bold inline-flex items-center gap-1.5 cursor-pointer';
+      btnGrid.className = 'px-2.5 sm:px-3 py-1.5 rounded-lg transition-all text-zinc-500 hover:text-zinc-900 dark:hover:text-white font-semibold inline-flex items-center gap-1.5 cursor-pointer';
+    }
+  }
+  renderInteractiveWorkspace();
+};
+
 // ==========================================
 // Render Interactive Workspace Cards (Smallpdf Style)
 // ==========================================
@@ -1268,36 +1285,54 @@ function renderInteractiveWorkspace() {
     totalPages = state.workspaceItems.length;
   }
 
-  // Update Top Toolbar Stats
+  // Update Top Toolbar Stats (Responsive, clean, NO ✕ symbol)
   const statsText = document.getElementById('workspaceStatsText');
   if (statsText) {
     if (toolId === 'merge-pdf') {
       statsText.textContent = `${totalFiles} ${totalFiles === 1 ? 'file' : 'files'} • ${totalPages} pages`;
     } else if (toolId === 'remove-pages') {
       const removedCount = state.workspaceItems.filter(i => i.removed).length;
-      statsText.textContent = `${state.workspaceItems.length} pages • ${removedCount} marked to remove (✕)`;
+      if (removedCount > 0) {
+        statsText.textContent = `${state.workspaceItems.length} pages • ${removedCount} marked to remove`;
+      } else {
+        statsText.textContent = `${state.workspaceItems.length} pages`;
+      }
     } else {
       statsText.textContent = `${state.workspaceItems.length} items`;
     }
   }
 
-  // Update Toolbar Restore All Button
+  // Toolbar controls visibility based on active tool
+  // For remove-pages: ONLY Restore All, Add More, and Grid vs Continuous View Switcher
+  const layoutSwitcher = document.getElementById('pageLayoutSwitcher');
+  const modeSwitcher = document.getElementById('workspaceModeSwitcher');
   const btnRestoreAll = document.getElementById('btnToolbarRestoreAll');
-  if (btnRestoreAll) {
-    if (toolId === 'remove-pages') {
-      btnRestoreAll.classList.remove('hidden');
-    } else {
-      btnRestoreAll.classList.add('hidden');
-    }
-  }
+  const btnAddMore = document.getElementById('btnToolbarAddMore');
+  const btnSort = document.getElementById('btnToolbarSort');
+  const btnRotate = document.getElementById('btnToolbarRotateAll');
+  const btnClear = document.getElementById('btnClearFiles');
 
-  // Update Mode Switcher Visibility
-  const switcher = document.getElementById('workspaceModeSwitcher');
-  if (switcher) {
-    if (toolId === 'merge-pdf' && state.uploadedPdfs.length > 0) {
-      switcher.classList.remove('hidden');
-    } else {
-      switcher.classList.add('hidden');
+  if (toolId === 'remove-pages') {
+    if (layoutSwitcher) layoutSwitcher.classList.remove('hidden');
+    if (modeSwitcher) modeSwitcher.classList.add('hidden');
+    if (btnRestoreAll) btnRestoreAll.classList.remove('hidden');
+    if (btnAddMore) btnAddMore.classList.remove('hidden');
+    if (btnSort) btnSort.classList.add('hidden');
+    if (btnRotate) btnRotate.classList.add('hidden');
+    if (btnClear) btnClear.classList.add('hidden');
+  } else {
+    if (layoutSwitcher) layoutSwitcher.classList.add('hidden');
+    if (btnRestoreAll) btnRestoreAll.classList.add('hidden');
+    if (btnAddMore) btnAddMore.classList.remove('hidden');
+    if (btnSort) btnSort.classList.remove('hidden');
+    if (btnRotate) btnRotate.classList.remove('hidden');
+    if (btnClear) btnClear.classList.remove('hidden');
+    if (modeSwitcher) {
+      if (toolId === 'merge-pdf' && state.uploadedPdfs.length > 0) {
+        modeSwitcher.classList.remove('hidden');
+      } else {
+        modeSwitcher.classList.add('hidden');
+      }
     }
   }
 
@@ -1311,22 +1346,31 @@ function renderInteractiveWorkspace() {
       const removedCount = state.workspaceItems.filter(i => i.removed).length;
       const keepCount = state.workspaceItems.length - removedCount;
       if (removedCount === 0) {
-        summaryEl.textContent = `Click any page or its trash icon to mark it for removal (✕). Click again to restore.`;
+        summaryEl.textContent = `Click any page or its trash icon to mark it for removal. Click again to restore.`;
       } else {
-        summaryEl.textContent = `${removedCount} page(s) marked for removal (✕). The new PDF will contain ${keepCount} page(s).`;
+        summaryEl.textContent = `${removedCount} page(s) marked for removal. The new PDF will contain ${keepCount} page(s).`;
       }
     } else {
       summaryEl.textContent = `Ready to process ${state.workspaceItems.length} items.`;
     }
   }
 
-  // Responsive Grid
+  // Container Layout: Grid vs Continuous
+  const isContinuous = (toolId === 'remove-pages' && state.pageLayoutMode === 'continuous');
   const grid = document.createElement('div');
-  grid.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 pb-2';
+  if (isContinuous) {
+    grid.className = 'flex flex-col items-center gap-6 max-w-xl mx-auto pb-6 w-full';
+  } else {
+    grid.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 pb-2';
+  }
 
   state.workspaceItems.forEach((item, index) => {
     const card = document.createElement('div');
-    card.className = `preview-card ${item.removed ? 'removed' : ''} ${item.selected ? 'selected' : ''}`;
+    if (isContinuous) {
+      card.className = `preview-card ${item.removed ? 'removed' : ''} w-full max-w-md sm:max-w-lg shadow-sm hover:shadow-md transition-all cursor-pointer`;
+    } else {
+      card.className = `preview-card ${item.removed ? 'removed' : ''} ${item.selected ? 'selected' : ''}`;
+    }
     card.setAttribute('draggable', 'true');
 
     // Drag and Drop Events
@@ -1346,29 +1390,31 @@ function renderInteractiveWorkspace() {
       infoBadge = `<div class="absolute top-2 right-2 z-10 bg-white/90 dark:bg-zinc-800/90 text-zinc-700 dark:text-zinc-200 text-[10px] font-bold px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-zinc-700 shadow-xs truncate max-w-[80px]" title="${item.fileName || ''}">${item.name || `P. ${item.pageNum}`}</div>`;
     }
 
-    // Hand-Painted Watercolor Brush Stroke Cross (حالت قلم‌مو) + Hollow Green Circle Restore Button
+    // Bold Permanent Marker Cross (انگار با ماژیک قرمز کشیده شده) + Hollow Green Circle Restore Button
     let removedOverlayHtml = '';
     if (item.removed) {
       removedOverlayHtml = `
-        <!-- Hand-Painted Watercolor Brush Stroke Cross (حالت قلم‌مو) -->
-        <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-15 bg-red-950/10">
-          <svg viewBox="0 0 100 100" class="w-20 h-20 sm:w-24 sm:h-24 pointer-events-none" style="filter: drop-shadow(0 2px 4px rgba(225,29,72,0.25));">
-            <!-- Stroke 1 (Top-Left to Bottom-Right) with multi-bristle watercolor texture -->
-            <path d="M18 18 Q 34 35 50 50 T 82 82" fill="none" stroke="#e11d48" stroke-width="8.5" stroke-linecap="round" opacity="0.85"/>
-            <path d="M20 17 Q 35 33 50 49 T 80 83" fill="none" stroke="#fb7185" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
-            <path d="M16 20 Q 33 37 49 52 T 78 80" fill="none" stroke="#9f1239" stroke-width="2.5" stroke-linecap="round" opacity="0.45"/>
-            
-            <!-- Stroke 2 (Top-Right to Bottom-Left) with multi-bristle watercolor texture -->
-            <path d="M82 18 Q 66 35 50 50 T 18 82" fill="none" stroke="#e11d48" stroke-width="8.5" stroke-linecap="round" opacity="0.85"/>
-            <path d="M80 17 Q 65 33 50 49 T 20 83" fill="none" stroke="#fb7185" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
-            <path d="M84 20 Q 67 37 51 52 T 22 80" fill="none" stroke="#9f1239" stroke-width="2.5" stroke-linecap="round" opacity="0.45"/>
+        <!-- Permanent Red Marker Cross (انگار با ماژیک قرمز کشیده شده) -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-15 bg-red-950/10 backdrop-blur-[0.5px]">
+          <svg viewBox="0 0 100 100" class="${isContinuous ? 'w-32 h-32 sm:w-40 sm:h-40' : 'w-24 h-24 sm:w-28 sm:h-28'} pointer-events-none" style="filter: drop-shadow(0 2px 5px rgba(225, 29, 72, 0.35));">
+            <g stroke-linecap="round" stroke-linejoin="round">
+              <!-- Marker Stroke 1: Top-Left to Bottom-Right (natural fluid hand curve) -->
+              <path d="M 19 21 C 36 38, 62 60, 81 79" fill="none" stroke="#e11d48" stroke-width="13" opacity="0.88" />
+              <path d="M 20 22 C 37 38, 61 59, 80 78" fill="none" stroke="#be123c" stroke-width="7.5" opacity="0.5" />
+
+              <!-- Marker Stroke 2: Top-Right to Bottom-Left (natural cross hand curve) -->
+              <path d="M 81 21 C 63 39, 37 61, 19 79" fill="none" stroke="#e11d48" stroke-width="13" opacity="0.88" />
+              <path d="M 80 22 C 62 39, 38 60, 20 78" fill="none" stroke="#be123c" stroke-width="7.5" opacity="0.5" />
+            </g>
+            <!-- Ink Overlap Concentration (جذب دوبل جوهر ماژیک روی تقاطع) -->
+            <ellipse cx="50" cy="50" rx="8" ry="7.5" fill="#881337" opacity="0.45" />
           </svg>
         </div>
 
         <!-- Hollow Green Circle Restore Button (دایره سبز توخالی ساده) slightly below -->
-        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 z-25">
-          <button type="button" onclick="toggleRemoveWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full border-2 border-emerald-500 bg-white/95 dark:bg-zinc-900/95 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 text-emerald-500 hover:text-emerald-600 shadow-sm flex items-center justify-center transition-all hover:scale-110 active:scale-95 cursor-pointer" title="Restore Page">
-            <svg class="w-4 h-4 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="absolute ${isContinuous ? 'bottom-4' : 'bottom-3'} left-1/2 -translate-x-1/2 z-25">
+          <button type="button" onclick="toggleRemoveWorkspaceItem(${index}); event.stopPropagation();" class="${isContinuous ? 'w-10 h-10' : 'w-8 h-8'} rounded-full border-2 border-emerald-500 bg-white/95 dark:bg-zinc-900/95 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 text-emerald-500 hover:text-emerald-600 shadow-sm flex items-center justify-center transition-all hover:scale-110 active:scale-95 cursor-pointer" title="Restore Page">
+            <svg class="${isContinuous ? 'w-5 h-5' : 'w-4 h-4'} stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 1 0 2.34-5.66L4 8m0 0V3m0 5h5"/>
             </svg>
           </button>
@@ -1392,10 +1438,11 @@ function renderInteractiveWorkspace() {
     }
 
     // Thumbnail Area
+    const thumbHeight = isContinuous ? 'h-80 sm:h-96' : 'h-44';
     let thumbHtml = '';
     if (item.previewUrl) {
       thumbHtml = `
-        <div class="h-44 bg-zinc-100 dark:bg-zinc-800/60 flex items-center justify-center overflow-hidden p-2 relative group/thumb">
+        <div class="${thumbHeight} bg-zinc-100 dark:bg-zinc-800/60 flex items-center justify-center overflow-hidden p-2 relative group/thumb">
           ${orderBadge}
           ${infoBadge}
           <img src="${item.previewUrl}" alt="${item.name}" style="transform: rotate(${item.rotation || 0}deg);" class="max-h-full max-w-full object-contain transition-transform duration-200 rounded-md shadow-xs pointer-events-none">
@@ -1405,7 +1452,7 @@ function renderInteractiveWorkspace() {
       `;
     } else {
       thumbHtml = `
-        <div class="h-44 bg-pink-50/50 dark:bg-zinc-800/50 flex flex-col items-center justify-center p-3 text-center relative">
+        <div class="${thumbHeight} bg-pink-50/50 dark:bg-zinc-800/50 flex flex-col items-center justify-center p-3 text-center relative">
           ${orderBadge}
           <div class="w-10 h-10 rounded-xl bg-pink-100 dark:bg-zinc-700 text-[#ff5277] flex items-center justify-center font-bold text-sm mb-1.5">PDF</div>
           <p class="text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 truncate w-full px-1">${item.name}</p>
