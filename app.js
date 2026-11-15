@@ -293,6 +293,11 @@ const DOM = {
   toolDropzone: document.getElementById('toolDropzone'),
   fileInput: document.getElementById('fileInput'),
   btnSelectFiles: document.getElementById('btnSelectFiles'),
+  btnGoogleDrive: document.getElementById('btnGoogleDrive'),
+  btnDropbox: document.getElementById('btnDropbox'),
+  btnVotePriority: document.getElementById('btnVotePriority'),
+  toolVoteCount: document.getElementById('toolVoteCount'),
+  toolNotAvailableNotice: document.getElementById('toolNotAvailableNotice'),
   filesSelectedArea: document.getElementById('filesSelectedArea'),
   selectedFilesList: document.getElementById('selectedFilesList'),
   btnClearFiles: document.getElementById('btnClearFiles'),
@@ -373,8 +378,8 @@ function renderAllToolsCatalog() {
                 <div class="w-12 h-12 flex-shrink-0 group-hover:scale-105 transition-transform duration-200">
                   ${vectorSvg}
                 </div>
-                <span class="text-[10px] font-semibold text-pink-600 dark:text-pink-300 bg-pink-50 dark:bg-pink-950/60 px-2 py-0.5 rounded-md border border-pink-200/60 dark:border-pink-800/60">
-                  Ready
+                <span class="text-[10px] font-semibold text-zinc-500 dark:text-zinc-400 bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded-md border border-zinc-200/80 dark:border-zinc-700/80">
+                  Not Available
                 </span>
               </div>
               <h3 class="font-bold text-sm text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff5277] transition-colors">${tool.title}</h3>
@@ -424,14 +429,14 @@ function initQuickToolsModal() {
     e.preventDefault();
     e.stopPropagation();
 
-    // Trigger snappy clashing strike animation without rotation (sword clash)
+    // Trigger smooth parallel vertical animation
     DOM.floatingToolsBtn.classList.remove('clashing');
     void DOM.floatingToolsBtn.offsetWidth; // force reflow
     DOM.floatingToolsBtn.classList.add('clashing');
 
     setTimeout(() => {
       DOM.floatingToolsBtn.classList.remove('clashing');
-    }, 450);
+    }, 800);
 
     toggleQuickTools();
   });
@@ -542,8 +547,11 @@ function renderQuickToolsModalGrid(query = '') {
               <div class="w-8 h-8 flex-shrink-0 group-hover:scale-105 transition-transform flex items-center justify-center">
                 ${VECTORS[tool.id] || '<div class="text-lg">📄</div>'}
               </div>
-              <div class="overflow-hidden min-w-0">
-                <h5 class="font-bold text-xs text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff5277] transition-colors truncate">${tool.title}</h5>
+              <div class="overflow-hidden min-w-0 flex-1">
+                <div class="flex items-center justify-between gap-1">
+                  <h5 class="font-bold text-xs text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff5277] transition-colors truncate">${tool.title}</h5>
+                  <span class="text-[9px] font-semibold text-zinc-400 dark:text-zinc-500 bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded flex-shrink-0">Not Available</span>
+                </div>
                 <p class="text-[10px] text-zinc-400 truncate">${tool.desc}</p>
               </div>
             </div>
@@ -600,6 +608,10 @@ function openToolDedicatedPage(tool) {
 
   document.title = `${tool.title} • CutiPDF`;
 
+  // Track visit to prioritize tools by traffic and user demand
+  recordToolVisit(tool.id);
+  updateToolVoteDisplay(tool.id);
+
   DOM.toolVectorContainer.innerHTML = VECTORS[tool.id] || '<div class="text-5xl">📄</div>';
   DOM.toolTitle.textContent = tool.title;
   DOM.toolDesc.textContent = tool.desc;
@@ -617,6 +629,30 @@ function openToolDedicatedPage(tool) {
   DOM.viewToolActive.classList.add('active');
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Tool Prioritization Analytics
+function recordToolVisit(toolId) {
+  try {
+    const stats = JSON.parse(localStorage.getItem('cutipdf_tool_views') || '{}');
+    stats[toolId] = (stats[toolId] || 0) + 1;
+    localStorage.setItem('cutipdf_tool_views', JSON.stringify(stats));
+  } catch (e) {}
+}
+
+function getToolViews(toolId) {
+  try {
+    const stats = JSON.parse(localStorage.getItem('cutipdf_tool_views') || '{}');
+    return stats[toolId] || 1;
+  } catch (e) {
+    return 1;
+  }
+}
+
+function updateToolVoteDisplay(toolId) {
+  if (DOM.toolVoteCount) {
+    DOM.toolVoteCount.textContent = getToolViews(toolId);
+  }
 }
 
 // ==========================================
@@ -786,7 +822,38 @@ function initDropzoneEvents() {
     DOM.fileInput.click();
   });
 
-  dropzone.addEventListener('click', () => {
+  if (DOM.btnGoogleDrive) {
+    DOM.btnGoogleDrive.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showToast('☁️ Google Drive: Pick your file via your device files browser!');
+      DOM.fileInput.click();
+    });
+  }
+
+  if (DOM.btnDropbox) {
+    DOM.btnDropbox.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showToast('📦 Dropbox: Pick your file via your device files browser!');
+      DOM.fileInput.click();
+    });
+  }
+
+  if (DOM.btnVotePriority) {
+    DOM.btnVotePriority.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (!state.activeTool) return;
+      try {
+        const stats = JSON.parse(localStorage.getItem('cutipdf_tool_views') || '{}');
+        stats[state.activeTool.id] = (stats[state.activeTool.id] || 0) + 1;
+        localStorage.setItem('cutipdf_tool_views', JSON.stringify(stats));
+        updateToolVoteDisplay(state.activeTool.id);
+        showToast('🚀 Priority requested! Vote added to prioritize this tool.');
+      } catch (e) {}
+    });
+  }
+
+  dropzone.addEventListener('click', (e) => {
+    if (e.target.closest('#btnSelectFiles') || e.target.closest('#btnGoogleDrive') || e.target.closest('#btnDropbox')) return;
     DOM.fileInput.click();
   });
 

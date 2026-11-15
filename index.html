@@ -121,12 +121,6 @@
         </div>
 
         <div>
-          <div class="inline-block mb-1.5">
-            <span id="toolStatusBadge" class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 shadow-2xs">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span>Fast, Secure &amp; Lovely</span>
-            </span>
-          </div>
           <h2 id="toolTitle" class="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-100">Tool Name</h2>
         </div>
 
@@ -135,20 +129,62 @@
         </p>
       </div>
 
+      <!-- Not Available / Prioritization Notice -->
+      <div id="toolNotAvailableNotice" class="cuti-card p-4 sm:p-5 text-center bg-zinc-50/90 dark:bg-zinc-900/80 border border-zinc-200/80 dark:border-zinc-800 rounded-2xl space-y-2 max-w-xl mx-auto shadow-2xs">
+        <div class="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800/80">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+          <span>Not Available • In Active Development</span>
+        </div>
+        <p class="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+          We are rolling out tools one by one based on user demand and traffic. Request priority below to bump this tool to the top of our queue!
+        </p>
+        <div class="pt-1">
+          <button id="btnVotePriority" type="button" class="inline-flex items-center gap-1.5 text-xs font-bold text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 py-1.5 px-3 rounded-lg bg-pink-50 dark:bg-pink-950/50 border border-pink-200 dark:border-pink-800 transition-all cursor-pointer">
+            <span>🚀 Request Priority</span>
+            <span class="text-[10px] text-zinc-400 font-normal">(<span id="toolVoteCount">0</span> views)</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Tool Options Drawer (Dynamic for tools like Watermark, Password, Page Numbers, Layout) -->
       <div id="toolOptionsDrawer" class="hidden cuti-card p-4 sm:p-5 bg-white dark:bg-zinc-900 border border-pink-200 dark:border-zinc-800 rounded-2xl space-y-3">
         <!-- Injected options -->
       </div>
 
-      <!-- Upload Dropzone (Restored Comfortable Size) -->
-      <div id="toolDropzone" class="tool-dropzone p-12 sm:p-16 text-center cursor-pointer group">
+      <!-- Upload Section (Responsive: Large Touch Button on Mobile, Comfortable Dropzone on Desktop) -->
+      <div id="toolDropzone" class="tool-dropzone p-4 sm:p-14 text-center cursor-pointer group">
         <input type="file" id="fileInput" class="hidden" multiple>
 
-        <div class="flex flex-col items-center justify-center space-y-4">
-          <button id="btnSelectFiles" class="btn-primary-action text-sm sm:text-base">
-            Select files
-          </button>
-          <p id="dropzoneText" class="text-xs text-zinc-400 dark:text-zinc-500">
+        <div class="flex flex-col items-center justify-center space-y-3.5">
+          <!-- Main Action Buttons Row (iLovePDF Style: Big Button + Google Drive + Dropbox) -->
+          <div class="flex items-center justify-center gap-2.5 sm:gap-3 w-full max-w-md">
+            <!-- Big Primary Select Files Button -->
+            <button id="btnSelectFiles" type="button" class="btn-primary-action flex-1 py-4 sm:py-4 px-6 sm:px-10 text-base sm:text-lg font-bold shadow-lg">
+              Select PDF files
+            </button>
+
+            <!-- Google Drive Cloud Button -->
+            <button id="btnGoogleDrive" type="button" class="cloud-source-btn group/cloud" title="Select files from Google Drive" aria-label="Google Drive">
+              <svg class="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover/cloud:scale-110" viewBox="0 0 87.3 78" xmlns="http://www.w3.org/2000/svg">
+                <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+                <path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44a9.06 9.06 0 0 0 -1.2 4.5h27.5z" fill="#00ac47"/>
+                <path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l1.6-2.75 7.65-13.25c.8-1.4 1.2-2.95 1.2-4.5h-27.502l5.852 11.5z" fill="#ea4335"/>
+                <path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.5-1.2h-18.5c-1.6 0-3.15.45-4.5 1.2z" fill="#00832d"/>
+                <path d="m59.8 53h-32.3l-13.75 23.8c1.35.8 2.9 1.2 4.5 1.2h50.8c1.6 0 3.15-.45 4.5-1.2z" fill="#2684fc"/>
+                <path d="m73.4 26.5-12.7-22c-.8-1.4-1.95-2.5-3.3-3.3l-13.75 23.8 16.15 28h27.45c0-1.55-.4-3.1-1.2-4.5z" fill="#ffba00"/>
+              </svg>
+            </button>
+
+            <!-- Dropbox Cloud Button -->
+            <button id="btnDropbox" type="button" class="cloud-source-btn group/cloud" title="Select files from Dropbox" aria-label="Dropbox">
+              <svg class="w-5 h-5 sm:w-6 sm:h-6 transition-transform group-hover/cloud:scale-110" viewBox="0 0 24 24" fill="#0061ff" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 2L0 6.5L6 11L12 6.5L6 2ZM18 2L12 6.5L18 11L24 6.5L18 2ZM0 15.5L6 20L12 15.5L6 11L0 15.5ZM18 11L12 15.5L18 20L24 15.5L18 11ZM6.02 21.05L12 17.5L17.98 21.05L12 24.5L6.02 21.05Z"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Drop text only on desktop -->
+          <p id="dropzoneText" class="hidden sm:block text-xs text-zinc-400 dark:text-zinc-500 font-medium">
             or drop files here
           </p>
         </div>
@@ -188,10 +224,17 @@
   <!-- FLOATING ROYAL BLUE TOOLS BUTTON (Crossed Screwdriver & Wrench) -->
   <!-- ============================================================ -->
   <button id="floatingToolsBtn" class="floating-tools-btn" aria-label="Toggle Quick Tools Preview" title="Quick Tools Preview">
-    <!-- Crossed Wrench & Screwdriver Solid Vector (No stray lines) -->
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="w-6 h-6 fill-white">
-      <path fill="currentColor" d="M78.6 5C69.1-2.4 55.6-1.5 47 7L7 47c-8.5 8.5-9.4 22-2.1 31.6l80 104c4.5 5.9 11.6 9.4 19 9.4l54.1 0 109 109c-14.7 29-10 65.4 14.3 89.6l112 112c12.5 12.5 32.8 12.5 45.3 0l64-64c12.5-12.5 12.5-32.8 0-45.3l-112-112c-24.2-24.2-60.6-29-89.6-14.3l-109-109 0-54.1c0-7.5-3.5-14.5-9.4-19L78.6 5zM19.9 396.1C7.2 408.8 0 426.1 0 444.1C0 481.6 30.4 512 67.9 512c18 0 35.3-7.2 48-19.9L233.7 374.3c-7.8-20.9-9-43.6-3.6-65.1l-61.7-61.7L19.9 396.1zM512 144c0-10.5-1.1-20.7-3.2-30.5c-2.4-11.2-16.1-14.1-24.2-6l-63.9 63.9c-3 3-7.1 4.7-11.3 4.7L352 176c-8.8 0-16-7.2-16-16l0-57.4c0-4.2 1.7-8.3 4.7-11.3l63.9-63.9c8.1-8.1 5.2-21.8-6-24.2C388.7 1.1 378.5 0 368 0C288.5 0 224 64.5 224 144l0 .8 85.3 85.3c36-9.1 75.8 .5 104 28.7L429 274.5c49-23 83-72.8 83-130.5zM56 432a24 24 0 1 1 48 0 24 24 0 1 1 -48 0z"/>
-    </svg>
+    <!-- Animated Independent Tools Box (Smooth Parallel Vertical Transition) -->
+    <div class="tools-btn-icon-box">
+      <!-- Full Solid Wrench -->
+      <svg class="tool-svg tool-wrench" viewBox="0 0 512 512" fill="currentColor">
+        <path d="M352 320c88.4 0 160-71.6 160-160c0-15.3-2.2-30.1-6.2-44.2c-3.1-10.8-16.4-13.2-24.3-5.3l-76.8 76.8c-3 3-7.1 4.7-11.3 4.7L336 192c-8.8 0-16-7.2-16-16l0-57.4c0-4.2 1.7-8.3 4.7-11.3l76.8-76.8c7.9-7.9 5.4-21.2-5.3-24.3C382.1 2.2 367.3 0 352 0C263.6 0 192 71.6 192 160c0 19.1 3.4 37.5 9.5 54.5L19.9 396.1C7.2 408.8 0 426.1 0 444.1C0 481.6 30.4 512 67.9 512c18 0 35.3-7.2 48-19.9L297.5 310.5c17 6.2 35.4 9.5 54.5 9.5zM80 408a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"/>
+      </svg>
+      <!-- Full Solid Screwdriver -->
+      <svg class="tool-svg tool-screwdriver" viewBox="0 0 512 512" fill="currentColor">
+        <path d="M465 7c-8.5-8.5-22-9.4-31.6-2.1l-104 80c-5.9 4.5-9.4 11.6-9.4 19l0 54.1-85.6 85.6c6.7 4.2 13 9.3 18.8 15.1s10.9 12.2 15.1 18.8L353.9 192l54.1 0c7.5 0 14.5-3.5 19-9.4l80-104c7.4-9.6 6.5-23.1-2.1-31.6L465 7zM121.4 281.4l-112 112c-12.5 12.5-12.5 32.8 0 45.3l64 64c12.5 12.5 32.8 12.5 45.3 0l112-112c30.2-30.2 30.2-79.1 0-109.3s-79.1-30.2-109.3 0z"/>
+      </svg>
+    </div>
     <span>Tools</span>
   </button>
 
