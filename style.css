@@ -285,13 +285,17 @@ html.dark .brand-logo {
   pointer-events: none;
 }
 
-/* Big Watercolor Action Button (iLovePDF Style) */
+/* Big Watercolor Action Button (iLovePDF Style - Prominent & Responsive) */
 .btn-primary-action {
   background: linear-gradient(135deg, #ff5277 0%, #ff3366 50%, #e91e63 100%);
   color: #ffffff;
   font-weight: 700;
   border-radius: 16px;
-  padding: 16px 36px;
+  min-height: 72px;
+  height: 72px;
+  padding: 16px 24px;
+  font-size: 20px;
+  letter-spacing: -0.2px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -300,6 +304,20 @@ html.dark .brand-logo {
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   border: none;
   cursor: pointer;
+  flex: 1;
+  max-width: 320px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (min-width: 640px) {
+  .btn-primary-action {
+    min-height: 76px;
+    height: 76px;
+    padding: 20px 52px;
+    font-size: 22px;
+    flex: initial;
+    max-width: none;
+  }
 }
 
 .btn-primary-action:hover {
@@ -312,11 +330,28 @@ html.dark .brand-logo {
   transform: translateY(0);
 }
 
+/* Vertical Stack of Cloud Source Buttons (Google Drive & Dropbox) */
+.cloud-buttons-stack {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 72px;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .cloud-buttons-stack {
+    height: 76px;
+    gap: 8px;
+  }
+}
+
 /* Vertically Stacked Cloud Storage Source Buttons (iLovePDF Style: Same Pink Color & Aligned) */
 .btn-cloud-stacked {
   height: calc(50% - 3px);
-  width: 44px;
-  min-width: 44px;
+  width: 48px;
+  min-width: 48px;
   border-radius: 12px;
   background: linear-gradient(135deg, #ff5277 0%, #ff3366 50%, #e91e63 100%);
   color: #ffffff;
