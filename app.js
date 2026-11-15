@@ -267,8 +267,10 @@ const TOOLS_CATALOG = {
 const state = {
   activeTool: null,
   selectedFiles: [],
-  // Interactive Items (for Image or PDF Pages)
-  workspaceItems: [], // [{ id, type: 'image'|'pdf-file'|'pdf-page', file, url, rotation, pageNum, selected, removed }]
+  uploadedPdfs: [], // Structured PDF metadata: [{ id, file, name, size, pageCount, coverUrl, rotation, pdfDoc, pages }]
+  workspaceItems: [], // Current view items
+  workspaceViewMode: 'file', // 'file' or 'page'
+  draggedItemIndex: null,
   toolOptions: {},
   theme: localStorage.getItem('cutipdf_theme_v3') || 'light'
 };
@@ -304,6 +306,15 @@ const DOM = {
   btnClearFiles: document.getElementById('btnClearFiles'),
   btnExecuteAction: document.getElementById('btnExecuteAction'),
   actionButtonText: document.getElementById('actionButtonText'),
+  workspaceStatsBadge: document.getElementById('workspaceStatsBadge'),
+  workspaceStatsText: document.getElementById('workspaceStatsText'),
+  workspaceModeSwitcher: document.getElementById('workspaceModeSwitcher'),
+  btnModeFile: document.getElementById('btnModeFile'),
+  btnModePage: document.getElementById('btnModePage'),
+  btnToolbarAddMore: document.getElementById('btnToolbarAddMore'),
+  btnToolbarSort: document.getElementById('btnToolbarSort'),
+  btnToolbarRotateAll: document.getElementById('btnToolbarRotateAll'),
+  workspaceActionSummary: document.getElementById('workspaceActionSummary'),
   
   // Toast
   toast: document.getElementById('toast'),
@@ -394,7 +405,7 @@ function renderAllToolsCatalog() {
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         ${tools.map(tool => {
-          const vectorSvg = VECTORS[tool.id] || '<div class="text-3xl">📄</div>';
+          const vectorSvg = VECTORS[tool.id] || '<div class="text-sm font-bold text-zinc-400">PDF</div>';
           return `
             <a href="${basePath}${tool.id}" data-tool-id="${tool.id}" class="tool-card group no-underline text-inherit block">
               <div class="w-12 h-12 flex-shrink-0 group-hover:scale-105 transition-transform duration-200 mb-3">
@@ -685,7 +696,7 @@ function renderQuickToolsModalGrid(query = '') {
           ${filtered.map(tool => `
             <a href="${basePath}${tool.id}" onclick="selectToolFromModal(event, '${tool.id}')" class="p-2.5 rounded-xl border border-pink-100 dark:border-zinc-800 hover:border-[#ff5277] bg-white dark:bg-zinc-800/80 hover:shadow-sm cursor-pointer transition-all flex items-center gap-2.5 group no-underline text-inherit">
               <div class="w-8 h-8 flex-shrink-0 group-hover:scale-105 transition-transform flex items-center justify-center">
-                ${VECTORS[tool.id] || '<div class="text-lg">📄</div>'}
+                ${VECTORS[tool.id] || '<div class="text-xs font-bold text-zinc-400">PDF</div>'}
               </div>
               <div class="overflow-hidden min-w-0 flex-1">
                 <h5 class="font-bold text-xs text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff5277] transition-colors truncate">${tool.title}</h5>
@@ -720,8 +731,18 @@ window.selectToolFromModal = function(e, toolId) {
 function openToolDedicatedPage(tool) {
   state.activeTool = tool;
   state.selectedFiles = [];
+  state.uploadedPdfs = [];
   state.workspaceItems = [];
+  state.workspaceViewMode = 'file';
   state.toolOptions = {};
+
+  if (DOM.workspaceModeSwitcher) {
+    if (tool.id === 'merge-pdf') {
+      DOM.workspaceModeSwitcher.classList.remove('hidden');
+    } else {
+      DOM.workspaceModeSwitcher.classList.add('hidden');
+    }
+  }
 
   // Dedicated SEO Title & Canonical URL for each tool
   const seoTitles = {
@@ -749,7 +770,7 @@ function openToolDedicatedPage(tool) {
   recordToolVisit(tool.id);
   updateToolVoteDisplay(tool.id);
 
-  DOM.toolVectorContainer.innerHTML = VECTORS[tool.id] || '<div class="text-5xl">📄</div>';
+  DOM.toolVectorContainer.innerHTML = VECTORS[tool.id] || '<div class="text-2xl font-bold text-zinc-400">PDF</div>';
   DOM.toolTitle.textContent = tool.title;
   DOM.toolDesc.textContent = tool.desc;
 
@@ -984,7 +1005,7 @@ function initDropzoneEvents() {
         stats[state.activeTool.id] = (stats[state.activeTool.id] || 0) + 1;
         localStorage.setItem('cutipdf_tool_views', JSON.stringify(stats));
         updateToolVoteDisplay(state.activeTool.id);
-        showToast('🚀 Priority requested! Vote added to prioritize this tool.');
+        showToast('Priority requested! Vote added to prioritize this tool.');
       } catch (e) {}
     });
   }
@@ -1017,7 +1038,7 @@ async function handleFilesSelected(files) {
   DOM.toolDropzone.classList.add('hidden');
   DOM.filesSelectedArea.classList.remove('hidden');
 
-  showToast('Rendering in-browser preview cards...');
+  showToast('Generating document preview cards...');
   await buildWorkspacePreview(files);
   renderInteractiveWorkspace();
 }
@@ -1032,7 +1053,7 @@ async function buildWorkspacePreview(newFiles) {
       if (f.type.startsWith('image/')) {
         const url = URL.createObjectURL(f);
         state.workspaceItems.push({
-          id: Math.random().toString(36).substring(2, 9),
+          id: 'img_' + Math.random().toString(36).substring(2, 9),
           type: 'image',
           file: f,
           name: f.name,
@@ -1043,46 +1064,66 @@ async function buildWorkspacePreview(newFiles) {
       }
     }
   }
-  // 2. Multi-PDF Tool (Merge PDF, Compare PDF)
+  // 2. Multi-PDF Tools (Merge PDF, Compare PDF)
   else if (toolId === 'merge-pdf' || toolId === 'compare-pdf') {
     for (const f of newFiles) {
       if (f.name.toLowerCase().endsWith('.pdf') || f.type === 'application/pdf') {
         let coverUrl = '';
         let pageCount = 1;
+        let pdfDoc = null;
         try {
           const bytes = await f.arrayBuffer();
-          const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
-          pageCount = pdf.numPages;
-          coverUrl = await renderPdfPageThumb(pdf, 1);
+          pdfDoc = await pdfjsLib.getDocument({ data: bytes }).promise;
+          pageCount = pdfDoc.numPages;
+          coverUrl = await renderPdfPageThumb(pdfDoc, 1);
         } catch (e) {
           console.warn('PDF preview render error:', e);
         }
 
-        state.workspaceItems.push({
-          id: Math.random().toString(36).substring(2, 9),
-          type: 'pdf-file',
+        const fileRecord = {
+          id: 'pdf_' + Math.random().toString(36).substring(2, 9),
           file: f,
           name: f.name,
           size: formatBytes(f.size),
           pageCount,
-          previewUrl: coverUrl,
-          rotation: 0
-        });
+          coverUrl,
+          rotation: 0,
+          pdfDoc,
+          pages: []
+        };
+        state.uploadedPdfs.push(fileRecord);
+
+        if (state.workspaceViewMode === 'file') {
+          state.workspaceItems.push({
+            id: fileRecord.id,
+            type: 'pdf-file',
+            file: f,
+            fileRecord,
+            name: f.name,
+            size: fileRecord.size,
+            pageCount,
+            previewUrl: coverUrl,
+            rotation: 0
+          });
+        } else {
+          await ensurePdfPagesRendered(fileRecord);
+          fileRecord.pages.forEach(p => state.workspaceItems.push(p));
+        }
       }
     }
   }
-  // 3. Single PDF Page-Level Tools (Rotate, Split, Remove, Organize, Extract, Watermark, PDF to JPG)
-  else if (['rotate-pdf', 'split-pdf', 'remove-pages', 'extract-pages', 'organize-pdf', 'pdf-to-jpg', 'watermark-pdf', 'crop-pdf'].includes(toolId)) {
+  // 3. Single PDF Page-Level Tools (Rotate, Split, Remove, Organize, Extract, Watermark, PDF to JPG, Crop)
+  else if (['organize-pdf', 'rotate-pdf', 'split-pdf', 'remove-pages', 'extract-pages', 'pdf-to-jpg', 'watermark-pdf', 'crop-pdf'].includes(toolId)) {
     const f = newFiles[0];
     if (f && (f.name.toLowerCase().endsWith('.pdf') || f.type === 'application/pdf')) {
-      state.workspaceItems = []; // single master PDF
+      state.workspaceItems = [];
       try {
         const bytes = await f.arrayBuffer();
         const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
         for (let i = 1; i <= pdf.numPages; i++) {
           const thumb = await renderPdfPageThumb(pdf, i);
           state.workspaceItems.push({
-            id: Math.random().toString(36).substring(2, 9),
+            id: 'page_' + i,
             type: 'pdf-page',
             file: f,
             pageNum: i,
@@ -1126,11 +1167,81 @@ async function renderPdfPageThumb(pdfDoc, pageNum) {
   return canvas.toDataURL('image/jpeg', 0.85);
 }
 
+// Ensure all individual pages are rendered for a PDF file record
+async function ensurePdfPagesRendered(fileRecord) {
+  if (fileRecord.pages && fileRecord.pages.length === fileRecord.pageCount) return;
+  fileRecord.pages = [];
+  try {
+    let pdf = fileRecord.pdfDoc;
+    if (!pdf) {
+      const bytes = await fileRecord.file.arrayBuffer();
+      pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+      fileRecord.pdfDoc = pdf;
+    }
+    for (let i = 1; i <= fileRecord.pageCount; i++) {
+      const thumb = await renderPdfPageThumb(pdf, i);
+      fileRecord.pages.push({
+        id: 'p_' + fileRecord.id + '_' + i,
+        type: 'pdf-page',
+        file: fileRecord.file,
+        fileId: fileRecord.id,
+        fileName: fileRecord.name,
+        pageNum: i,
+        name: `Page ${i}`,
+        previewUrl: thumb,
+        rotation: fileRecord.rotation || 0,
+        removed: false
+      });
+    }
+  } catch (e) {
+    console.warn('Error rendering pages for', fileRecord.name, e);
+  }
+}
+
+// Toggle Workspace View Mode (File Mode vs Page Mode)
+window.setWorkspaceViewMode = async function(mode) {
+  if (state.workspaceViewMode === mode) return;
+  state.workspaceViewMode = mode;
+
+  const btnFile = document.getElementById('btnModeFile');
+  const btnPage = document.getElementById('btnModePage');
+
+  if (mode === 'page') {
+    if (btnPage) btnPage.className = 'px-3.5 py-1.5 rounded-lg transition-all active-mode bg-white dark:bg-zinc-800 shadow-xs text-zinc-900 dark:text-white font-bold cursor-pointer';
+    if (btnFile) btnFile.className = 'px-3.5 py-1.5 rounded-lg transition-all text-zinc-500 hover:text-zinc-900 dark:hover:text-white cursor-pointer';
+
+    showToast('Expanding all document pages...');
+    state.workspaceItems = [];
+    for (const rec of state.uploadedPdfs) {
+      await ensurePdfPagesRendered(rec);
+      rec.pages.forEach(p => state.workspaceItems.push(p));
+    }
+  } else {
+    if (btnFile) btnFile.className = 'px-3.5 py-1.5 rounded-lg transition-all active-mode bg-white dark:bg-zinc-800 shadow-xs text-zinc-900 dark:text-white font-bold cursor-pointer';
+    if (btnPage) btnPage.className = 'px-3.5 py-1.5 rounded-lg transition-all text-zinc-500 hover:text-zinc-900 dark:hover:text-white cursor-pointer';
+
+    state.workspaceItems = state.uploadedPdfs.map(rec => ({
+      id: rec.id,
+      type: 'pdf-file',
+      file: rec.file,
+      fileRecord: rec,
+      name: rec.name,
+      size: rec.size,
+      pageCount: rec.pageCount,
+      previewUrl: rec.coverUrl,
+      rotation: rec.rotation || 0
+    }));
+  }
+
+  renderInteractiveWorkspace();
+};
+
 // ==========================================
-// Render Interactive Workspace Cards (iLovePDF Style)
+// Render Interactive Workspace Cards (Smallpdf Style)
 // ==========================================
 function renderInteractiveWorkspace() {
   const container = DOM.selectedFilesList;
+  if (!container) return;
   container.innerHTML = '';
   const toolId = state.activeTool ? state.activeTool.id : '';
 
@@ -1140,58 +1251,127 @@ function renderInteractiveWorkspace() {
     return;
   }
 
-  // Use Grid for interactive preview cards!
+  // Calculate statistics
+  let totalFiles = 0;
+  let totalPages = 0;
+  if (toolId === 'merge-pdf') {
+    totalFiles = state.uploadedPdfs.length;
+    totalPages = state.uploadedPdfs.reduce((sum, f) => sum + (f.pageCount || 1), 0);
+  } else {
+    totalFiles = state.selectedFiles.length || 1;
+    totalPages = state.workspaceItems.length;
+  }
+
+  // Update Top Toolbar Stats
+  const statsText = document.getElementById('workspaceStatsText');
+  if (statsText) {
+    if (toolId === 'merge-pdf') {
+      statsText.textContent = `${totalFiles} ${totalFiles === 1 ? 'file' : 'files'} • ${totalPages} pages`;
+    } else {
+      statsText.textContent = `${state.workspaceItems.length} items`;
+    }
+  }
+
+  // Update Mode Switcher Visibility
+  const switcher = document.getElementById('workspaceModeSwitcher');
+  if (switcher) {
+    if (toolId === 'merge-pdf' && state.uploadedPdfs.length > 0) {
+      switcher.classList.remove('hidden');
+    } else {
+      switcher.classList.add('hidden');
+    }
+  }
+
+  // Update Bottom Action Summary
+  const summaryEl = document.getElementById('workspaceActionSummary');
+  if (summaryEl) {
+    if (toolId === 'merge-pdf') {
+      const modeLabel = state.workspaceViewMode === 'page' ? 'custom organized pages' : 'files';
+      summaryEl.textContent = `Ready to merge ${totalFiles} ${totalFiles === 1 ? 'PDF' : 'PDFs'} (${totalPages} pages total) in ${modeLabel} order.`;
+    } else {
+      summaryEl.textContent = `Ready to process ${state.workspaceItems.length} items.`;
+    }
+  }
+
+  // Responsive Grid
   const grid = document.createElement('div');
-  grid.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3.5 pb-2';
+  grid.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 pb-2';
 
   state.workspaceItems.forEach((item, index) => {
     const card = document.createElement('div');
     card.className = `preview-card ${item.removed ? 'removed' : ''} ${item.selected ? 'selected' : ''}`;
+    card.setAttribute('draggable', 'true');
 
+    // Drag and Drop Events
+    card.addEventListener('dragstart', (e) => handleCardDragStart(e, index));
+    card.addEventListener('dragover', (e) => handleCardDragOver(e, index));
+    card.addEventListener('dragleave', (e) => handleCardDragLeave(e));
+    card.addEventListener('drop', (e) => handleCardDrop(e, index));
+    card.addEventListener('dragend', (e) => handleCardDragEnd(e));
+
+    // Top badges
+    let orderBadge = `<div class="absolute top-2 left-2 z-10 bg-zinc-900/80 dark:bg-black/80 backdrop-blur-md text-white text-[10px] font-bold px-2 py-0.5 rounded-lg border border-white/10 shadow-xs">${index + 1}</div>`;
+
+    let infoBadge = '';
+    if (item.type === 'pdf-file') {
+      infoBadge = `<div class="absolute top-2 right-2 z-10 bg-[#ff5277] text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-xs">${item.pageCount || 1} pgs</div>`;
+    } else if (item.type === 'pdf-page') {
+      infoBadge = `<div class="absolute top-2 right-2 z-10 bg-white/90 dark:bg-zinc-800/90 text-zinc-700 dark:text-zinc-200 text-[10px] font-bold px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-zinc-700 shadow-xs truncate max-w-[80px]" title="${item.fileName || ''}">${item.name || `P. ${item.pageNum}`}</div>`;
+    }
+
+    // Thumbnail Area
     let thumbHtml = '';
     if (item.previewUrl) {
       thumbHtml = `
-        <div class="h-44 bg-zinc-100 dark:bg-zinc-800 flex items-center justify-center overflow-hidden p-1.5 relative">
-          <img src="${item.previewUrl}" alt="${item.name}" style="transform: rotate(${item.rotation}deg);" class="max-h-full max-w-full object-contain transition-transform duration-200 rounded-md">
-          <div class="absolute top-2 left-2 z-10 bg-white/90 dark:bg-zinc-900/90 text-[10px] font-bold px-2 py-0.5 rounded-md border border-zinc-200 dark:border-zinc-700 shadow-xs">
-            ${item.pageNum ? `Page ${item.pageNum}` : index + 1}
+        <div class="h-44 bg-zinc-100 dark:bg-zinc-800/60 flex items-center justify-center overflow-hidden p-2 relative group/thumb">
+          ${orderBadge}
+          ${infoBadge}
+          <img src="${item.previewUrl}" alt="${item.name}" style="transform: rotate(${item.rotation || 0}deg);" class="max-h-full max-w-full object-contain transition-transform duration-200 rounded-md shadow-xs pointer-events-none">
+          
+          <!-- Floating Hover Action Buttons (Smallpdf Style) -->
+          <div class="card-hover-actions absolute inset-0 bg-black/35 backdrop-blur-[1px] flex items-center justify-center gap-2 z-20">
+            <button type="button" onclick="rotateWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-[#ff5277] hover:bg-pink-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Rotate 90 degrees">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </button>
+            <button type="button" onclick="removeWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-400 hover:text-red-500 hover:bg-red-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Delete">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
           </div>
         </div>
       `;
     } else {
       thumbHtml = `
-        <div class="h-44 bg-pink-50/50 dark:bg-zinc-800/50 flex flex-col items-center justify-center p-3 text-center">
-          <div class="text-3xl mb-1">${state.activeTool ? state.activeTool.title.includes('Word') ? '📄' : state.activeTool.title.includes('Excel') ? '📈' : '📑' : '📄'}</div>
-          <p class="text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 truncate w-full">${item.name}</p>
+        <div class="h-44 bg-pink-50/50 dark:bg-zinc-800/50 flex flex-col items-center justify-center p-3 text-center relative">
+          ${orderBadge}
+          <div class="w-10 h-10 rounded-xl bg-pink-100 dark:bg-zinc-700 text-[#ff5277] flex items-center justify-center font-bold text-sm mb-1.5">PDF</div>
+          <p class="text-[11px] font-semibold text-zinc-700 dark:text-zinc-300 truncate w-full px-1">${item.name}</p>
           <p class="text-[10px] text-zinc-400 mt-0.5">${item.size || ''}</p>
         </div>
       `;
     }
 
-    // Action buttons inside card footer
+    // Card Footer with Name and Touch Arrows
     let actionsHtml = `
-      <div class="p-2.5 bg-white dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between">
-        <div class="flex items-center gap-1">
-          <button type="button" onclick="rotateWorkspaceItem(${index})" class="w-6 h-6 rounded-md hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-600 hover:text-[#ff5277] flex items-center justify-center transition-colors" title="Rotate 90°">
-            ↻
+      <div class="p-2 bg-white dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-1 text-xs">
+        <div class="truncate flex-1 min-w-0 pr-1">
+          <p class="text-[11px] font-bold text-zinc-800 dark:text-zinc-200 truncate" title="${item.name}">${item.name}</p>
+          ${item.size ? `<span class="text-[10px] text-zinc-400">${item.size}</span>` : ''}
+        </div>
+        <div class="flex items-center gap-0.5 flex-shrink-0">
+          <button type="button" onclick="moveWorkspaceItem(${index}, -1); event.stopPropagation();" ${index === 0 ? 'disabled' : ''} class="w-6 h-6 rounded-md hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff5277] flex items-center justify-center disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer" title="Move Left">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
           </button>
-          <button type="button" onclick="moveWorkspaceItem(${index}, -1)" ${index === 0 ? 'disabled' : ''} class="w-6 h-6 rounded-md hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-600 hover:text-[#ff5277] flex items-center justify-center disabled:opacity-30 disabled:pointer-events-none" title="Move Left">
-            ←
-          </button>
-          <button type="button" onclick="moveWorkspaceItem(${index}, 1)" ${index === state.workspaceItems.length - 1 ? 'disabled' : ''} class="w-6 h-6 rounded-md hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-600 hover:text-[#ff5277] flex items-center justify-center disabled:opacity-30 disabled:pointer-events-none" title="Move Right">
-            →
+          <button type="button" onclick="moveWorkspaceItem(${index}, 1); event.stopPropagation();" ${index === state.workspaceItems.length - 1 ? 'disabled' : ''} class="w-6 h-6 rounded-md hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff5277] flex items-center justify-center disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer" title="Move Right">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
           </button>
         </div>
-        <button type="button" onclick="toggleRemoveWorkspaceItem(${index})" class="w-6 h-6 rounded-md hover:bg-red-50 text-zinc-400 hover:text-red-500 flex items-center justify-center transition-colors" title="Remove">
-          ✕
-        </button>
       </div>
     `;
 
-    // Special click toggle for Split / Remove Pages tool
+    // Click toggle for Split / Remove Pages tools
     if (toolId === 'remove-pages' || toolId === 'split-pdf' || toolId === 'extract-pages') {
       card.onclick = (e) => {
-        if (e.target.tagName !== 'BUTTON') {
+        if (!e.target.closest('button')) {
           toggleRemoveWorkspaceItem(index);
         }
       };
@@ -1202,16 +1382,16 @@ function renderInteractiveWorkspace() {
     grid.appendChild(card);
   });
 
-  // "Add More Files" Card at the end of the grid (iLovePDF Style)
+  // "+ Add More Files" Card at end of grid (Smallpdf Style)
   const addMoreCard = document.createElement('div');
-  addMoreCard.className = 'preview-card border-2 border-dashed border-pink-200 hover:border-[#ff5277] bg-pink-50/20 hover:bg-pink-50/50 flex flex-col items-center justify-center p-6 text-center cursor-pointer min-h-[190px] transition-all';
+  addMoreCard.className = 'preview-card min-h-[210px] border-2 border-dashed border-pink-200/90 dark:border-zinc-700 hover:border-[#ff5277] bg-pink-50/20 hover:bg-pink-50/50 dark:hover:bg-zinc-800/40 flex flex-col items-center justify-center p-5 text-center cursor-pointer transition-all group';
   addMoreCard.onclick = () => DOM.fileInput.click();
   addMoreCard.innerHTML = `
-    <div class="w-10 h-10 rounded-full bg-pink-100 text-[#ff5277] flex items-center justify-center text-lg font-bold mb-2">
-      +
+    <div class="w-11 h-11 rounded-full bg-pink-100 dark:bg-zinc-800 text-[#ff5277] flex items-center justify-center text-xl font-bold mb-2 group-hover:scale-110 transition-transform shadow-2xs">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
     </div>
-    <span class="text-xs font-bold text-zinc-700 dark:text-zinc-300">Add More</span>
-    <span class="text-[10px] text-zinc-400 mt-0.5">Click to browse</span>
+    <span class="text-xs font-bold text-zinc-800 dark:text-zinc-200">Add More</span>
+    <span class="text-[10px] text-zinc-400 mt-0.5">Click or drop files</span>
   `;
   grid.appendChild(addMoreCard);
 
@@ -1222,16 +1402,98 @@ function renderInteractiveWorkspace() {
   DOM.actionButtonText.textContent = `${state.activeTool.actionText} (${activeCount})`;
 }
 
+// Drag and Drop Handlers
+function handleCardDragStart(e, index) {
+  state.draggedItemIndex = index;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', index);
+  setTimeout(() => {
+    if (e.target) e.target.classList.add('dragging');
+  }, 0);
+}
+
+function handleCardDragOver(e, index) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  const card = e.currentTarget;
+  if (card && state.draggedItemIndex !== null && state.draggedItemIndex !== index) {
+    card.classList.add('drag-over');
+  }
+}
+
+function handleCardDragLeave(e) {
+  const card = e.currentTarget;
+  if (card) {
+    card.classList.remove('drag-over');
+  }
+}
+
+function handleCardDrop(e, targetIndex) {
+  e.preventDefault();
+  const card = e.currentTarget;
+  if (card) {
+    card.classList.remove('drag-over');
+  }
+  const fromIndex = state.draggedItemIndex;
+  if (fromIndex === null || fromIndex === targetIndex || fromIndex < 0 || fromIndex >= state.workspaceItems.length) return;
+
+  const item = state.workspaceItems.splice(fromIndex, 1)[0];
+  state.workspaceItems.splice(targetIndex, 0, item);
+  state.draggedItemIndex = null;
+  renderInteractiveWorkspace();
+}
+
+function handleCardDragEnd(e) {
+  state.draggedItemIndex = null;
+  document.querySelectorAll('.preview-card').forEach(c => {
+    c.classList.remove('dragging', 'drag-over');
+  });
+}
+
 // Interactive Workspace Actions
 window.rotateWorkspaceItem = function(index) {
-  state.workspaceItems[index].rotation = (state.workspaceItems[index].rotation + 90) % 360;
+  if (!state.workspaceItems[index]) return;
+  state.workspaceItems[index].rotation = ((state.workspaceItems[index].rotation || 0) + 90) % 360;
+  if (state.workspaceItems[index].fileRecord) {
+    state.workspaceItems[index].fileRecord.rotation = state.workspaceItems[index].rotation;
+  }
   renderInteractiveWorkspace();
+};
+
+window.removeWorkspaceItem = function(index) {
+  if (!state.workspaceItems[index]) return;
+  const item = state.workspaceItems[index];
+
+  if (item.type === 'pdf-file' && item.fileRecord) {
+    state.uploadedPdfs = state.uploadedPdfs.filter(f => f.id !== item.fileRecord.id);
+    state.selectedFiles = state.selectedFiles.filter(f => f !== item.file);
+  }
+
+  state.workspaceItems.splice(index, 1);
+  if (state.workspaceItems.length === 0) {
+    state.selectedFiles = [];
+    state.uploadedPdfs = [];
+    DOM.filesSelectedArea.classList.add('hidden');
+    DOM.toolDropzone.classList.remove('hidden');
+  } else {
+    renderInteractiveWorkspace();
+  }
 };
 
 window.rotateAllWorkspace = function(angle) {
   state.workspaceItems.forEach(i => {
-    i.rotation = (i.rotation + angle) % 360;
+    i.rotation = ((i.rotation || 0) + angle) % 360;
+    if (i.fileRecord) {
+      i.fileRecord.rotation = i.rotation;
+    }
   });
+  renderInteractiveWorkspace();
+};
+
+window.sortWorkspaceItems = function(by) {
+  if (by === 'name') {
+    state.workspaceItems.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+  }
   renderInteractiveWorkspace();
 };
 
@@ -1251,7 +1513,8 @@ window.toggleRemoveWorkspaceItem = function(index) {
   } else if (toolId === 'split-pdf' || toolId === 'extract-pages') {
     state.workspaceItems[index].selected = !state.workspaceItems[index].selected;
   } else {
-    state.workspaceItems.splice(index, 1);
+    removeWorkspaceItem(index);
+    return;
   }
   renderInteractiveWorkspace();
 };
@@ -1509,18 +1772,51 @@ function renderRotatedBlob(item) {
   });
 }
 
-// 2. Merge PDF (Respects user's reordered sequence)
+// 2. Merge PDF (Supports both File View sequence and customized Page View sequence)
 async function engineMergePdf() {
-  const { PDFDocument } = PDFLib;
+  const { PDFDocument, degrees } = PDFLib;
   const mergedDoc = await PDFDocument.create();
 
-  for (const item of state.workspaceItems) {
-    if (item.file) {
-      const bytes = await item.file.arrayBuffer();
-      const doc = await PDFDocument.load(bytes);
-      const pages = await mergedDoc.copyPages(doc, doc.getPageIndices());
-      pages.forEach(p => mergedDoc.addPage(p));
+  if (state.workspaceViewMode === 'page') {
+    // Merge page by page according to customized user sequence
+    for (const item of state.workspaceItems) {
+      if (item.removed) continue;
+      if (item.file) {
+        const bytes = await item.file.arrayBuffer();
+        const srcDoc = await PDFDocument.load(bytes);
+        const pageIdx = (item.pageNum || 1) - 1;
+        if (pageIdx >= 0 && pageIdx < srcDoc.getPageCount()) {
+          const [copiedPage] = await mergedDoc.copyPages(srcDoc, [pageIdx]);
+          if (item.rotation) {
+            const currentAngle = copiedPage.getRotation().angle;
+            copiedPage.setRotation(degrees((currentAngle + item.rotation) % 360));
+          }
+          mergedDoc.addPage(copiedPage);
+        }
+      }
     }
+  } else {
+    // Merge file by file according to customized user sequence
+    for (const item of state.workspaceItems) {
+      if (item.file) {
+        const bytes = await item.file.arrayBuffer();
+        const doc = await PDFDocument.load(bytes);
+        const pageIndices = doc.getPageIndices();
+        const pages = await mergedDoc.copyPages(doc, pageIndices);
+        pages.forEach(p => {
+          if (item.rotation) {
+            const currentAngle = p.getRotation().angle;
+            p.setRotation(degrees((currentAngle + item.rotation) % 360));
+          }
+          mergedDoc.addPage(p);
+        });
+      }
+    }
+  }
+
+  if (mergedDoc.getPageCount() === 0) {
+    showToast('No pages selected for merging.');
+    return;
   }
 
   const mergedBytes = await mergedDoc.save();
@@ -1986,7 +2282,7 @@ function downloadBlob(blob, filename) {
     });
   }
 
-  showToast('File processed & downloaded successfully! 🎉');
+  showToast('File processed & downloaded successfully!');
 }
 
 let toastTimer;

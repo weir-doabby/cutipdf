@@ -464,20 +464,38 @@ html.dark .brand-logo {
 .preview-card {
   background: var(--bg-card);
   border: 1.5px solid var(--border-color);
-  border-radius: 16px;
+  border-radius: 18px;
   overflow: hidden;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, opacity 0.2s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  cursor: grab;
+}
+
+.preview-card:active {
+  cursor: grabbing;
 }
 
 .preview-card:hover {
   border-color: var(--color-pink-primary);
-  box-shadow: 0 8px 24px -4px var(--color-pink-glow);
+  box-shadow: 0 10px 28px -4px var(--color-pink-glow);
   transform: translateY(-2px);
+}
+
+.preview-card.dragging {
+  opacity: 0.45;
+  transform: scale(0.96);
+  border-style: dashed;
+  border-color: var(--color-pink-primary);
+}
+
+.preview-card.drag-over {
+  border-color: var(--color-pink-primary);
+  box-shadow: 0 0 0 2px var(--color-pink-primary);
+  transform: translateY(-4px);
 }
 
 .preview-card.removed {
@@ -489,6 +507,23 @@ html.dark .brand-logo {
 .preview-card.selected {
   border-color: var(--color-pink-primary);
   box-shadow: 0 0 0 2px var(--color-pink-primary);
+}
+
+/* Card hover overlay actions */
+.card-hover-actions {
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.preview-card:hover .card-hover-actions,
+.preview-card:focus-within .card-hover-actions {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .card-hover-actions {
+    opacity: 1;
+  }
 }
 
 /* Options Drawer */
