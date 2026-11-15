@@ -1346,22 +1346,31 @@ function renderInteractiveWorkspace() {
       infoBadge = `<div class="absolute top-2 right-2 z-10 bg-white/90 dark:bg-zinc-800/90 text-zinc-700 dark:text-zinc-200 text-[10px] font-bold px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-zinc-700 shadow-xs truncate max-w-[80px]" title="${item.fileName || ''}">${item.name || `P. ${item.pageNum}`}</div>`;
     }
 
-    // Simple Red Cross (ضربدر ساده) + Green Restore Button slightly below for removed pages
+    // Hand-Painted Watercolor Brush Stroke Cross (حالت قلم‌مو) + Hollow Green Circle Restore Button
     let removedOverlayHtml = '';
     if (item.removed) {
       removedOverlayHtml = `
-        <!-- Simple Red Cross with NO text/explanations -->
-        <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-15 bg-red-950/15">
-          <svg class="w-16 h-16 sm:w-20 sm:h-20 text-red-600/90 pointer-events-none drop-shadow-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <line x1="18" y1="6" x2="6" y2="18" stroke-width="2.2" stroke-linecap="round"/>
-            <line x1="6" y1="6" x2="18" y2="18" stroke-width="2.2" stroke-linecap="round"/>
+        <!-- Hand-Painted Watercolor Brush Stroke Cross (حالت قلم‌مو) -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-15 bg-red-950/10">
+          <svg viewBox="0 0 100 100" class="w-20 h-20 sm:w-24 sm:h-24 pointer-events-none" style="filter: drop-shadow(0 2px 4px rgba(225,29,72,0.25));">
+            <!-- Stroke 1 (Top-Left to Bottom-Right) with multi-bristle watercolor texture -->
+            <path d="M18 18 Q 34 35 50 50 T 82 82" fill="none" stroke="#e11d48" stroke-width="8.5" stroke-linecap="round" opacity="0.85"/>
+            <path d="M20 17 Q 35 33 50 49 T 80 83" fill="none" stroke="#fb7185" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
+            <path d="M16 20 Q 33 37 49 52 T 78 80" fill="none" stroke="#9f1239" stroke-width="2.5" stroke-linecap="round" opacity="0.45"/>
+            
+            <!-- Stroke 2 (Top-Right to Bottom-Left) with multi-bristle watercolor texture -->
+            <path d="M82 18 Q 66 35 50 50 T 18 82" fill="none" stroke="#e11d48" stroke-width="8.5" stroke-linecap="round" opacity="0.85"/>
+            <path d="M80 17 Q 65 33 50 49 T 20 83" fill="none" stroke="#fb7185" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
+            <path d="M84 20 Q 67 37 51 52 T 22 80" fill="none" stroke="#9f1239" stroke-width="2.5" stroke-linecap="round" opacity="0.45"/>
           </svg>
         </div>
 
-        <!-- Green Restore Button slightly below -->
+        <!-- Hollow Green Circle Restore Button (دایره سبز توخالی ساده) slightly below -->
         <div class="absolute bottom-3 left-1/2 -translate-x-1/2 z-25">
-          <button type="button" onclick="toggleRemoveWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white shadow-md flex items-center justify-center transition-transform hover:scale-110 active:scale-95 cursor-pointer border-2 border-white dark:border-zinc-800" title="Restore Page">
-            <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a5 5 0 0 1 5 5v2m0 0l-3-3m3 3l3-3M3 10l3 3m-3-3l3-3"/></svg>
+          <button type="button" onclick="toggleRemoveWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full border-2 border-emerald-500 bg-white/95 dark:bg-zinc-900/95 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 text-emerald-500 hover:text-emerald-600 shadow-sm flex items-center justify-center transition-all hover:scale-110 active:scale-95 cursor-pointer" title="Restore Page">
+            <svg class="w-4 h-4 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 1 0 2.34-5.66L4 8m0 0V3m0 5h5"/>
+            </svg>
           </button>
         </div>
       `;
