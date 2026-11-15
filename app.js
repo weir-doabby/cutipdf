@@ -696,15 +696,15 @@ function alignFloatingToolsButton() {
   if (isRemovePagesFloating) {
     const rect = actionBtn.getBoundingClientRect();
     if (rect.width > 0 && rect.height > 0) {
-      // The rightmost edge of actionBtn is at rect.right.
-      // The exact distance from the right edge of viewport to the rightmost edge of actionBtn:
-      const rightFromViewport = Math.max(16, Math.round(window.innerWidth - rect.right));
-      // Distance from bottom of viewport to the top of actionBtn + 12px gap:
+      // Calculate exact left position so right edge of toolsBtn is 100% flush with rect.right:
+      const btnWidth = toolsBtn.offsetWidth || 66;
+      const exactLeft = Math.round(rect.right - btnWidth);
+      // Distance from bottom of viewport to top of actionBtn + 12px gap:
       const bottomFromViewport = Math.round(window.innerHeight - rect.top) + 12;
 
-      toolsBtn.style.setProperty('right', `${rightFromViewport}px`, 'important');
+      toolsBtn.style.setProperty('left', `${exactLeft}px`, 'important');
+      toolsBtn.style.setProperty('right', 'auto', 'important');
       toolsBtn.style.setProperty('bottom', `${bottomFromViewport}px`, 'important');
-      toolsBtn.style.setProperty('left', 'auto', 'important');
       toolsBtn.classList.add('elevated-mobile');
       return;
     }
@@ -719,6 +719,14 @@ function alignFloatingToolsButton() {
 
 window.addEventListener('resize', alignFloatingToolsButton);
 window.addEventListener('scroll', alignFloatingToolsButton, { passive: true });
+window.addEventListener('orientationchange', alignFloatingToolsButton);
+
+if (window.ResizeObserver) {
+  const executeBtn = document.getElementById('btnExecuteAction');
+  if (executeBtn) {
+    new ResizeObserver(alignFloatingToolsButton).observe(executeBtn);
+  }
+}
 
 function renderQuickToolsModalGrid(query = '') {
   const container = DOM.quickToolsModalGrid;
