@@ -24,7 +24,7 @@ const TOOLS_CATALOG = {
     {
       id: 'remove-pages',
       title: 'Remove Pages',
-      desc: 'Remove pages from a PDF document quickly and easily with interactive preview.',
+      desc: 'Select and remove the PDF pages you don’t need. Get a new file without your deleted pages.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Remove Pages'
@@ -507,7 +507,9 @@ function showAllToolsCatalogView() {
   const actionBar = document.getElementById('workspaceActionBar');
   if (actionBar) actionBar.classList.remove('floating-mode');
   const toolsBtn = document.getElementById('floatingToolsBtn');
-  if (toolsBtn) toolsBtn.classList.remove('elevated');
+  if (toolsBtn) toolsBtn.classList.remove('elevated', 'elevated-mobile');
+  const toolbar = document.querySelector('.workspace-toolbar');
+  if (toolbar) toolbar.classList.remove('clean-actions-only');
   document.title = 'CutiPDF • Clean, Fast & Complete PDF Studio';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -791,7 +793,9 @@ function openToolDedicatedPage(tool) {
   const actionBar = document.getElementById('workspaceActionBar');
   if (actionBar) actionBar.classList.remove('floating-mode');
   const toolsBtn = document.getElementById('floatingToolsBtn');
-  if (toolsBtn) toolsBtn.classList.remove('elevated');
+  if (toolsBtn) toolsBtn.classList.remove('elevated', 'elevated-mobile');
+  const toolbar = document.querySelector('.workspace-toolbar');
+  if (toolbar) toolbar.classList.remove('clean-actions-only');
 
   DOM.viewAllTools.classList.remove('active');
   DOM.viewToolActive.classList.add('active');
@@ -1047,7 +1051,9 @@ function initDropzoneEvents() {
     const actionBar = document.getElementById('workspaceActionBar');
     if (actionBar) actionBar.classList.remove('floating-mode');
     const toolsBtn = document.getElementById('floatingToolsBtn');
-    if (toolsBtn) toolsBtn.classList.remove('elevated');
+    if (toolsBtn) toolsBtn.classList.remove('elevated', 'elevated-mobile');
+    const toolbar = document.querySelector('.workspace-toolbar');
+    if (toolbar) toolbar.classList.remove('clean-actions-only');
   });
 
   DOM.btnExecuteAction.addEventListener('click', executeActiveToolAction);
@@ -1468,8 +1474,9 @@ function renderInteractiveWorkspace() {
     }
   }
 
-  // Toolbar controls visibility based on active tool
-  // For remove-pages: ONLY Restore All, Add More, and Grid vs Continuous View Switcher
+  // Toolbar & Stats visibility based on active tool
+  const statsBadge = document.getElementById('workspaceStatsBadge');
+  const toolbar = document.querySelector('.workspace-toolbar');
   const layoutSwitcher = document.getElementById('pageLayoutSwitcher');
   const modeSwitcher = document.getElementById('workspaceModeSwitcher');
   const btnRestoreAll = document.getElementById('btnToolbarRestoreAll');
@@ -1479,6 +1486,10 @@ function renderInteractiveWorkspace() {
   const btnClear = document.getElementById('btnClearFiles');
 
   if (toolId === 'remove-pages') {
+    // Hide stats text and strip toolbar bar background completely (فقط دکمه‌های Restore All و Add More بدون بار و آمار)
+    if (statsBadge) statsBadge.classList.add('hidden');
+    if (toolbar) toolbar.classList.add('clean-actions-only');
+
     if (layoutSwitcher) layoutSwitcher.classList.add('hidden');
     if (modeSwitcher) modeSwitcher.classList.add('hidden');
     if (btnRestoreAll) btnRestoreAll.classList.remove('hidden');
@@ -1487,6 +1498,9 @@ function renderInteractiveWorkspace() {
     if (btnRotate) btnRotate.classList.add('hidden');
     if (btnClear) btnClear.classList.add('hidden');
   } else {
+    if (statsBadge) statsBadge.classList.remove('hidden');
+    if (toolbar) toolbar.classList.remove('clean-actions-only');
+
     if (layoutSwitcher) layoutSwitcher.classList.add('hidden');
     if (btnRestoreAll) btnRestoreAll.classList.add('hidden');
     if (btnAddMore) btnAddMore.classList.remove('hidden');
@@ -1508,7 +1522,11 @@ function renderInteractiveWorkspace() {
 
   if (toolId === 'remove-pages') {
     if (actionBar) actionBar.classList.add('floating-mode');
-    if (toolsBtn) toolsBtn.classList.add('elevated');
+    // On desktop, tools button position stays unchanged; on mobile it moves up above remove button
+    if (toolsBtn) {
+      toolsBtn.classList.remove('elevated');
+      toolsBtn.classList.add('elevated-mobile');
+    }
 
     const removedCount = state.workspaceItems.filter(i => i.removed).length;
     if (DOM.actionButtonText) {
@@ -1524,7 +1542,7 @@ function renderInteractiveWorkspace() {
     }
   } else {
     if (actionBar) actionBar.classList.remove('floating-mode');
-    if (toolsBtn) toolsBtn.classList.remove('elevated');
+    if (toolsBtn) toolsBtn.classList.remove('elevated', 'elevated-mobile');
     DOM.btnExecuteAction.disabled = false;
     DOM.btnExecuteAction.classList.remove('opacity-50', 'cursor-not-allowed');
     if (DOM.actionButtonText) {

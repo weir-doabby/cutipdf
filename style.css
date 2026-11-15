@@ -225,19 +225,22 @@ html.dark .brand-logo {
   border-color: #93c5fd;
 }
 
-/* Elevated Tools Button (بالاتر قرار گرفتن دکمه Tools هنگام شناور شدن دکمه اکشن) */
-.floating-tools-btn.elevated {
-  bottom: 86px !important;
-  bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
+/* Clean Top Actions for Remove Pages (حذف بار و پس‌زمینه و حاشیه‌ها) */
+.workspace-toolbar.clean-actions-only {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 4px !important;
+  justify-content: flex-end !important;
 }
 
-/* Floating Action Bar (شناور در گوشه پایین راست، هم‌راستا با دکمه Tools) */
+/* Floating Action Bar (Remove Pages: پایین وسط، بزرگتر، زاویه گوشه‌ها ۱۸px مثل دکمه تولز) */
 .workspace-action-bar.floating-mode {
   position: fixed !important;
-  bottom: 20px !important;
-  right: 20px !important;
   bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
-  right: calc(20px + env(safe-area-inset-right, 0px)) !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
   z-index: 70 !important;
   padding: 0 !important;
   margin: 0 !important;
@@ -246,11 +249,10 @@ html.dark .brand-logo {
   box-shadow: none !important;
   display: flex !important;
   align-items: center !important;
-  justify-content: flex-end !important;
+  justify-content: center !important;
   width: auto !important;
-  max-width: calc(100vw - 32px) !important;
   pointer-events: none;
-  animation: floatInUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: floatInUpCenter 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .workspace-action-bar.floating-mode > * {
@@ -262,19 +264,50 @@ html.dark .brand-logo {
 }
 
 .workspace-action-bar.floating-mode #btnExecuteAction {
-  border-radius: 9999px !important;
-  padding: 13px 22px !important;
-  box-shadow: 0 12px 28px -4px rgba(255, 82, 119, 0.45), 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+  border-radius: 18px !important; /* دقیقا هم‌اندازه زاویه گوشه دکمه تولز (18px) */
+  padding: 16px 36px !important; /* یکم بزرگتر و کشیده‌تر */
+  min-height: 56px !important;
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 14px 34px -4px rgba(255, 82, 119, 0.5), 0 6px 16px rgba(0, 0, 0, 0.12) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  white-space: nowrap !important;
 }
 
-@keyframes floatInUp {
+@media (max-width: 639px) {
+  .workspace-action-bar.floating-mode {
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 16px !important;
+    right: 16px !important;
+    transform: none !important;
+    width: calc(100% - 32px) !important;
+    max-width: 440px !important;
+    margin: 0 auto !important;
+  }
+
+  .workspace-action-bar.floating-mode #btnExecuteAction {
+    width: 100% !important;
+    padding: 15px 20px !important;
+    font-size: 15px !important;
+  }
+
+  /* در موبایل چون دکمه ریموو کل زیر صفحه را می‌گیرد، دکمه تولز با کمی فاصله بالا می‌آید */
+  .floating-tools-btn.elevated-mobile {
+    bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+@keyframes floatInUpCenter {
   from {
     opacity: 0;
-    transform: translateY(16px) scale(0.95);
+    transform: translate(-50%, 16px) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translate(-50%, 0) scale(1);
   }
 }
 
