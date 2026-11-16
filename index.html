@@ -75,7 +75,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=20261116e">
+  <link rel="stylesheet" href="style.css?v=20261116f">
 </head>
 <body class="watercolor-paper-bg selection:bg-pink-500/20 selection:text-[#ff5277]">
 
@@ -88,7 +88,7 @@
   </div>
 
   <!-- Clean Top Header (Corner-Aligned with Tools Button) -->
-  <header class="w-full px-6 py-4 flex items-center justify-between border-b border-zinc-200/80 dark:border-zinc-800/80">
+  <header class="w-full px-6 py-2.5 sm:py-3 flex items-center justify-between border-b border-zinc-200/80 dark:border-zinc-800/80">
     <!-- Brand: Left Corner (Cuti in dark/light, PDF in Pink) -->
     <a id="brandLogoLink" href="./" class="flex items-center cursor-pointer no-underline text-inherit group" title="CutiPDF Home">
       <span class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:opacity-90 transition-opacity font-brush">
@@ -103,7 +103,7 @@
   </header>
 
   <!-- Main Content Area (Snug & Cohesive Spacing to Header) -->
-  <main class="w-full max-w-6xl mx-auto px-5 pt-3 sm:pt-6 pb-8 flex-1">
+  <main class="w-full max-w-6xl mx-auto px-5 pt-1 sm:pt-2.5 pb-8 flex-1">
 
     <!-- ============================================================ -->
     <!-- VIEW 1: ALL TOOLS CATALOG (Full iLovePDF Suite) -->
@@ -130,19 +130,19 @@
     <!-- ============================================================ -->
     <!-- VIEW 2: DEDICATED TOOL PAGE FOR EACH TOOL -->
     <!-- ============================================================ -->
-    <div id="view-tool-active" class="view-container max-w-4xl mx-auto space-y-4 sm:space-y-5">
+    <div id="view-tool-active" class="view-container max-w-4xl mx-auto space-y-3 sm:space-y-4">
 
-      <!-- Tool Header with Gorgeous Vector (Centered, Lower & Closer to Title) -->
-      <div class="text-center flex flex-col items-center space-y-1 sm:space-y-1.5">
-        <div id="toolVectorContainer" class="w-16 h-16 sm:w-20 sm:h-20 mx-auto flex items-center justify-center drop-shadow-xs">
+      <!-- Tool Header with Gorgeous Vector (Centered, Clean Spacing to Header & Title) -->
+      <div class="text-center flex flex-col items-center space-y-0.5 sm:space-y-1">
+        <div id="toolVectorContainer" class="w-14 h-14 sm:w-16 sm:h-16 mx-auto flex items-center justify-center drop-shadow-xs mb-0.5">
           <!-- Injected SVG Vector -->
         </div>
 
         <div>
-          <h2 id="toolTitle" class="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight">Tool Name</h2>
+          <h2 id="toolTitle" class="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight leading-tight">Tool Name</h2>
         </div>
 
-        <p id="toolDesc" class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto leading-normal">
+        <p id="toolDesc" class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto leading-snug mt-1">
           Description
         </p>
       </div>
@@ -428,8 +428,8 @@
   </div>
 
   <!-- Vector Illustrations Library -->
-  <script src="vectors.js?v=20261116e"></script>
+  <script src="vectors.js?v=20261116f"></script>
   <!-- Main Application Script -->
-  <script src="app.js?v=20261116e"></script>
+  <script src="app.js?v=20261116f"></script>
 </body>
 </html>

@@ -105,13 +105,13 @@ const VECTORS = {
     </svg>
   `,
 
-  // 9. Remove Pages
+  // 9. Remove Pages (Both sheets identical size for symmetrical, balanced look)
   'remove-pages': `
     <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="12" y="10" width="28" height="38" rx="4" fill="#FEE2E2" stroke="#E63946" stroke-width="2"/>
-      <rect x="28" y="18" width="24" height="34" rx="4" fill="#FFFFFF" stroke="#DC2626" stroke-width="2.2"/>
-      <circle cx="40" cy="35" r="8" fill="#DC2626"/>
-      <path d="M36 31l8 8M44 31l-8 8" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+      <rect x="14" y="10" width="28" height="38" rx="4" fill="#FEE2E2" stroke="#E63946" stroke-width="2"/>
+      <rect x="22" y="16" width="28" height="38" rx="4" fill="#FFFFFF" stroke="#DC2626" stroke-width="2.2"/>
+      <circle cx="36" cy="35" r="8" fill="#DC2626"/>
+      <path d="M32 31l8 8M40 31l-8 8" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
     </svg>
   `,
 

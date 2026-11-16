@@ -693,7 +693,11 @@ function alignFloatingToolsButton() {
   const toolId = state.activeTool ? state.activeTool.id : '';
   const isRemovePagesFloating = (toolId === 'remove-pages' && state.workspaceItems && state.workspaceItems.length > 0 && !DOM.filesSelectedArea.classList.contains('hidden'));
 
-  if (isRemovePagesFloating) {
+  // On desktop (>= 1024px), tools button stays in its original place in the bottom-right corner!
+  // On mobile & tablet (< 1024px), tools button elevates directly above action button with flush right-edge alignment.
+  const isResponsiveScreen = window.innerWidth < 1024;
+
+  if (isRemovePagesFloating && isResponsiveScreen) {
     const rect = actionBtn.getBoundingClientRect();
     if (rect.width > 0 && rect.height > 0) {
       // Calculate exact left position so right edge of toolsBtn is 100% flush with rect.right:
@@ -710,11 +714,11 @@ function alignFloatingToolsButton() {
     }
   }
 
-  // Reset to default CSS positioning
+  // Reset to default CSS positioning (desktop bottom-right corner: bottom 24px, right 24px)
   toolsBtn.style.removeProperty('right');
   toolsBtn.style.removeProperty('bottom');
   toolsBtn.style.removeProperty('left');
-  toolsBtn.classList.remove('elevated-mobile');
+  toolsBtn.classList.remove('elevated', 'elevated-mobile');
 }
 
 window.addEventListener('resize', alignFloatingToolsButton);
@@ -1592,19 +1596,22 @@ function renderInteractiveWorkspace() {
 
   if (toolId === 'remove-pages') {
     if (actionBar) actionBar.classList.add('floating-mode');
-    // On desktop, tools button position stays unchanged; on mobile it moves up above remove button
+    // On desktop (>= 1024px), tools button stays in bottom-right corner; on mobile/tablet it elevates above remove button
     if (toolsBtn) {
       toolsBtn.classList.remove('elevated');
-      toolsBtn.classList.add('elevated-mobile');
+      if (window.innerWidth < 1024) {
+        toolsBtn.classList.add('elevated-mobile');
+      } else {
+        toolsBtn.classList.remove('elevated-mobile');
+      }
     }
 
     const removedCount = state.workspaceItems.filter(i => i.removed).length;
     if (state.removePagesProcessed) {
-      // Step 2: Selected pages were removed in-situ from workspace, button now becomes Download PDF
+      // Step 2: Selected pages were removed in-situ from workspace, button now becomes Download PDF (NO icon)
       DOM.btnExecuteAction.disabled = false;
       DOM.btnExecuteAction.classList.remove('opacity-50', 'cursor-not-allowed');
       DOM.btnExecuteAction.innerHTML = `
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
         <span id="actionButtonText">Download PDF</span>
       `;
     } else {
@@ -2365,7 +2372,6 @@ async function engineRemovePagesDownload() {
     showToast('⚠️ No pages to keep in the new PDF.');
     DOM.btnExecuteAction.disabled = false;
     DOM.btnExecuteAction.innerHTML = `
-      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
       <span id="actionButtonText">Download PDF</span>
     `;
     return;
@@ -2381,7 +2387,6 @@ async function engineRemovePagesDownload() {
 
   DOM.btnExecuteAction.disabled = false;
   DOM.btnExecuteAction.innerHTML = `
-    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
     <span id="actionButtonText">Download PDF</span>
   `;
 }
