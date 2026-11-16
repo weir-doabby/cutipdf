@@ -230,11 +230,11 @@ html.dark .brand-logo {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  padding: 4px 0 !important;
+  padding: 4px 0 10px 0 !important;
   justify-content: center !important;
   align-items: center !important;
   width: 100% !important;
-  margin: 0 auto !important;
+  margin: 0 auto 12px auto !important;
 }
 
 .workspace-toolbar.clean-actions-only > div:first-child {
@@ -248,6 +248,10 @@ html.dark .brand-logo {
   gap: 10px !important;
   flex-wrap: nowrap !important;
   margin: 0 auto !important;
+}
+
+.workspace-toolbar.clean-actions-only button {
+  border-radius: 18px !important;
 }
 
 /* Floating Action Bar (Remove Pages: پایین وسط، بزرگتر، زاویه گوشه‌ها ۱۸px مثل دکمه تولز) */
@@ -430,7 +434,7 @@ html.dark .brand-logo {
   background: linear-gradient(135deg, #ff5277 0%, #ff3366 50%, #e91e63 100%);
   color: #ffffff;
   font-weight: 700;
-  border-radius: 16px;
+  border-radius: 18px;
   min-height: 70px;
   height: 70px;
   width: 100%;
@@ -593,9 +597,14 @@ html.dark .preview-card {
 }
 
 .preview-card:hover {
-  border-color: var(--color-pink-primary);
-  box-shadow: 0 10px 28px -4px var(--color-pink-glow);
+  border-color: rgba(203, 213, 225, 0.95);
+  box-shadow: 0 8px 22px -4px rgba(0, 0, 0, 0.08);
   transform: translateY(-2px);
+}
+
+html.dark .preview-card:hover {
+  border-color: rgba(82, 82, 91, 0.8);
+  box-shadow: 0 8px 22px -4px rgba(0, 0, 0, 0.3);
 }
 
 .preview-card.dragging {
@@ -635,7 +644,7 @@ html.dark .preview-card.removed {
   box-shadow: 0 0 0 3px rgba(255, 82, 119, 0.45), 0 6px 18px rgba(255, 82, 119, 0.2) !important;
 }
 
-.preview-card.selected {
+.preview-card.selected:not(.removed) {
   border-color: var(--color-pink-primary);
   box-shadow: 0 0 0 2px var(--color-pink-primary);
 }

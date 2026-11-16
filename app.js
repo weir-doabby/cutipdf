@@ -1161,11 +1161,14 @@ async function handleFilesSelected(files) {
   if (!files || files.length === 0) return;
 
   state.selectedFiles.push(...files);
-  DOM.toolDropzone.classList.add('hidden');
-  DOM.filesSelectedArea.classList.remove('hidden');
+  // Keep filesSelectedArea clean and hidden while building preview cards so no background ghost buttons bleed through
+  DOM.filesSelectedArea.classList.add('hidden');
+  if (DOM.selectedFilesList) DOM.selectedFilesList.innerHTML = '';
 
   showToast('Generating document preview cards...');
   await buildWorkspacePreview(files);
+  DOM.toolDropzone.classList.add('hidden');
+  DOM.filesSelectedArea.classList.remove('hidden');
   renderInteractiveWorkspace();
 }
 
@@ -1321,7 +1324,7 @@ async function buildWorkspacePreview(newFiles) {
             name: `Page ${i}`,
             previewUrl: thumb,
             rotation: 0,
-            selected: true,
+            selected: false,
             removed: false
           });
 
@@ -2525,11 +2528,12 @@ function renderInteractiveWorkspace() {
 
   // Container Layout: Grid vs Continuous
   const isContinuous = (toolId === 'remove-pages' && state.pageLayoutMode === 'continuous');
+  const isRemoveTool = (toolId === 'remove-pages');
   const grid = document.createElement('div');
   if (isContinuous) {
-    grid.className = 'flex flex-col items-center gap-6 max-w-xl mx-auto pb-6 w-full';
+    grid.className = 'flex flex-col items-center gap-6 max-w-xl mx-auto pt-3 sm:pt-4 pb-6 w-full';
   } else {
-    grid.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 pb-2';
+    grid.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 pt-3 sm:pt-4 pb-6';
   }
 
   state.workspaceItems.forEach((item, index) => {
@@ -2543,7 +2547,7 @@ function renderInteractiveWorkspace() {
     if (isContinuous) {
       card.className = `preview-card ${item.removed ? 'removed' : ''} w-full max-w-md sm:max-w-lg shadow-sm hover:shadow-md transition-all cursor-pointer`;
     } else {
-      card.className = `preview-card ${item.removed ? 'removed' : ''} ${item.selected ? 'selected' : ''} ${toolId === 'remove-pages' ? 'min-h-[220px] sm:min-h-[250px]' : ''}`;
+      card.className = `preview-card ${item.removed ? 'removed' : ''} ${(!isRemoveTool && item.selected) ? 'selected' : ''} ${isRemoveTool ? 'min-h-[220px] sm:min-h-[250px]' : ''}`;
     }
 
     // Drag and Drop Events (only for re-ordering tools, NOT remove-pages)
@@ -2557,19 +2561,30 @@ function renderInteractiveWorkspace() {
     }
 
     // Top badges: For remove-pages, Page Number on Left and Zoom Preview on Right
-    let orderBadge = `<div class="absolute top-2 left-2 z-10 bg-zinc-900/80 dark:bg-black/80 backdrop-blur-md text-white text-[11px] font-bold px-2 py-0.5 rounded-lg border border-white/10 shadow-xs">${index + 1}</div>`;
-
+    // Both identically sized (28px on mobile, 32px on desktop) with matching squircle rounded-xl
+    let orderBadge = '';
     let infoBadge = '';
     let zoomPreviewBtn = '';
 
     if (toolId === 'remove-pages') {
+      orderBadge = `
+        <div class="absolute top-2 left-2 z-20 min-w-[28px] h-7 sm:min-w-[32px] sm:h-8 px-1.5 rounded-xl bg-white/95 dark:bg-zinc-800/95 text-zinc-700 dark:text-zinc-200 text-xs sm:text-sm font-bold shadow-sm border border-zinc-200/80 dark:border-zinc-700 flex items-center justify-center pointer-events-none select-none">
+          ${index + 1}
+        </div>
+      `;
       zoomPreviewBtn = `
-        <button type="button" onclick="openPagePreviewModal(${index}); event.stopPropagation();" class="absolute top-2 right-2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-white/95 dark:bg-zinc-800/95 text-zinc-700 dark:text-zinc-200 hover:text-[#ff5277] hover:bg-pink-50 dark:hover:bg-zinc-700 shadow-sm border border-zinc-200/80 dark:border-zinc-700 flex items-center justify-center transition-all hover:scale-110 active:scale-95 cursor-pointer" title="Zoom & Preview Page">
+        <button type="button" onclick="openPagePreviewModal(${index}); event.stopPropagation();" class="absolute top-2 right-2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/95 dark:bg-zinc-800/95 text-zinc-700 dark:text-zinc-200 hover:text-[#ff5277] hover:bg-pink-50 dark:hover:bg-zinc-700 shadow-sm border border-zinc-200/80 dark:border-zinc-700 flex items-center justify-center transition-all hover:scale-110 active:scale-95 cursor-pointer" title="Zoom & Preview Page">
           <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
         </button>
       `;
     } else {
+      orderBadge = `<div class="absolute top-2 left-2 z-10 bg-zinc-900/80 dark:bg-black/80 backdrop-blur-md text-white text-[11px] font-bold px-2 py-0.5 rounded-lg border border-white/10 shadow-xs">${index + 1}</div>`;
       if (item.type === 'pdf-file') {
+        infoBadge = `<div class="absolute top-2 right-2 z-10 bg-[#ff5277] text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-xs">${item.pageCount || 1} pgs</div>`;
+      } else if (item.type === 'pdf-page') {
+        infoBadge = `<div class="absolute top-2 right-2 z-10 bg-white/90 dark:bg-zinc-800/90 text-zinc-700 dark:text-zinc-200 text-[10px] font-bold px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-zinc-700 shadow-xs truncate max-w-[80px]" title="${item.fileName || ''}">${item.name || `P. ${item.pageNum}`}</div>`;
+      }
+    }
         infoBadge = `<div class="absolute top-2 right-2 z-10 bg-[#ff5277] text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-xs">${item.pageCount || 1} pgs</div>`;
       } else if (item.type === 'pdf-page') {
         infoBadge = `<div class="absolute top-2 right-2 z-10 bg-white/90 dark:bg-zinc-800/90 text-zinc-700 dark:text-zinc-200 text-[10px] font-bold px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-zinc-700 shadow-xs truncate max-w-[80px]" title="${item.fileName || ''}">${item.name || `P. ${item.pageNum}`}</div>`;

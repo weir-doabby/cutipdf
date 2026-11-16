@@ -79,7 +79,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=20261117b">
+  <link rel="stylesheet" href="style.css?v=20261117c">
 </head>
 <body class="watercolor-paper-bg selection:bg-pink-500/20 selection:text-[#ff5277]">
 
@@ -236,19 +236,19 @@
           <!-- Right: Quick Actions (Select All / Restore All, Remove by Number, Add More) -->
           <div class="flex items-center justify-center flex-nowrap gap-2 sm:gap-2.5 max-w-full">
             <!-- Select All Pages Button (Shown when 0 pages removed) -->
-            <button type="button" id="btnToolbarSelectAll" onclick="selectAllPagesForRemoval()" class="hidden inline-flex items-center justify-center gap-1.5 px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold bg-pink-50 dark:bg-zinc-800 hover:bg-pink-100 dark:hover:bg-zinc-700 text-[#ff5277] border border-pink-200 dark:border-zinc-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer flex-shrink-0 whitespace-nowrap" title="Select all pages for removal">
+            <button type="button" id="btnToolbarSelectAll" onclick="selectAllPagesForRemoval()" class="hidden inline-flex items-center justify-center gap-1.5 w-[110px] sm:w-[130px] py-2 sm:py-2.5 rounded-[18px] text-xs sm:text-sm font-bold bg-pink-50 dark:bg-zinc-800 hover:bg-pink-100 dark:hover:bg-zinc-700 text-[#ff5277] border border-pink-200 dark:border-zinc-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer flex-shrink-0 whitespace-nowrap" title="Select all pages for removal">
               <svg class="w-3.5 h-3.5 stroke-[2.4]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
               <span>Select All</span>
             </button>
 
             <!-- Restore All Pages Button (Shown when >= 1 page removed) -->
-            <button type="button" id="btnToolbarRestoreAll" onclick="resetRemovedPages()" class="hidden inline-flex items-center justify-center gap-1.5 px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer flex-shrink-0 whitespace-nowrap" title="Restore all removed pages">
+            <button type="button" id="btnToolbarRestoreAll" onclick="resetRemovedPages()" class="hidden inline-flex items-center justify-center gap-1.5 w-[110px] sm:w-[130px] py-2 sm:py-2.5 rounded-[18px] text-xs sm:text-sm font-bold bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer flex-shrink-0 whitespace-nowrap" title="Restore all removed pages">
               <svg class="w-3.5 h-3.5 stroke-[2.4]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 1 0 2.34-5.66L4 8m0 0V3m0 5h5"/></svg>
               <span>Restore All</span>
             </button>
 
-            <!-- Remove by Number Button (No hashtag, clean & compact) -->
-            <button type="button" id="btnToolbarEnterPages" onclick="openEnterPagesModal()" class="hidden inline-flex items-center justify-center px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold bg-pink-50 dark:bg-zinc-800 hover:bg-pink-100 dark:hover:bg-zinc-700 text-[#ff5277] border border-pink-200 dark:border-zinc-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer flex-shrink-0 whitespace-nowrap" title="Remove pages by entering numbers or ranges">
+            <!-- Remove by Number Button (No hashtag, clean & compact, matching 18px radius) -->
+            <button type="button" id="btnToolbarEnterPages" onclick="openEnterPagesModal()" class="hidden inline-flex items-center justify-center px-4 py-2 sm:px-5 sm:py-2.5 rounded-[18px] text-xs sm:text-sm font-bold bg-pink-50 dark:bg-zinc-800 hover:bg-pink-100 dark:hover:bg-zinc-700 text-[#ff5277] border border-pink-200 dark:border-zinc-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer flex-shrink-0 whitespace-nowrap" title="Remove pages by entering numbers or ranges">
               <span>Remove by Number</span>
             </button>
 
@@ -281,7 +281,7 @@
         </div>
 
         <!-- Files / Pages Thumbnail Grid (Drag & Drop Reorderable Canvas) -->
-        <div id="selectedFilesList" class="min-h-[220px] max-h-[65vh] overflow-y-auto pr-1 select-none"></div>
+        <div id="selectedFilesList" class="min-h-[220px] max-h-[65vh] overflow-y-auto px-1 pt-3 pb-24 sm:pt-4 sm:pb-28 select-none"></div>
 
         <!-- Modern Action Bar at Bottom (Supports In-Place & Floating Modes) -->
         <div id="workspaceActionBar" class="workspace-action-bar p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-pink-200/80 dark:border-zinc-800 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
@@ -342,9 +342,8 @@
   </aside>
 
   <!-- ============================================================ -->
-  <!-- CUTE PDF LOADING MODAL WITH PERCENTAGE (صفحه کیوت لودینگ با درصد) -->
-  <!-- ============================================================ -->
-  <div id="pdfLoadingModal" class="fixed inset-0 z-[120] bg-black/60 dark:bg-black/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+  <!-- Cute PDF Loading Modal with Percentage (Clean Deep Backdrop - No Background Ghost Bleed) -->
+  <div id="pdfLoadingModal" class="fixed inset-0 z-[120] bg-zinc-950/95 dark:bg-black/95 backdrop-blur-2xl flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
     <div class="relative w-full max-w-xs sm:max-w-sm rounded-3xl bg-white dark:bg-zinc-900 border border-pink-200/80 dark:border-zinc-800 shadow-2xl p-6 sm:p-7 text-center transform scale-95 transition-all duration-300 flex flex-col items-center">
       
       <!-- Cute Animated PDF Sheet with Pulsing Ring -->
@@ -460,11 +459,11 @@
   <div id="enterPagesModal" onclick="if(event.target === this) closeEnterPagesModal()" class="fixed inset-0 z-[115] bg-black/80 dark:bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 opacity-0 pointer-events-none transition-all duration-300">
     <div class="relative w-full max-w-lg bg-white dark:bg-zinc-900 rounded-3xl border border-pink-200/70 dark:border-zinc-800 shadow-2xl p-5 sm:p-6 flex flex-col gap-4 transform scale-95 transition-all duration-300">
       
-      <!-- Modal Header (Minimalist & Clean) -->
+      <!-- Modal Header (Minimalist & Clean - No Hashtag) -->
       <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
         <div class="flex items-center gap-2.5 sm:gap-3">
-          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-pink-100 dark:bg-zinc-800 text-[#ff5277] flex items-center justify-center flex-shrink-0 shadow-2xs">
-            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-[18px] bg-pink-100 dark:bg-zinc-800 text-[#ff5277] flex items-center justify-center flex-shrink-0 shadow-2xs">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
           </div>
           <h3 class="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">Remove Pages by Number</h3>
         </div>
@@ -498,12 +497,12 @@
         <div id="enterPagesValidationMsg" class="text-xs min-h-[20px] font-medium transition-all"></div>
       </div>
 
-      <!-- Modal Footer Actions -->
+      <!-- Modal Footer Actions (Apple-Consistent 18px Radius) -->
       <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-zinc-100 dark:border-zinc-800">
-        <button type="button" onclick="closeEnterPagesModal()" class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer">
+        <button type="button" onclick="closeEnterPagesModal()" class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-[18px] text-xs sm:text-sm font-semibold text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer">
           Cancel
         </button>
-        <button type="button" id="btnApplyEnteredPages" onclick="applyEnteredPagesToRemove()" class="px-5 py-2 sm:px-6 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold text-white bg-[#ff5277] hover:bg-[#ff3b65] transition shadow-md hover:shadow-lg active:scale-95 cursor-pointer">
+        <button type="button" id="btnApplyEnteredPages" onclick="applyEnteredPagesToRemove()" class="px-5 py-2 sm:px-6 sm:py-2.5 rounded-[18px] text-xs sm:text-sm font-bold text-white bg-[#ff5277] hover:bg-[#ff3b65] transition shadow-md hover:shadow-lg active:scale-95 cursor-pointer">
           Mark for Removal
         </button>
       </div>
@@ -512,8 +511,8 @@
   </div>
 
   <!-- Vector Illustrations Library -->
-  <script src="vectors.js?v=20261117b"></script>
+  <script src="vectors.js?v=20261117c"></script>
   <!-- Main Application Script -->
-  <script src="app.js?v=20261117b"></script>
+  <script src="app.js?v=20261117c"></script>
 </body>
 </html>
