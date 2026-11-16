@@ -275,6 +275,7 @@ const state = {
   savedOriginalFile: null,
   savedOriginalWorkspaceItems: null,
   draggedItemIndex: null,
+  lastSelectedIndex: null,
   toolOptions: {},
   theme: localStorage.getItem('cutipdf_theme_v3') || 'light'
 };
@@ -507,6 +508,7 @@ function showAllToolsCatalogView() {
   state.removePagesProcessed = false;
   state.savedOriginalFile = null;
   state.savedOriginalWorkspaceItems = null;
+  state.lastSelectedIndex = null;
 
   DOM.viewToolActive.classList.remove('active');
   DOM.viewAllTools.classList.add('active');
@@ -845,6 +847,7 @@ function openToolDedicatedPage(tool) {
   state.removePagesProcessed = false;
   state.savedOriginalFile = null;
   state.savedOriginalWorkspaceItems = null;
+  state.lastSelectedIndex = null;
 
   DOM.filesSelectedArea.classList.add('hidden');
   DOM.toolDropzone.classList.remove('hidden');
@@ -1032,6 +1035,7 @@ window.resetRemovedPages = function() {
     state.workspaceItems.forEach(i => i.removed = false);
   }
   state.removePagesProcessed = false;
+  state.lastSelectedIndex = null;
   renderInteractiveWorkspace();
   showToast('All pages restored');
 };
@@ -1116,6 +1120,7 @@ function initDropzoneEvents() {
     state.removePagesProcessed = false;
     state.savedOriginalFile = null;
     state.savedOriginalWorkspaceItems = null;
+  state.lastSelectedIndex = null;
     DOM.filesSelectedArea.classList.add('hidden');
     DOM.toolDropzone.classList.remove('hidden');
 
@@ -1219,6 +1224,7 @@ async function buildWorkspacePreview(newFiles) {
       state.removePagesProcessed = false;
       state.savedOriginalFile = f;
       state.savedOriginalWorkspaceItems = null;
+  state.lastSelectedIndex = null;
       try {
         const bytes = await f.arrayBuffer();
         const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
@@ -1473,6 +1479,346 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ==========================================
+// Workspace Card Multi-Selection & Gesture Handlers
+// (Shift-Click Row/Range Selection + Touch Drag/Swipe Continuous Selection)
+// ==========================================
+let touchSwipeState = null;
+let mouseDragState = null;
+let isMouseDown = false;
+let suppressNextClick = false;
+
+// 1. Instant Visual Card State Update (60fps without full DOM rebuild)
+function updateCardVisualState(cardEl, isRemoved) {
+  if (!cardEl) return;
+  if (isRemoved) {
+    cardEl.classList.add('removed');
+  } else {
+    cardEl.classList.remove('removed');
+  }
+  const overlay = cardEl.querySelector('.card-removed-overlay');
+  if (overlay) {
+    if (isRemoved) {
+      overlay.classList.remove('hidden');
+    } else {
+      overlay.classList.add('hidden');
+    }
+  }
+  const img = cardEl.querySelector('img');
+  if (img) {
+    if (isRemoved) {
+      img.style.opacity = '0.55';
+      img.style.filter = 'grayscale(40%)';
+    } else {
+      img.style.opacity = '1';
+      img.style.filter = 'none';
+    }
+  }
+}
+
+// 2. Real-time Action Button and Toolbar Sync for remove-pages
+function updateRemovePagesActionState() {
+  const toolId = state.activeTool ? state.activeTool.id : '';
+  if (toolId !== 'remove-pages') return;
+
+  const removedCount = state.workspaceItems.filter(i => i.removed).length;
+  const remainingCount = state.workspaceItems.length - removedCount;
+
+  const btnRestore = document.getElementById('btnToolbarRestoreAll');
+  if (btnRestore) {
+    if (removedCount > 0) {
+      btnRestore.classList.remove('hidden');
+    } else {
+      btnRestore.classList.add('hidden');
+    }
+  }
+
+  const summaryEl = document.getElementById('workspaceActionSummary');
+  if (summaryEl) {
+    if (removedCount === 0) {
+      summaryEl.textContent = `Click any page or drag across pages to mark for removal.`;
+    } else {
+      summaryEl.textContent = `${removedCount} page(s) marked for removal. The new PDF will contain ${remainingCount} page(s).`;
+    }
+  }
+
+  if (state.removePagesProcessed) {
+    DOM.btnExecuteAction.disabled = false;
+    DOM.btnExecuteAction.classList.remove('opacity-50', 'cursor-not-allowed');
+    DOM.btnExecuteAction.innerHTML = `<span id="actionButtonText">Download PDF</span>`;
+  } else {
+    if (removedCount === 0) {
+      DOM.btnExecuteAction.disabled = true;
+      DOM.btnExecuteAction.classList.add('opacity-50', 'cursor-not-allowed');
+      DOM.btnExecuteAction.innerHTML = `<span id="actionButtonText">Remove Pages (0 marked)</span>`;
+    } else {
+      DOM.btnExecuteAction.disabled = false;
+      DOM.btnExecuteAction.classList.remove('opacity-50', 'cursor-not-allowed');
+      DOM.btnExecuteAction.innerHTML = `
+        <span id="actionButtonText">Remove ${removedCount} ${removedCount === 1 ? 'Page' : 'Pages'} (${remainingCount} remaining)</span>
+      `;
+    }
+  }
+
+  requestAnimationFrame(alignFloatingToolsButton);
+}
+
+// 3. Shift-Click Range Selection & Card Click Handler
+function handleCardClick(e, index) {
+  if (suppressNextClick) return;
+  if (e.target && e.target.closest('button')) return;
+
+  const toolId = state.activeTool ? state.activeTool.id : '';
+  if (toolId !== 'remove-pages' && toolId !== 'split-pdf' && toolId !== 'extract-pages') return;
+
+  if (e.shiftKey && state.lastSelectedIndex !== null && state.lastSelectedIndex !== undefined) {
+    // Shift-Click Range Selection: select all cards between anchor and current index
+    const from = Math.min(state.lastSelectedIndex, index);
+    const to = Math.max(state.lastSelectedIndex, index);
+
+    if (toolId === 'remove-pages') {
+      const targetState = !state.workspaceItems[index].removed;
+      for (let i = from; i <= to; i++) {
+        state.workspaceItems[i].removed = targetState;
+      }
+      state.removePagesProcessed = false;
+    } else {
+      const targetState = !state.workspaceItems[index].selected;
+      for (let i = from; i <= to; i++) {
+        state.workspaceItems[i].selected = targetState;
+      }
+    }
+
+    if (window.getSelection) {
+      window.getSelection().removeAllRanges();
+    }
+    state.lastSelectedIndex = index;
+    renderInteractiveWorkspace();
+  } else {
+    // Normal single-click toggle
+    toggleRemoveWorkspaceItem(index);
+  }
+}
+
+// 4. Mobile Touch Drag / Continuous Swipe Selection Handler
+function initCardTouchAndSwipe(card, index) {
+  const toolId = state.activeTool ? state.activeTool.id : '';
+  if (toolId !== 'remove-pages' && toolId !== 'split-pdf' && toolId !== 'extract-pages') return;
+
+  card.addEventListener('touchstart', (e) => {
+    if (e.target.closest('button')) return;
+    if (e.touches.length !== 1) return;
+
+    const touch = e.touches[0];
+    const initialRemoved = (toolId === 'remove-pages')
+      ? !!state.workspaceItems[index].removed
+      : !state.workspaceItems[index].selected;
+    const targetState = !initialRemoved;
+
+    touchSwipeState = {
+      startX: touch.clientX,
+      startY: touch.clientY,
+      startIndex: index,
+      lastIndex: index,
+      targetState: targetState,
+      isSwiping: false,
+      touchedIndices: new Set([index]),
+      holdTimer: setTimeout(() => {
+        if (touchSwipeState && !touchSwipeState.isSwiping) {
+          touchSwipeState.isSwiping = true;
+          if (toolId === 'remove-pages') {
+            state.workspaceItems[index].removed = targetState;
+            updateCardVisualState(card, targetState);
+            updateRemovePagesActionState();
+          }
+          if (navigator.vibrate) navigator.vibrate(12);
+        }
+      }, 180)
+    };
+  }, { passive: true });
+
+  card.addEventListener('touchmove', (e) => {
+    if (!touchSwipeState) return;
+    if (e.touches.length !== 1) return;
+
+    const touch = e.touches[0];
+    const dx = touch.clientX - touchSwipeState.startX;
+    const dy = touch.clientY - touchSwipeState.startY;
+    const absDx = Math.abs(dx);
+    const absDy = Math.abs(dy);
+
+    if (absDx > 10 || absDy > 10) {
+      if (absDx > absDy || touchSwipeState.isSwiping) {
+        if (touchSwipeState.holdTimer) {
+          clearTimeout(touchSwipeState.holdTimer);
+          touchSwipeState.holdTimer = null;
+        }
+      } else if (!touchSwipeState.isSwiping) {
+        // Natural vertical scroll: cancel swipe selection
+        if (touchSwipeState.holdTimer) {
+          clearTimeout(touchSwipeState.holdTimer);
+          touchSwipeState.holdTimer = null;
+        }
+        touchSwipeState = null;
+        return;
+      }
+    }
+
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    const targetCard = el ? el.closest('.preview-card[data-index]') : null;
+    if (!targetCard) return;
+
+    const currentIndex = parseInt(targetCard.dataset.index, 10);
+    if (isNaN(currentIndex)) return;
+
+    if (currentIndex !== touchSwipeState.startIndex || touchSwipeState.isSwiping) {
+      if (!touchSwipeState.isSwiping) {
+        touchSwipeState.isSwiping = true;
+        if (toolId === 'remove-pages') {
+          state.workspaceItems[touchSwipeState.startIndex].removed = touchSwipeState.targetState;
+          const startCardEl = document.getElementById(`workspace-card-${touchSwipeState.startIndex}`);
+          if (startCardEl) updateCardVisualState(startCardEl, touchSwipeState.targetState);
+        }
+        if (navigator.vibrate) navigator.vibrate(10);
+      }
+
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+
+      const minIdx = Math.min(touchSwipeState.lastIndex, currentIndex);
+      const maxIdx = Math.max(touchSwipeState.lastIndex, currentIndex);
+      let newlyTouched = false;
+
+      for (let k = minIdx; k <= maxIdx; k++) {
+        if (!touchSwipeState.touchedIndices.has(k)) {
+          touchSwipeState.touchedIndices.add(k);
+          if (toolId === 'remove-pages') {
+            state.workspaceItems[k].removed = touchSwipeState.targetState;
+            const currentCardEl = document.getElementById(`workspace-card-${k}`);
+            if (currentCardEl) updateCardVisualState(currentCardEl, touchSwipeState.targetState);
+          } else {
+            state.workspaceItems[k].selected = touchSwipeState.targetState;
+            const currentCardEl = document.getElementById(`workspace-card-${k}`);
+            if (currentCardEl) {
+              if (touchSwipeState.targetState) currentCardEl.classList.add('selected');
+              else currentCardEl.classList.remove('selected');
+            }
+          }
+          newlyTouched = true;
+        }
+      }
+
+      if (newlyTouched) {
+        if (navigator.vibrate) navigator.vibrate(10);
+        updateRemovePagesActionState();
+      }
+
+      touchSwipeState.lastIndex = currentIndex;
+    }
+  }, { passive: false });
+
+  const handleTouchEnd = () => {
+    if (!touchSwipeState) return;
+    if (touchSwipeState.holdTimer) {
+      clearTimeout(touchSwipeState.holdTimer);
+      touchSwipeState.holdTimer = null;
+    }
+
+    if (touchSwipeState.isSwiping) {
+      suppressNextClick = true;
+      setTimeout(() => { suppressNextClick = false; }, 300);
+      state.removePagesProcessed = false;
+      state.lastSelectedIndex = touchSwipeState.lastIndex;
+      renderInteractiveWorkspace();
+    }
+    touchSwipeState = null;
+  };
+
+  card.addEventListener('touchend', handleTouchEnd);
+  card.addEventListener('touchcancel', handleTouchEnd);
+}
+
+// 5. Desktop Mouse Drag Selection Handler
+function initCardMouseDrag(card, index) {
+  const toolId = state.activeTool ? state.activeTool.id : '';
+  if (toolId !== 'remove-pages' && toolId !== 'split-pdf' && toolId !== 'extract-pages') return;
+
+  card.addEventListener('mousedown', (e) => {
+    if (e.button !== 0) return;
+    if (e.target.closest('button')) return;
+    if (e.shiftKey) return;
+
+    const initialRemoved = (toolId === 'remove-pages')
+      ? !!state.workspaceItems[index].removed
+      : !state.workspaceItems[index].selected;
+
+    mouseDragState = {
+      startIndex: index,
+      lastIndex: index,
+      targetState: !initialRemoved,
+      isDragging: false,
+      touchedCards: new Set([index])
+    };
+    isMouseDown = true;
+  });
+
+  card.addEventListener('mouseenter', () => {
+    if (!isMouseDown || !mouseDragState) return;
+
+    if (!mouseDragState.isDragging) {
+      mouseDragState.isDragging = true;
+      if (toolId === 'remove-pages') {
+        state.workspaceItems[mouseDragState.startIndex].removed = mouseDragState.targetState;
+        const startCardEl = document.getElementById(`workspace-card-${mouseDragState.startIndex}`);
+        if (startCardEl) updateCardVisualState(startCardEl, mouseDragState.targetState);
+      }
+    }
+
+    const minIdx = Math.min(mouseDragState.lastIndex, index);
+    const maxIdx = Math.max(mouseDragState.lastIndex, index);
+    let newlyTouched = false;
+
+    for (let k = minIdx; k <= maxIdx; k++) {
+      if (!mouseDragState.touchedCards.has(k)) {
+        mouseDragState.touchedCards.add(k);
+        if (toolId === 'remove-pages') {
+          state.workspaceItems[k].removed = mouseDragState.targetState;
+          const cardEl = document.getElementById(`workspace-card-${k}`);
+          if (cardEl) updateCardVisualState(cardEl, mouseDragState.targetState);
+        } else {
+          state.workspaceItems[k].selected = mouseDragState.targetState;
+          const cardEl = document.getElementById(`workspace-card-${k}`);
+          if (cardEl) {
+            if (mouseDragState.targetState) cardEl.classList.add('selected');
+            else cardEl.classList.remove('selected');
+          }
+        }
+        newlyTouched = true;
+      }
+    }
+
+    mouseDragState.lastIndex = index;
+    if (newlyTouched) {
+      updateRemovePagesActionState();
+    }
+  });
+}
+
+document.addEventListener('mouseup', () => {
+  if (isMouseDown && mouseDragState) {
+    if (mouseDragState.isDragging) {
+      suppressNextClick = true;
+      setTimeout(() => { suppressNextClick = false; }, 150);
+      state.removePagesProcessed = false;
+      state.lastSelectedIndex = mouseDragState.lastIndex;
+      renderInteractiveWorkspace();
+    }
+  }
+  isMouseDown = false;
+  mouseDragState = null;
+});
+
+// ==========================================
 // Render Interactive Workspace Cards (Smallpdf Style)
 // ==========================================
 function renderInteractiveWorkspace() {
@@ -1640,19 +1986,24 @@ function renderInteractiveWorkspace() {
 
   state.workspaceItems.forEach((item, index) => {
     const card = document.createElement('div');
+    card.id = `workspace-card-${index}`;
+    card.dataset.index = index;
+
     if (isContinuous) {
       card.className = `preview-card ${item.removed ? 'removed' : ''} w-full max-w-md sm:max-w-lg shadow-sm hover:shadow-md transition-all cursor-pointer`;
     } else {
       card.className = `preview-card ${item.removed ? 'removed' : ''} ${item.selected ? 'selected' : ''} ${toolId === 'remove-pages' ? 'min-h-[220px] sm:min-h-[250px]' : ''}`;
     }
-    card.setAttribute('draggable', 'true');
 
-    // Drag and Drop Events
-    card.addEventListener('dragstart', (e) => handleCardDragStart(e, index));
-    card.addEventListener('dragover', (e) => handleCardDragOver(e, index));
-    card.addEventListener('dragleave', (e) => handleCardDragLeave(e));
-    card.addEventListener('drop', (e) => handleCardDrop(e, index));
-    card.addEventListener('dragend', (e) => handleCardDragEnd(e));
+    // Drag and Drop Events (only for re-ordering tools, NOT remove-pages)
+    if (toolId !== 'remove-pages') {
+      card.setAttribute('draggable', 'true');
+      card.addEventListener('dragstart', (e) => handleCardDragStart(e, index));
+      card.addEventListener('dragover', (e) => handleCardDragOver(e, index));
+      card.addEventListener('dragleave', (e) => handleCardDragLeave(e));
+      card.addEventListener('drop', (e) => handleCardDrop(e, index));
+      card.addEventListener('dragend', (e) => handleCardDragEnd(e));
+    }
 
     // Top badges: For remove-pages, Page Number on Left and Zoom Preview on Right
     let orderBadge = `<div class="absolute top-2 left-2 z-10 bg-zinc-900/80 dark:bg-black/80 backdrop-blur-md text-white text-[11px] font-bold px-2 py-0.5 rounded-lg border border-white/10 shadow-xs">${index + 1}</div>`;
@@ -1674,18 +2025,15 @@ function renderInteractiveWorkspace() {
       }
     }
 
-    // Flat Style Red Cross (iStock Reference: gm1210969290) - Simple & Flat
-    let removedOverlayHtml = '';
-    if (item.removed) {
-      removedOverlayHtml = `
-        <!-- Flat Red X Symbol (Clean & bold flat cross) -->
-        <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-15 bg-black/10 dark:bg-black/30 backdrop-blur-[0.5px]">
-          <svg viewBox="0 0 100 100" class="${isContinuous ? 'w-28 h-28 sm:w-36 sm:h-36' : 'w-20 h-20 sm:w-24 sm:h-24'} pointer-events-none drop-shadow-md text-red-500" fill="none" stroke="currentColor">
-            <path d="M22 22 L78 78 M78 22 L22 78" stroke="#ef4444" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-      `;
-    }
+    // Flat Style Red Cross (iStock Reference: gm1210969290) - Always present with hidden toggle for instant 60fps swipe
+    const overlayHiddenClass = item.removed ? '' : 'hidden';
+    const removedOverlayHtml = `
+      <div class="card-removed-overlay ${overlayHiddenClass} absolute inset-0 flex items-center justify-center pointer-events-none z-15 bg-black/10 dark:bg-black/30 backdrop-blur-[0.5px]">
+        <svg viewBox="0 0 100 100" class="${isContinuous ? 'w-28 h-28 sm:w-36 sm:h-36' : 'w-20 h-20 sm:w-24 sm:h-24'} pointer-events-none drop-shadow-md text-red-500" fill="none" stroke="currentColor">
+          <path d="M22 22 L78 78 M78 22 L22 78" stroke="#ef4444" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    `;
 
     // Hover Action Buttons (shown only when NOT removed and NOT remove-pages)
     let hoverActionsHtml = '';
@@ -1713,7 +2061,7 @@ function renderInteractiveWorkspace() {
           ${orderBadge}
           ${infoBadge}
           ${zoomPreviewBtn}
-          <img src="${item.previewUrl}" alt="${item.name}" style="transform: rotate(${item.rotation || 0}deg);" class="max-h-full max-w-full object-contain transition-transform duration-200 rounded-md shadow-xs pointer-events-none">
+          <img src="${item.previewUrl}" alt="${item.name}" style="transform: rotate(${item.rotation || 0}deg); ${item.removed ? 'opacity: 0.55; filter: grayscale(40%);' : ''}" class="max-h-full max-w-full object-contain transition-transform duration-200 rounded-md shadow-xs pointer-events-none">
           ${removedOverlayHtml}
           ${hoverActionsHtml}
         </div>
@@ -1754,14 +2102,14 @@ function renderInteractiveWorkspace() {
       `;
     }
 
-    // Click toggle for Split / Remove Pages tools
+    // Click toggle & Swipe/Drag for Split / Remove Pages tools
     if (toolId === 'remove-pages' || toolId === 'split-pdf' || toolId === 'extract-pages') {
       card.onclick = (e) => {
-        if (!e.target.closest('button')) {
-          toggleRemoveWorkspaceItem(index);
-        }
+        handleCardClick(e, index);
       };
       card.classList.add('cursor-pointer');
+      initCardTouchAndSwipe(card, index);
+      initCardMouseDrag(card, index);
     }
 
     card.innerHTML = thumbHtml + actionsHtml;
@@ -1906,8 +2254,10 @@ window.toggleRemoveWorkspaceItem = function(index) {
   if (toolId === 'remove-pages') {
     state.workspaceItems[index].removed = !state.workspaceItems[index].removed;
     state.removePagesProcessed = false;
+    state.lastSelectedIndex = index;
   } else if (toolId === 'split-pdf' || toolId === 'extract-pages') {
     state.workspaceItems[index].selected = !state.workspaceItems[index].selected;
+    state.lastSelectedIndex = index;
   } else {
     removeWorkspaceItem(index);
     return;
