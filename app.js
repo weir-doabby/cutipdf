@@ -2585,11 +2585,6 @@ function renderInteractiveWorkspace() {
         infoBadge = `<div class="absolute top-2 right-2 z-10 bg-white/90 dark:bg-zinc-800/90 text-zinc-700 dark:text-zinc-200 text-[10px] font-bold px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-zinc-700 shadow-xs truncate max-w-[80px]" title="${item.fileName || ''}">${item.name || `P. ${item.pageNum}`}</div>`;
       }
     }
-        infoBadge = `<div class="absolute top-2 right-2 z-10 bg-[#ff5277] text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-xs">${item.pageCount || 1} pgs</div>`;
-      } else if (item.type === 'pdf-page') {
-        infoBadge = `<div class="absolute top-2 right-2 z-10 bg-white/90 dark:bg-zinc-800/90 text-zinc-700 dark:text-zinc-200 text-[10px] font-bold px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-zinc-700 shadow-xs truncate max-w-[80px]" title="${item.fileName || ''}">${item.name || `P. ${item.pageNum}`}</div>`;
-      }
-    }
 
     // Flat Style Red Cross (iStock Reference: gm1210969290) - Always present with hidden toggle for instant 60fps swipe
     const overlayHiddenClass = item.removed ? '' : 'hidden';
