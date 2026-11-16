@@ -274,6 +274,7 @@ const state = {
   removePagesProcessed: false,
   savedOriginalFile: null,
   savedOriginalWorkspaceItems: null,
+  savedOriginalPassword: null,
   draggedItemIndex: null,
   lastSelectedIndex: null,
   toolOptions: {},
@@ -1224,10 +1225,50 @@ async function buildWorkspacePreview(newFiles) {
       state.removePagesProcessed = false;
       state.savedOriginalFile = f;
       state.savedOriginalWorkspaceItems = null;
-  state.lastSelectedIndex = null;
+      state.savedOriginalPassword = null;
+      state.lastSelectedIndex = null;
+
       try {
         const bytes = await f.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+        let pdf = null;
+        try {
+          pdf = await pdfjsLib.getDocument({
+            data: bytes,
+            cMapUrl: 'https://unpkg.com/pdfjs-dist@3.11.174/cmaps/',
+            cMapPacked: true
+          }).promise;
+        } catch (initialErr) {
+          if (initialErr.name === 'PasswordException' || initialErr.message?.toLowerCase().includes('password') || initialErr.code === 1 || initialErr.code === 2) {
+            const enteredPassword = await promptPdfPassword(f.name);
+            if (!enteredPassword) {
+              showToast('🔒 Document requires a password to open.');
+              resetWorkspaceToDropzone();
+              return;
+            }
+            try {
+              pdf = await pdfjsLib.getDocument({
+                data: bytes,
+                password: enteredPassword,
+                cMapUrl: 'https://unpkg.com/pdfjs-dist@3.11.174/cmaps/',
+                cMapPacked: true
+              }).promise;
+              state.savedOriginalPassword = enteredPassword;
+            } catch (pwErr) {
+              showToast('❌ Incorrect password for this PDF document.');
+              resetWorkspaceToDropzone();
+              return;
+            }
+          } else if (initialErr.name === 'InvalidPDFException' || initialErr.name === 'MissingPDFException' || initialErr.message?.toLowerCase().includes('invalid') || initialErr.message?.toLowerCase().includes('format')) {
+            showToast('⚠️ The selected file is corrupted or not a valid PDF. You can try the Repair PDF tool.');
+            resetWorkspaceToDropzone();
+            return;
+          } else {
+            throw initialErr;
+          }
+        }
+
+        if (!pdf) return;
+
         showPdfLoadingModal(pdf.numPages, f.name);
         for (let i = 1; i <= pdf.numPages; i++) {
           const thumb = await renderPdfPageThumb(pdf, i);
@@ -1248,6 +1289,8 @@ async function buildWorkspacePreview(newFiles) {
         }
       } catch (e) {
         console.warn('PDF pages render error:', e);
+        showToast('⚠️ Unable to process this PDF file. Please ensure it is valid.');
+        resetWorkspaceToDropzone();
       } finally {
         hidePdfLoadingModal();
       }
@@ -1269,16 +1312,22 @@ async function buildWorkspacePreview(newFiles) {
   }
 }
 
-// Render Thumbnail Canvas with PDF.js
+// Render Thumbnail Canvas with PDF.js (Optimized for 100+ pages & low memory consumption)
 async function renderPdfPageThumb(pdfDoc, pageNum) {
   const page = await pdfDoc.getPage(pageNum);
   const viewport = page.getViewport({ scale: 0.35 });
   const canvas = document.createElement('canvas');
-  canvas.width = viewport.width;
-  canvas.height = viewport.height;
+  canvas.width = Math.max(1, Math.round(viewport.width));
+  canvas.height = Math.max(1, Math.round(viewport.height));
   const ctx = canvas.getContext('2d');
   await page.render({ canvasContext: ctx, viewport }).promise;
-  return canvas.toDataURL('image/jpeg', 0.85);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+  if (typeof page.cleanup === 'function') {
+    page.cleanup();
+  }
+  canvas.width = 0;
+  canvas.height = 0;
+  return dataUrl;
 }
 
 // Ensure all individual pages are rendered for a PDF file record
@@ -1413,6 +1462,86 @@ function hidePdfLoadingModal() {
 }
 
 // ==========================================
+// Password Protected & Encrypted PDF Helpers
+// ==========================================
+let passwordPromptResolver = null;
+
+function promptPdfPassword(fileName = '') {
+  return new Promise((resolve) => {
+    passwordPromptResolver = resolve;
+    const modal = document.getElementById('pdfPasswordPromptModal');
+    const subtitle = document.getElementById('pdfPasswordPromptSubtitle');
+    const input = document.getElementById('pdfPromptPasswordInput');
+    const errorMsg = document.getElementById('pdfPasswordPromptError');
+
+    if (subtitle && fileName) {
+      subtitle.textContent = `"${fileName}" is password-protected. Enter the password to view and edit pages:`;
+    }
+    if (input) input.value = '';
+    if (errorMsg) {
+      errorMsg.textContent = '';
+      errorMsg.classList.add('hidden');
+    }
+
+    if (modal) {
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      modal.classList.add('opacity-100');
+      setTimeout(() => { if (input) input.focus(); }, 120);
+    }
+  });
+}
+
+window.handlePdfPasswordSubmit = function(e) {
+  if (e && e.preventDefault) e.preventDefault();
+  const input = document.getElementById('pdfPromptPasswordInput');
+  const password = input ? input.value : '';
+  const modal = document.getElementById('pdfPasswordPromptModal');
+
+  if (modal) {
+    modal.classList.remove('opacity-100');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+  }
+
+  if (passwordPromptResolver) {
+    passwordPromptResolver(password);
+    passwordPromptResolver = null;
+  }
+};
+
+window.cancelPdfPasswordPrompt = function() {
+  const modal = document.getElementById('pdfPasswordPromptModal');
+  if (modal) {
+    modal.classList.remove('opacity-100');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+  }
+  if (passwordPromptResolver) {
+    passwordPromptResolver(null);
+    passwordPromptResolver = null;
+  }
+};
+
+function resetWorkspaceToDropzone() {
+  state.workspaceItems = [];
+  state.selectedFiles = [];
+  state.uploadedPdfs = [];
+  state.removePagesProcessed = false;
+  state.savedOriginalFile = null;
+  state.savedOriginalWorkspaceItems = null;
+  state.savedOriginalPassword = null;
+  state.lastSelectedIndex = null;
+
+  if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.add('hidden');
+  if (DOM.toolDropzone) DOM.toolDropzone.classList.remove('hidden');
+
+  const actionBar = document.getElementById('workspaceActionBar');
+  if (actionBar) actionBar.classList.remove('floating-mode');
+  const toolsBtn = document.getElementById('floatingToolsBtn');
+  if (toolsBtn) toolsBtn.classList.remove('elevated', 'elevated-mobile');
+  const toolbar = document.querySelector('.workspace-toolbar');
+  if (toolbar) toolbar.classList.remove('clean-actions-only');
+}
+
+// ==========================================
 // High Resolution Page Preview Lightbox Modal (پریویو و بزرگنمایی صفحه با کیفیت بالا و مینیمال)
 // ==========================================
 state.previewModalIndex = null;
@@ -1442,15 +1571,28 @@ window.openPagePreviewModal = async function(index) {
   if (!item.highResUrl && item.file && window.pdfjsLib) {
     try {
       const bytes = await item.file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+      const pdfOptions = {
+        data: bytes,
+        cMapUrl: 'https://unpkg.com/pdfjs-dist@3.11.174/cmaps/',
+        cMapPacked: true
+      };
+      if (state.savedOriginalPassword) {
+        pdfOptions.password = state.savedOriginalPassword;
+      }
+      const pdf = await pdfjsLib.getDocument(pdfOptions).promise;
       const page = await pdf.getPage(item.pageNum || 1);
       const viewport = page.getViewport({ scale: 1.8 });
       const canvas = document.createElement('canvas');
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
+      canvas.width = Math.max(1, Math.round(viewport.width));
+      canvas.height = Math.max(1, Math.round(viewport.height));
       const ctx = canvas.getContext('2d');
       await page.render({ canvasContext: ctx, viewport }).promise;
       item.highResUrl = canvas.toDataURL('image/jpeg', 0.95);
+      if (typeof page.cleanup === 'function') {
+        page.cleanup();
+      }
+      canvas.width = 0;
+      canvas.height = 0;
       if (state.previewModalIndex === index && img) {
         img.src = item.highResUrl;
       }
@@ -2658,7 +2800,7 @@ async function engineSplitPdf() {
   downloadBlob(new Blob([out], { type: 'application/pdf' }), `Extracted_Pages_${masterFile.name}`);
 }
 
-// 5. Remove Pages (Downloads PDF with kept pages)
+// 5. Remove Pages (Downloads PDF with kept pages, preserving 100% of links, bookmarks, forms & metadata)
 async function engineRemovePagesDownload() {
   const { PDFDocument } = PDFLib;
   const masterFile = state.savedOriginalFile || (state.workspaceItems[0] && state.workspaceItems[0].file) || (state.selectedFiles && state.selectedFiles[0]);
@@ -2678,34 +2820,63 @@ async function engineRemovePagesDownload() {
   `;
 
   showToast('Generating your new PDF...');
-  const bytes = await masterFile.arrayBuffer();
-  const doc = await PDFDocument.load(bytes);
 
-  const pagesToKeep = state.workspaceItems
-    .map(item => (item.pageNum ? item.pageNum - 1 : 0))
-    .filter(idx => idx >= 0 && idx < doc.getPageCount());
+  try {
+    const bytes = await masterFile.arrayBuffer();
+    const loadOptions = { ignoreEncryption: true };
+    if (state.savedOriginalPassword) {
+      loadOptions.password = state.savedOriginalPassword;
+    }
+    const doc = await PDFDocument.load(bytes, loadOptions);
 
-  if (pagesToKeep.length === 0) {
-    showToast('⚠️ No pages to keep in the new PDF.');
+    const totalCount = doc.getPageCount();
+    const keepSet = new Set(
+      state.workspaceItems
+        .map(item => (item.pageNum ? item.pageNum - 1 : 0))
+        .filter(idx => idx >= 0 && idx < totalCount)
+    );
+
+    if (keepSet.size === 0) {
+      showToast('⚠️ No pages to keep in the new PDF.');
+      DOM.btnExecuteAction.disabled = false;
+      DOM.btnExecuteAction.innerHTML = `<span id="actionButtonText">Download PDF</span>`;
+      return;
+    }
+
+    const indicesToRemove = [];
+    for (let i = 0; i < totalCount; i++) {
+      if (!keepSet.has(i)) {
+        indicesToRemove.push(i);
+      }
+    }
+
+    let out;
+    // In-place page removal preserves Outlines/Bookmarks, Form fields, Links, Annotations, and Metadata
+    try {
+      indicesToRemove.sort((a, b) => b - a).forEach(idx => {
+        doc.removePage(idx);
+      });
+      out = await doc.save({ updateFieldAppearances: false });
+    } catch (removeErr) {
+      console.warn('In-place removePage fallback to copyPages:', removeErr);
+      const fallbackDoc = await PDFDocument.create();
+      const pagesToKeep = Array.from(keepSet).sort((a, b) => a - b);
+      const copied = await fallbackDoc.copyPages(doc, pagesToKeep);
+      copied.forEach(p => fallbackDoc.addPage(p));
+      out = await fallbackDoc.save({ updateFieldAppearances: false });
+    }
+
+    downloadBlob(new Blob([out], { type: 'application/pdf' }), `Pages_Removed_${masterFile.name}`);
+    showToast(`✅ Successfully downloaded! Document has ${keepSet.size} page(s).`);
+  } catch (err) {
+    console.error('Error generating PDF:', err);
+    showToast('⚠️ Error generating PDF. Please ensure the file is valid and password is correct.');
+  } finally {
     DOM.btnExecuteAction.disabled = false;
     DOM.btnExecuteAction.innerHTML = `
       <span id="actionButtonText">Download PDF</span>
     `;
-    return;
   }
-
-  const newDoc = await PDFDocument.create();
-  const copied = await newDoc.copyPages(doc, pagesToKeep);
-  copied.forEach(p => newDoc.addPage(p));
-
-  const out = await newDoc.save();
-  downloadBlob(new Blob([out], { type: 'application/pdf' }), `Pages_Removed_${masterFile.name}`);
-  showToast(`✅ Successfully downloaded! Document has ${pagesToKeep.length} page(s).`);
-
-  DOM.btnExecuteAction.disabled = false;
-  DOM.btnExecuteAction.innerHTML = `
-    <span id="actionButtonText">Download PDF</span>
-  `;
 }
 
 // 6. Organize PDF (Saves new user arrangement)
