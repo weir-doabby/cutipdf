@@ -1407,64 +1407,50 @@ function hidePdfLoadingModal() {
 }
 
 // ==========================================
-// High Resolution Page Preview Lightbox Modal (پریویو و بزرگنمایی صفحه)
+// High Resolution Page Preview Lightbox Modal (پریویو و بزرگنمایی صفحه با کیفیت بالا و مینیمال)
 // ==========================================
 state.previewModalIndex = null;
 
-window.openPagePreviewModal = function(index) {
+window.openPagePreviewModal = async function(index) {
   const item = state.workspaceItems[index];
   if (!item) return;
 
   state.previewModalIndex = index;
   const modal = document.getElementById('pagePreviewModal');
   const title = document.getElementById('previewModalTitle');
-  const statusBadge = document.getElementById('previewModalStatusBadge');
   const img = document.getElementById('previewModalImage');
-  const overlay = document.getElementById('previewModalRemovedOverlay');
-  const btnPrev = document.getElementById('btnPreviewPrev');
-  const btnNext = document.getElementById('btnPreviewNext');
-  const btnToggle = document.getElementById('btnPreviewToggleRemove');
 
-  if (title) title.textContent = `Page ${item.pageNum || (index + 1)} of ${state.workspaceItems.length}`;
+  if (title) title.textContent = `Page ${item.pageNum || (index + 1)}`;
   if (img) {
-    img.src = item.previewUrl;
+    // Show instant thumbnail while crisp high-res renders
+    img.src = item.highResUrl || item.previewUrl;
     img.style.transform = `rotate(${item.rotation || 0}deg)`;
   }
-
-  if (item.removed) {
-    if (statusBadge) {
-      statusBadge.textContent = 'Marked to Remove';
-      statusBadge.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-red-100 dark:bg-red-950/60 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800';
-    }
-    if (overlay) overlay.classList.remove('hidden');
-    if (btnToggle) {
-      btnToggle.className = 'px-4 py-2 rounded-xl text-xs font-bold shadow-sm inline-flex items-center gap-1.5 transition bg-emerald-500 hover:bg-emerald-600 text-white cursor-pointer active:scale-95';
-      btnToggle.innerHTML = `
-        <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 1 0 2.34-5.66L4 8m0 0V3m0 5h5"/></svg>
-        <span>Restore Page</span>
-      `;
-    }
-  } else {
-    if (statusBadge) {
-      statusBadge.textContent = 'Keep';
-      statusBadge.className = 'text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800';
-    }
-    if (overlay) overlay.classList.add('hidden');
-    if (btnToggle) {
-      btnToggle.className = 'px-4 py-2 rounded-xl text-xs font-bold shadow-sm inline-flex items-center gap-1.5 transition bg-red-500 hover:bg-red-600 text-white cursor-pointer active:scale-95';
-      btnToggle.innerHTML = `
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
-        <span>Mark to Remove</span>
-      `;
-    }
-  }
-
-  if (btnPrev) btnPrev.disabled = (index === 0);
-  if (btnNext) btnNext.disabled = (index === state.workspaceItems.length - 1);
 
   if (modal) {
     modal.classList.remove('opacity-0', 'pointer-events-none');
     modal.classList.add('opacity-100');
+  }
+
+  // On-demand crisp high-res render (scale: 1.8, 95% quality)
+  if (!item.highResUrl && item.file && window.pdfjsLib) {
+    try {
+      const bytes = await item.file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: bytes }).promise;
+      const page = await pdf.getPage(item.pageNum || 1);
+      const viewport = page.getViewport({ scale: 1.8 });
+      const canvas = document.createElement('canvas');
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      const ctx = canvas.getContext('2d');
+      await page.render({ canvasContext: ctx, viewport }).promise;
+      item.highResUrl = canvas.toDataURL('image/jpeg', 0.95);
+      if (state.previewModalIndex === index && img) {
+        img.src = item.highResUrl;
+      }
+    } catch (e) {
+      console.warn('High-res page render error:', e);
+    }
   }
 };
 
@@ -1477,31 +1463,12 @@ window.closePagePreviewModal = function() {
   state.previewModalIndex = null;
 };
 
-window.navigatePagePreview = function(delta) {
-  if (state.previewModalIndex === null) return;
-  const newIdx = state.previewModalIndex + delta;
-  if (newIdx >= 0 && newIdx < state.workspaceItems.length) {
-    openPagePreviewModal(newIdx);
-  }
-};
-
-window.toggleRemoveInPreviewModal = function() {
-  if (state.previewModalIndex === null) return;
-  const idx = state.previewModalIndex;
-  toggleRemoveWorkspaceItem(idx);
-  openPagePreviewModal(idx);
-};
-
-// Keyboard listener for Page Preview Modal
+// Keyboard listener for Page Preview Modal (Escape to close)
 document.addEventListener('keydown', (e) => {
   const modal = document.getElementById('pagePreviewModal');
   if (!modal || modal.classList.contains('pointer-events-none')) return;
   if (e.key === 'Escape') {
     closePagePreviewModal();
-  } else if (e.key === 'ArrowLeft') {
-    navigatePagePreview(-1);
-  } else if (e.key === 'ArrowRight') {
-    navigatePagePreview(1);
   }
 });
 
