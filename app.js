@@ -3764,14 +3764,55 @@ function downloadBlob(blob, filename) {
 let toastTimer;
 function showToast(msg) {
   if (toastTimer) clearTimeout(toastTimer);
-  DOM.toastMessage.textContent = msg;
-  DOM.toast.classList.remove('opacity-0', 'translate-y-4', 'pointer-events-none');
+  if (!msg || !DOM.toastMessage || !DOM.toast) return;
+
+  // Clean any emojis and trim
+  let cleanMsg = String(msg).replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[⚠️✅❌🔒💡]/gu, '').trim();
+
+  // Concise message mappings (Single-line, minimal, Apple-like)
+  const shortMap = {
+    'You cannot remove all pages. Please keep at least one page.': 'Keep at least 1 page',
+    'Please click on at least one page to mark it for removal (✕).': 'Select at least 1 page',
+    'All pages marked for removal. Click any page you want to keep.': 'All pages selected',
+    'Generating document preview cards...': 'Preparing pages...',
+    'Document requires a password to open.': 'Password required',
+    'Incorrect password for this PDF document.': 'Incorrect password',
+    'Original PDF file not found.': 'File not found',
+    'No pages to keep in the new PDF.': 'Keep at least 1 page',
+    'Generating your new PDF...': 'Generating PDF...',
+    'No pages in the document to download.': 'No pages to download',
+    'Please select at least one page to extract.': 'Select at least 1 page',
+    'No pages selected for merging.': 'Select pages to merge',
+    'Priority requested! Vote added to prioritize this tool.': 'Vote recorded',
+    'File processed & downloaded successfully!': 'Downloaded successfully'
+  };
+
+  for (const [longText, shortText] of Object.entries(shortMap)) {
+    if (cleanMsg.includes(longText) || longText.includes(cleanMsg)) {
+      cleanMsg = shortText;
+      break;
+    }
+  }
+
+  if (cleanMsg.toLowerCase().includes('successfully downloaded') || cleanMsg.toLowerCase().includes('downloaded!')) {
+    cleanMsg = 'Downloaded successfully';
+  } else if (cleanMsg.toLowerCase().includes('pages removed! click download')) {
+    cleanMsg = 'Pages removed. Ready to download';
+  } else if (cleanMsg.toLowerCase().includes('page(s) marked for removal') || cleanMsg.toLowerCase().includes('pages marked for removal')) {
+    const numMatch = cleanMsg.match(/\d+/);
+    cleanMsg = numMatch ? `${numMatch[0]} pages marked` : 'Pages marked';
+  } else if (cleanMsg.toLowerCase().includes('appears to be corrupted')) {
+    cleanMsg = 'Invalid or corrupted PDF';
+  }
+
+  DOM.toastMessage.textContent = cleanMsg;
+  DOM.toast.classList.remove('opacity-0', '-translate-y-3', 'pointer-events-none');
   DOM.toast.classList.add('opacity-100', 'translate-y-0');
 
   toastTimer = setTimeout(() => {
     DOM.toast.classList.remove('opacity-100', 'translate-y-0');
-    DOM.toast.classList.add('opacity-0', 'translate-y-4', 'pointer-events-none');
-  }, 3200);
+    DOM.toast.classList.add('opacity-0', '-translate-y-3', 'pointer-events-none');
+  }, 2400);
 }
 
 function formatBytes(bytes) {

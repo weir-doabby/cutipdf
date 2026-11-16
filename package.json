@@ -4,6 +4,7 @@
   "description": "🌸 CutiPDF (cutipdf.com) — Cute & minimal Japanese-style PDF studio with 100% in-browser client-side conversion.",
   "main": "index.html",
   "scripts": {
+    "build": "node scripts/generate-tool-pages.js",
     "dev": "npx serve .",
     "start": "npx serve .",
     "test": "echo \"Error: no test specified\" && exit 0"

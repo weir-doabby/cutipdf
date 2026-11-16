@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Compare PDF Online • CutiPDF</title>
+  
+  <meta name="description" content="Show a side-by-side comparison of two PDF files to spot visual changes. 100% free, private, client-side PDF tool in your browser.">
+  <link rel="canonical" href="https://cutipdf.com/compare-pdf">
+  <meta name="7c5f415417bfdf7647b7" content="ba9fd24064e70cfe0dd2">
+  <!-- Cute Strawberry Favicon (توت فرنگی) -->
+  <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16x16.png">
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+
+  <!-- Immediate Theme Initializer: Default to Light Mode -->
+  <script>
+    (function() {
+      var savedTheme = localStorage.getItem('cutipdf_theme_v3');
+      if (!savedTheme) {
+        savedTheme = 'light';
+        localStorage.setItem('cutipdf_theme_v3', 'light');
+      }
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+    })();
+  </script>
+
+  <!-- GitHub Pages SPA Path Restorer -->
+  <script>
+    (function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const p = urlParams.get('p');
+      if (p) {
+        const isRepo = window.location.pathname.startsWith('/cutipdf');
+        const basePath = isRepo ? '/cutipdf/' : '/';
+        const cleanPath = p.replace(/^\/+/, '').replace(/\/+$/, '');
+        window.history.replaceState(null, '', basePath + cleanPath + window.location.hash);
+      }
+    })();
+  </script>
+
+  <!-- Google Fonts: Kaushan Script (Brush), Caveat & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Kaushan+Script&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+
+  <!-- Client-Side Engine Libraries -->
+  <!-- 1. PDF-Lib -->
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <!-- 2. PDF.js (Mozilla Engine) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    if (window.pdfjsLib) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+  </script>
+  <!-- 3. JSZip (ZIP Packaging) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <!-- 4. SheetJS (Excel Engine) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <!-- 5. Mammoth (Word DOCX Engine) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <!-- 6. Confetti Celebration -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="../style.css?v=20261117d">
+
+  <!-- Open Graph / Social Media Meta Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Compare PDF Online • CutiPDF">
+  <meta property="og:description" content="Show a side-by-side comparison of two PDF files to spot visual changes. 100% free, private, client-side PDF tool in your browser.">
+  <meta property="og:url" content="https://cutipdf.com/compare-pdf">
+  <meta property="og:site_name" content="CutiPDF">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Compare PDF Online • CutiPDF">
+  <meta name="twitter:description" content="Show a side-by-side comparison of two PDF files to spot visual changes. 100% free, private, client-side PDF tool in your browser.">
+
+  <!-- Schema.org WebApplication Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Compare PDF - CutiPDF",
+    "url": "https://cutipdf.com/compare-pdf",
+    "description": "Show a side-by-side comparison of two PDF files to spot visual changes.",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "All",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+</head>
+<body class="watercolor-paper-bg selection:bg-pink-500/20 selection:text-[#ff5277]">
+
+  <!-- Global Toast Notification (Minimal Sleek Black Frame, Single-Line, No Dots) -->
+  <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-0 -translate-y-3 pointer-events-none max-w-[92vw]">
+    <div class="inline-flex items-center justify-center bg-zinc-950/95 dark:bg-zinc-900/95 text-white text-xs sm:text-sm font-medium px-4 py-2 sm:px-5 sm:py-2.5 rounded-full shadow-lg border border-white/10 backdrop-blur-md whitespace-nowrap text-center">
+      <span id="toastMessage">Success</span>
+    </div>
+  </div>
+
+  <!-- Clean Top Header (Corner-Aligned with Tools Button) -->
+  <header class="w-full px-6 py-2.5 sm:py-3 flex items-center justify-between border-b border-zinc-200/80 dark:border-zinc-800/80">
+    <!-- Brand: Left Corner (Cuti in dark/light, PDF in Pink) -->
+    <a id="brandLogoLink" href="../" class="flex items-center cursor-pointer no-underline text-inherit group" title="CutiPDF Home">
+      <span class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:opacity-90 transition-opacity font-brush">
+        Cuti<span class="text-[#ff5277] drop-shadow-xs">PDF</span>
+      </span>
+    </a>
+
+    <!-- Dark / Light Mode Toggle (Right Side) -->
+    <button id="themeToggle" class="w-9 h-9 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 flex items-center justify-center hover:border-zinc-300 dark:hover:border-zinc-600 transition-colors shadow-2xs" title="Toggle Theme">
+      <span id="themeIcon"></span>
+    </button>
+  </header>
+
+  <!-- Main Content Area (Snug & Cohesive Spacing to Header) -->
+  <main class="w-full max-w-6xl mx-auto px-5 pt-1 sm:pt-2.5 pb-8 flex-1">
+
+    <!-- ============================================================ -->
+    <!-- VIEW 1: ALL TOOLS CATALOG (Full iLovePDF Suite) -->
+    <!-- ============================================================ -->
+    <div id="view-all-tools" class="view-container active space-y-10">
+      
+      <!-- Clean Welcome Header with (pdf tool box, but lovely) -->
+      <div class="text-center max-w-3xl mx-auto space-y-1.5 py-4">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight">
+          Every tool you need to work with PDFs
+        </h1>
+        <p class="text-base sm:text-lg font-brush text-[#ff5277] font-semibold tracking-wide">
+          (pdf tool box, but lovely)
+        </p>
+      </div>
+
+      <!-- Categories & Tools Grid -->
+      <div id="toolsGridContainer" class="space-y-10">
+        <!-- Injected dynamically from TOOLS_CATALOG in app.js -->
+      </div>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- VIEW 2: DEDICATED TOOL PAGE FOR EACH TOOL -->
+    <!-- ============================================================ -->
+    <div id="view-tool-active" class="view-container max-w-4xl mx-auto space-y-3 sm:space-y-4">
+
+      <!-- Tool Header with Gorgeous Vector (Centered, Clean Spacing to Header & Title) -->
+      <div class="text-center flex flex-col items-center space-y-0.5 sm:space-y-1">
+        <div id="toolVectorContainer" class="w-14 h-14 sm:w-16 sm:h-16 mx-auto flex items-center justify-center drop-shadow-xs mb-0.5">
+          <!-- Injected SVG Vector -->
+        </div>
+
+        <div>
+          <h2 id="toolTitle" class="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight leading-tight">Tool Name</h2>
+        </div>
+
+        <p id="toolDesc" class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto leading-snug mt-1">
+          Description
+        </p>
+      </div>
+
+      <!-- Tool Options Drawer (Dynamic for tools like Watermark, Password, Page Numbers, Layout) -->
+      <div id="toolOptionsDrawer" class="hidden cuti-card p-4 sm:p-5 bg-white dark:bg-zinc-900 border border-pink-200 dark:border-zinc-800 rounded-2xl space-y-3">
+        <!-- Injected options -->
+      </div>
+
+      <!-- Upload Section (Responsive: Large Touch Button on Mobile, Comfortable Dropzone on Desktop) -->
+      <div id="toolDropzone" class="tool-dropzone text-center cursor-pointer group">
+        <input type="file" id="fileInput" class="hidden" multiple>
+
+        <div class="flex flex-col items-center justify-center space-y-2.5">
+          <!-- Main Action Buttons Wrap (Responsive: Stacked on Mobile like iLovePDF, Inline with Balancer on Desktop) -->
+          <div class="action-buttons-wrap">
+            <!-- Invisible Balancer on Left: balances the 48px cloud buttons on desktop to center Select button with 'or drop files here' -->
+            <div class="desktop-balancer" aria-hidden="true"></div>
+
+            <!-- Big Primary Select Files Button (iLovePDF Style: Large touch target, 70px height, 20px bold font) -->
+            <button id="btnSelectFiles" type="button" class="btn-primary-action">
+              Select PDF files
+            </button>
+
+            <!-- Cloud Source Buttons (Underneath in row on Mobile; Vertically Stacked beside Select on Desktop) -->
+            <div class="cloud-buttons-wrap">
+              <!-- Google Drive Button -->
+              <button id="btnGoogleDrive" type="button" class="btn-cloud-source group/cloud" title="Select files from Google Drive" aria-label="Google Drive">
+                <svg class="w-5 h-5 fill-white transition-transform group-hover/cloud:scale-115" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M339 314.9L175.4 32h161.2l163.6 282.9H339zm-137.5 23.6L120.9 480h310.5L512 338.5H201.5zM154.1 67.4L0 338.5 80.6 480 237 208.8 154.1 67.4z"/>
+                </svg>
+              </button>
+
+              <!-- Dropbox Button -->
+              <button id="btnDropbox" type="button" class="btn-cloud-source group/cloud" title="Select files from Dropbox" aria-label="Dropbox">
+                <svg class="w-5 h-5 fill-white transition-transform group-hover/cloud:scale-115" viewBox="0 0 528 512" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M264.4 116.3l-132 84.3 132 84.3-132 84.3L0 284.1l132.3-84.3L0 116.3 132.3 32l132.1 84.3zM131.6 395.7l132-84.3 132 84.3-132 84.3-132-84.3zm132.8-111.6l132-84.3-132-83.6L395.7 32 528 116.3l-132.3 84.3L528 284.8l-132.3 84.3-131.3-85z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Drop text only on desktop -->
+          <p id="dropzoneText" class="hidden sm:block text-xs text-zinc-400 dark:text-zinc-500 font-medium">
+            or drop files here
+          </p>
+        </div>
+      </div>
+
+      <!-- Selected Files Workspace & Action Button (Smallpdf-Inspired Organize & Merge Studio) -->
+      <div id="filesSelectedArea" class="hidden space-y-4">
+        
+        <!-- Modern Workspace Top Toolbar -->
+        <div class="workspace-toolbar p-2.5 sm:p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-pink-200/80 dark:border-zinc-800 shadow-sm flex flex-wrap items-center justify-between gap-2.5">
+          
+          <!-- Left: Files & Pages Count Badge (Responsive & Clean on Mobile) -->
+          <div class="flex items-center gap-2">
+            <div id="workspaceStatsBadge" class="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-xl bg-pink-50 dark:bg-zinc-800 text-[11px] sm:text-xs font-bold text-zinc-800 dark:text-zinc-200 border border-pink-200/70 dark:border-zinc-700 shadow-2xs whitespace-nowrap">
+              <span class="w-2 h-2 rounded-full bg-[#ff5277] animate-pulse"></span>
+              <span id="workspaceStatsText">0 pages</span>
+            </div>
+          </div>
+
+          <!-- Center: View Mode Segmented Controls -->
+          <!-- 1. For Merge PDF: File Mode vs Page Mode -->
+          <div id="workspaceModeSwitcher" class="hidden segmented-control text-xs font-semibold">
+            <button type="button" id="btnModeFile" onclick="setWorkspaceViewMode('file')" class="px-3 py-1.5 rounded-lg transition-all active-mode bg-white dark:bg-zinc-800 shadow-xs text-zinc-900 dark:text-white font-bold cursor-pointer">
+              File Mode
+            </button>
+            <button type="button" id="btnModePage" onclick="setWorkspaceViewMode('page')" class="px-3 py-1.5 rounded-lg transition-all text-zinc-500 hover:text-zinc-900 dark:hover:text-white cursor-pointer">
+              Page Mode
+            </button>
+          </div>
+
+          <!-- 2. For Remove Pages & Page Tools: Grid vs Continuous (انتخاب بین نمایش همه صفحات یا کنتینیوس) -->
+          <div id="pageLayoutSwitcher" class="hidden segmented-control text-xs font-semibold">
+            <button type="button" id="btnLayoutGrid" onclick="setPageLayoutMode('grid')" class="px-2.5 sm:px-3 py-1.5 rounded-lg transition-all active-mode bg-white dark:bg-zinc-800 shadow-xs text-zinc-900 dark:text-white font-bold inline-flex items-center gap-1.5 cursor-pointer" title="Grid View">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+              <span>Grid</span>
+            </button>
+            <button type="button" id="btnLayoutContinuous" onclick="setPageLayoutMode('continuous')" class="px-2.5 sm:px-3 py-1.5 rounded-lg transition-all text-zinc-500 hover:text-zinc-900 dark:hover:text-white font-semibold inline-flex items-center gap-1.5 cursor-pointer" title="Continuous View">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              <span>Continuous</span>
+            </button>
+          </div>
+
+          <!-- Right: Quick Actions (Select All / Restore All, Remove by Number, Add More) -->
+          <div class="flex items-center justify-center flex-nowrap gap-2 sm:gap-2.5 max-w-full">
+            <!-- Select All Pages Button (Shown when 0 pages removed) -->
+            <button type="button" id="btnToolbarSelectAll" onclick="selectAllPagesForRemoval()" class="hidden inline-flex items-center justify-center gap-1.5 w-[110px] sm:w-[130px] py-2 sm:py-2.5 rounded-[18px] text-xs sm:text-sm font-bold bg-pink-50 dark:bg-zinc-800 hover:bg-pink-100 dark:hover:bg-zinc-700 text-[#ff5277] border border-pink-200 dark:border-zinc-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer flex-shrink-0 whitespace-nowrap" title="Select all pages for removal">
+              <svg class="w-3.5 h-3.5 stroke-[2.4]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span>Select All</span>
+            </button>
+
+            <!-- Restore All Pages Button (Shown when >= 1 page removed) -->
+            <button type="button" id="btnToolbarRestoreAll" onclick="resetRemovedPages()" class="hidden inline-flex items-center justify-center gap-1.5 w-[110px] sm:w-[130px] py-2 sm:py-2.5 rounded-[18px] text-xs sm:text-sm font-bold bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer flex-shrink-0 whitespace-nowrap" title="Restore all removed pages">
+              <svg class="w-3.5 h-3.5 stroke-[2.4]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 1 0 2.34-5.66L4 8m0 0V3m0 5h5"/></svg>
+              <span>Restore All</span>
+            </button>
+
+            <!-- Remove by Number Button (No hashtag, clean & compact, matching 18px radius) -->
+            <button type="button" id="btnToolbarEnterPages" onclick="openEnterPagesModal()" class="hidden inline-flex items-center justify-center px-4 py-2 sm:px-5 sm:py-2.5 rounded-[18px] text-xs sm:text-sm font-bold bg-pink-50 dark:bg-zinc-800 hover:bg-pink-100 dark:hover:bg-zinc-700 text-[#ff5277] border border-pink-200 dark:border-zinc-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer flex-shrink-0 whitespace-nowrap" title="Remove pages by entering numbers or ranges">
+              <span>Remove by Number</span>
+            </button>
+
+            <!-- Add More Button (Round design - Enriched & Centered) -->
+            <button type="button" id="btnToolbarAddMore" onclick="DOM.fileInput.click()" class="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full text-sm sm:text-base font-bold bg-pink-50 dark:bg-zinc-800 hover:bg-pink-100 dark:hover:bg-zinc-700 text-[#ff5277] border border-pink-200 dark:border-zinc-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer">
+              <span class="w-6 h-6 rounded-full bg-pink-200/60 dark:bg-pink-900/50 flex items-center justify-center">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+              </span>
+              <span>Add More</span>
+            </button>
+
+            <!-- Sort A-Z Button -->
+            <button type="button" id="btnToolbarSort" onclick="sortWorkspaceItems('name')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 transition cursor-pointer" title="Sort by filename A-Z">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/></svg>
+              <span class="hidden sm:inline">Sort</span>
+            </button>
+
+            <!-- Rotate All Button -->
+            <button type="button" id="btnToolbarRotateAll" onclick="rotateAllWorkspace(90)" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 transition cursor-pointer" title="Rotate all 90 degrees">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span class="hidden sm:inline">Rotate</span>
+            </button>
+
+            <!-- Clear All Button -->
+            <button type="button" id="btnClearFiles" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition cursor-pointer" title="Clear all files">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              <span class="hidden sm:inline">Clear</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Files / Pages Thumbnail Grid (Drag & Drop Reorderable Canvas) -->
+        <div id="selectedFilesList" class="min-h-[220px] max-h-[65vh] overflow-y-auto px-1 pt-3 pb-24 sm:pt-4 sm:pb-28 select-none"></div>
+
+        <!-- Modern Action Bar at Bottom (Supports In-Place & Floating Modes) -->
+        <div id="workspaceActionBar" class="workspace-action-bar p-3.5 sm:p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-pink-200/80 dark:border-zinc-800 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="text-xs text-zinc-500 dark:text-zinc-400 text-center sm:text-left">
+            <span id="workspaceActionSummary">All files ready for processing.</span>
+          </div>
+
+          <button id="btnExecuteAction" class="btn-primary-action w-full sm:w-auto px-8 py-3.5 text-base shadow-lg shadow-pink-500/20 active:scale-[0.98] transition-all cursor-pointer">
+            <span id="actionButtonText">Merge PDF</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ============================================================ -->
+  <!-- FLOATING ROYAL BLUE TOOLS BUTTON (Adobe Stock Gear & Wrench Logo) -->
+  <!-- ============================================================ -->
+  <button id="floatingToolsBtn" class="floating-tools-btn" aria-label="Toggle Quick Tools Preview" title="Quick Tools Preview">
+    <!-- Animated Gear Playing Around Stationary Wrench (Exact Adobe Stock Tool Logo) -->
+    <div class="tools-btn-icon-box">
+      <svg class="tool-svg" viewBox="100 100 312 312" fill="currentColor">
+        <!-- 8-Tooth Outer Gear with Channel (Plays a few small degrees every few seconds) -->
+        <path class="tool-gear" d="M 237.5 112.4 L 273.1 112.4 L 275.9 113.8 L 277.3 120.9 L 278.8 122.3 L 278.8 130.8 L 280.2 132.3 L 280.2 139.4 L 281.6 142.2 L 284.4 145.1 L 302.9 150.8 L 311.5 155.0 L 314.3 157.9 L 320.0 155.0 L 338.5 140.8 L 344.2 140.8 L 347.0 142.2 L 368.4 163.6 L 369.8 166.4 L 369.8 172.1 L 352.7 194.8 L 361.2 210.5 L 365.5 226.1 L 371.2 230.4 L 378.3 230.4 L 379.7 231.8 L 394.0 233.2 L 396.8 234.7 L 398.2 237.5 L 398.2 273.1 L 396.8 275.9 L 389.7 277.3 L 388.3 278.8 L 379.7 278.8 L 378.3 280.2 L 371.2 280.2 L 368.4 281.6 L 365.5 284.4 L 362.7 294.4 L 361.2 294.4 L 338.5 271.6 L 339.9 270.2 L 339.9 258.8 L 341.3 257.4 L 341.3 253.2 L 339.9 251.7 L 339.9 240.4 L 338.5 238.9 L 335.6 224.7 L 330.0 213.3 L 320.0 199.1 L 311.5 190.6 L 300.1 182.0 L 285.9 174.9 L 271.6 172.1 L 270.2 170.7 L 258.8 170.7 L 257.4 169.2 L 253.2 169.2 L 251.7 170.7 L 240.4 170.7 L 238.9 172.1 L 224.7 174.9 L 210.5 182.0 L 199.1 190.6 L 190.6 199.1 L 180.6 213.3 L 174.9 224.7 L 172.1 238.9 L 170.7 240.4 L 170.7 251.7 L 169.2 253.2 L 169.2 257.4 L 170.7 258.8 L 170.7 270.2 L 172.1 271.6 L 174.9 285.9 L 180.6 297.2 L 190.6 311.5 L 199.1 320.0 L 210.5 328.5 L 224.7 335.6 L 238.9 338.5 L 240.4 339.9 L 251.7 339.9 L 253.2 341.3 L 257.4 341.3 L 258.8 339.9 L 270.2 339.9 L 293.0 362.7 L 291.6 364.1 L 284.4 365.5 L 281.6 368.4 L 280.2 371.2 L 280.2 378.3 L 278.8 379.7 L 277.3 394.0 L 275.9 396.8 L 273.1 398.2 L 237.5 398.2 L 234.7 396.8 L 233.2 389.7 L 231.8 388.3 L 231.8 379.7 L 230.4 378.3 L 230.4 371.2 L 229.0 368.4 L 226.1 365.5 L 207.6 359.8 L 199.1 355.6 L 196.3 352.7 L 190.6 355.6 L 172.1 369.8 L 166.4 369.8 L 163.6 368.4 L 142.2 347.0 L 140.8 344.2 L 140.8 338.5 L 157.9 315.7 L 149.3 300.1 L 145.1 284.4 L 139.4 280.2 L 132.3 280.2 L 130.8 278.8 L 116.6 277.3 L 113.8 275.9 L 112.4 273.1 L 112.4 237.5 L 113.8 234.7 L 120.9 233.2 L 122.3 231.8 L 130.8 231.8 L 132.3 230.4 L 139.4 230.4 L 142.2 229.0 L 145.1 226.1 L 149.3 210.5 L 155.0 199.1 L 157.9 196.3 L 155.0 190.6 L 140.8 172.1 L 140.8 166.4 L 142.2 163.6 L 163.6 142.2 L 166.4 140.8 L 172.1 140.8 L 194.8 157.9 L 207.6 150.8 L 226.1 145.1 L 230.4 139.4 L 230.4 130.8 L 231.8 129.4 L 233.2 116.6 L 234.7 113.8 L 237.5 112.4 Z" />
+        <!-- Stationary Wrench (Fixed Rock-Solid In Center) -->
+        <path class="tool-wrench" d="M 248.9 204.8 L 263.1 204.8 L 264.5 206.2 L 274.5 207.6 L 287.3 214.8 L 297.2 224.7 L 304.4 237.5 L 304.4 240.4 L 307.2 246.0 L 307.2 270.2 L 310.0 271.6 L 328.5 290.1 L 328.5 291.6 L 331.4 293.0 L 339.9 301.5 L 339.9 302.9 L 342.8 304.4 L 354.1 315.7 L 354.1 317.2 L 362.7 324.3 L 368.4 332.8 L 368.4 335.6 L 369.8 337.1 L 369.8 351.3 L 365.5 359.8 L 358.4 366.9 L 349.9 371.2 L 335.6 371.2 L 328.5 368.4 L 324.3 365.5 L 267.4 308.6 L 253.2 310.0 L 251.7 308.6 L 243.2 308.6 L 241.8 307.2 L 234.7 305.8 L 224.7 300.1 L 211.9 287.3 L 206.2 275.9 L 204.8 267.4 L 203.4 266.0 L 203.4 248.9 L 204.8 247.5 L 204.8 243.2 L 207.6 238.9 L 241.8 273.1 L 244.6 274.5 L 253.2 274.5 L 273.1 254.6 L 273.1 246.0 L 271.6 243.2 L 237.5 209.1 L 241.8 206.2 L 247.5 206.2 L 248.9 204.8 Z" />
+      </svg>
+    </div>
+    <span>Tools</span>
+  </button>
+
+  <!-- ============================================================ -->
+  <!-- QUICK TOOLS SIDE PREVIEW DRAWER (Slide-out Side Pop Menu) -->
+  <!-- ============================================================ -->
+  <div id="quickToolsBackdrop" class="fixed inset-0 z-[60] bg-zinc-950/40 dark:bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300"></div>
+
+  <aside id="quickToolsDrawer" class="fixed top-0 right-0 bottom-0 z-[65] w-full sm:w-[460px] md:w-[480px] bg-white dark:bg-zinc-900 border-l border-pink-100 dark:border-zinc-800 shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out pointer-events-none" style="height: 100dvh; max-height: 100vh;">
+    <!-- Drawer Top Bar (Clean Full-Width Search Bar - No Clutter) -->
+    <div class="px-4 py-3.5 border-b border-zinc-200/80 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md flex-shrink-0">
+      <div class="relative w-full">
+        <input type="text" id="quickToolSearch" placeholder="Search tools (e.g. merge, compress, word, jpg...)" class="w-full pl-9 pr-4 py-2.5 text-xs rounded-xl border border-pink-200/80 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 outline-none focus:border-[#ff5277] transition-all">
+        <svg class="w-4 h-4 absolute left-3 top-3 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Drawer Tools Grid (Scrollable) -->
+    <div id="quickToolsModalGrid" class="p-5 overflow-y-auto space-y-5 flex-1 overscroll-contain" style="padding-bottom: 96px;">
+      <!-- Injected dynamically -->
+    </div>
+  </aside>
+
+  <!-- ============================================================ -->
+  <!-- Cute PDF Loading Modal with Percentage (Frosted White Blur in Light Mode, Deep Black in Dark Mode) -->
+  <div id="pdfLoadingModal" class="fixed inset-0 z-[120] bg-white/90 dark:bg-black/92 backdrop-blur-2xl flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="relative w-full max-w-xs sm:max-w-sm rounded-3xl bg-white dark:bg-zinc-900 border border-pink-200/80 dark:border-zinc-800 shadow-2xl p-6 sm:p-7 text-center transform scale-95 transition-all duration-300 flex flex-col items-center">
+      
+      <!-- Cute Animated PDF Sheet with Pulsing Ring -->
+      <div class="relative w-20 h-20 mb-4 flex items-center justify-center">
+        <div class="absolute inset-0 rounded-2xl bg-pink-500/20 dark:bg-pink-500/30 animate-ping opacity-75"></div>
+        <div class="relative w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#ff5277] to-rose-400 text-white flex items-center justify-center shadow-lg shadow-pink-500/30">
+          <svg class="w-10 h-10 animate-bounce" style="animation-duration: 1.5s;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Title & Dynamic Page Status -->
+      <h3 class="text-base sm:text-lg font-bold text-zinc-900 dark:text-white mb-1">
+        Preparing Pages...
+      </h3>
+      <p id="pdfLoadingStatusText" class="text-xs text-zinc-500 dark:text-zinc-400 mb-3 truncate max-w-[260px]">
+        Loading pages in browser...
+      </p>
+
+      <!-- Percentage Display (Big, Cute & Bold) -->
+      <div class="mb-3">
+        <span id="pdfLoadingPercent" class="text-3xl sm:text-4xl font-black tracking-tight bg-gradient-to-r from-[#ff5277] to-rose-500 bg-clip-text text-transparent">0%</span>
+      </div>
+
+      <!-- Cute Gradient Progress Bar Track -->
+      <div class="w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-3 p-0.5 overflow-hidden border border-zinc-200/80 dark:border-zinc-700/80">
+        <div id="pdfLoadingProgressBar" class="h-full rounded-full bg-gradient-to-r from-pink-400 to-[#ff5277] transition-all duration-150 ease-out" style="width: 0%;"></div>
+      </div>
+
+      <!-- Private In-Browser Notice -->
+      <p class="text-[11px] text-zinc-400 dark:text-zinc-500 mt-3.5 font-medium flex items-center justify-center gap-1">
+        <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        <span>100% Private in your browser</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECURE PDF PASSWORD PROMPT MODAL (ورود رمز عبور فایل رمزگذاری‌شده) -->
+  <!-- ============================================================ -->
+  <div id="pdfPasswordPromptModal" class="fixed inset-0 z-[130] bg-black/70 dark:bg-black/85 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="relative w-full max-w-sm rounded-3xl bg-white dark:bg-zinc-900 border border-pink-200/80 dark:border-zinc-800 shadow-2xl p-6 sm:p-7 text-center transform scale-95 transition-all duration-300 flex flex-col items-center">
+      
+      <!-- Lock Icon with Glow -->
+      <div class="w-14 h-14 rounded-2xl bg-pink-100 dark:bg-zinc-800 text-[#ff5277] flex items-center justify-center mb-4 shadow-sm border border-pink-200/50 dark:border-zinc-700">
+        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+      </div>
+
+      <h3 class="text-base sm:text-lg font-bold text-zinc-800 dark:text-zinc-100 mb-1">
+        Password Protected PDF
+      </h3>
+      <p id="pdfPasswordPromptSubtitle" class="text-xs text-zinc-500 dark:text-zinc-400 mb-4 text-center leading-relaxed">
+        This document is encrypted. Please enter the password to view and edit pages.
+      </p>
+
+      <form id="pdfPasswordPromptForm" onsubmit="handlePdfPasswordSubmit(event)" class="w-full space-y-3">
+        <div class="relative">
+          <input type="password" id="pdfPromptPasswordInput" placeholder="Enter PDF password" autocomplete="current-password" class="w-full px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm outline-none focus:border-[#ff5277] focus:ring-2 focus:ring-pink-500/20 transition">
+        </div>
+        <p id="pdfPasswordPromptError" class="hidden text-xs text-red-500 font-semibold"></p>
+
+        <div class="flex items-center gap-2 pt-1">
+          <button type="button" onclick="cancelPdfPasswordPrompt()" class="flex-1 py-2.5 rounded-xl text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 transition cursor-pointer">
+            Cancel
+          </button>
+          <button type="submit" id="btnSubmitPdfPassword" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-[#ff5277] hover:bg-[#ff3b65] text-white shadow-md hover:shadow-pink-500/25 transition cursor-pointer">
+            Unlock & Open
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- HIGH RESOLUTION PAGE PREVIEW LIGHTBOX MODAL (Pure Page Zoom) -->
+  <!-- ============================================================ -->
+  <div id="pagePreviewModal" onclick="if(event.target === this) closePagePreviewModal()" class="fixed inset-0 z-[110] bg-black/80 dark:bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="relative w-full max-w-2xl sm:max-w-3xl max-h-[92vh] bg-white dark:bg-zinc-900 rounded-3xl border border-pink-200/60 dark:border-zinc-800 shadow-2xl flex flex-col overflow-hidden transform scale-95 transition-all duration-300">
+      
+      <!-- Modal Header: Simple Title & Close -->
+      <div class="px-5 py-3 border-b border-zinc-200/80 dark:border-zinc-800 flex items-center justify-between bg-zinc-50/90 dark:bg-zinc-800/70">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#ff5277]"></span>
+          <h4 id="previewModalTitle" class="text-sm sm:text-base font-bold text-zinc-800 dark:text-zinc-100">
+            Page Preview
+          </h4>
+        </div>
+        <button type="button" onclick="closePagePreviewModal()" class="w-8 h-8 rounded-full bg-zinc-200/80 dark:bg-zinc-700 hover:bg-zinc-300 dark:hover:bg-zinc-600 text-zinc-700 dark:text-zinc-200 flex items-center justify-center transition-all cursor-pointer" title="Close Preview (Esc)">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Modal Body: High Resolution Page Image with Smooth Loading -->
+      <div class="relative flex-1 p-3 sm:p-5 overflow-auto flex items-center justify-center bg-zinc-100/60 dark:bg-zinc-950/60 min-h-[340px]">
+        <!-- Dedicated Clean Loading Spinner -->
+        <div id="previewModalSpinner" class="hidden absolute inset-0 flex items-center justify-center bg-zinc-100/80 dark:bg-zinc-950/80 backdrop-blur-xs z-10 transition-opacity">
+          <div class="flex flex-col items-center gap-2.5">
+            <div class="w-9 h-9 rounded-full border-3 border-pink-200 border-t-[#ff5277] animate-spin"></div>
+            <span class="text-xs font-semibold text-zinc-600 dark:text-zinc-300">Rendering crisp preview...</span>
+          </div>
+        </div>
+        <img id="previewModalImage" src="" alt="Page Preview" class="max-h-[80vh] max-w-full object-contain rounded-xl shadow-lg border border-zinc-200/50 dark:border-zinc-800 select-none transition-opacity duration-200">
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- REMOVE PAGES BY NUMBER / RANGE MODAL -->
+  <!-- ============================================================ -->
+  <div id="enterPagesModal" onclick="if(event.target === this) closeEnterPagesModal()" class="fixed inset-0 z-[115] bg-zinc-950/40 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="relative w-full max-w-lg bg-white dark:bg-zinc-900 rounded-3xl border border-pink-200/70 dark:border-zinc-800 shadow-2xl p-5 sm:p-6 flex flex-col gap-4 transform scale-95 transition-all duration-300">
+      
+      <!-- Modal Header (Minimalist & Clean - No Hashtag) -->
+      <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+        <div class="flex items-center gap-2.5 sm:gap-3">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-[18px] bg-pink-100 dark:bg-zinc-800 text-[#ff5277] flex items-center justify-center flex-shrink-0 shadow-2xs">
+            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          </div>
+          <h3 class="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">Remove Pages by Number</h3>
+        </div>
+        <button type="button" onclick="closeEnterPagesModal()" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 flex items-center justify-center transition cursor-pointer" title="Close (Esc)">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Input Field Area -->
+      <div class="flex flex-col gap-2 pt-1">
+        <div class="flex items-center justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <span>Enter pages or ranges:</span>
+          <span id="enterPagesTotalHint" class="text-[11px] text-zinc-400 font-normal">Total pages: 0</span>
+        </div>
+        
+        <div class="relative">
+          <textarea id="enterPagesInput" rows="3" oninput="updateEnterPagesLiveFeedback()" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); applyEnteredPagesToRemove();}" placeholder="e.g. 1-15 or 1 to 15 or 1, 2, 3, 19, 1005 or 1 n 2 n 9 n 25" class="w-full px-4 py-3 text-sm sm:text-base font-mono rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#ff5277] focus:border-transparent transition resize-none"></textarea>
+        </div>
+
+        <!-- Format Badges & Tips (Clean & Minimal) -->
+        <div class="flex flex-wrap items-center gap-1.5 pt-0.5 text-[11px] text-zinc-500 dark:text-zinc-400">
+          <span class="font-medium text-zinc-600 dark:text-zinc-300">Formats:</span>
+          <span class="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-mono">1-15</span>
+          <span class="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-mono">1 to 15</span>
+          <span class="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-mono">1, 2, 3</span>
+          <span class="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-mono">1 n 2 n 9</span>
+        </div>
+
+        <!-- Live Feedback Message Area -->
+        <div id="enterPagesValidationMsg" class="text-xs min-h-[20px] font-medium transition-all"></div>
+      </div>
+
+      <!-- Modal Footer Actions (Apple-Consistent 18px Radius) -->
+      <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+        <button type="button" onclick="closeEnterPagesModal()" class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-[18px] text-xs sm:text-sm font-semibold text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer">
+          Cancel
+        </button>
+        <button type="button" id="btnApplyEnteredPages" onclick="applyEnteredPagesToRemove()" class="px-5 py-2 sm:px-6 sm:py-2.5 rounded-[18px] text-xs sm:text-sm font-bold text-white bg-[#ff5277] hover:bg-[#ff3b65] transition shadow-md hover:shadow-lg active:scale-95 cursor-pointer">
+          Mark for Removal
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Vector Illustrations Library -->
+  <script src="../vectors.js?v=20261117d"></script>
+  <!-- Main Application Script -->
+  <script src="../app.js?v=20261117d"></script>
+</body>
+</html>

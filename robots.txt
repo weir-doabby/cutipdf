@@ -1,0 +1,23 @@
+# CutiPDF Robots.txt
+# Welcome all web crawlers, search engines, and AI chatbots
+
+User-agent: *
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+Sitemap: https://cutipdf.com/sitemap.xml
+Sitemap: https://weir-doabby.github.io/cutipdf/sitemap.xml
