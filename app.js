@@ -1044,6 +1044,24 @@ window.resetRemovedPages = function() {
   showToast('All pages restored');
 };
 
+window.selectAllPagesForRemoval = function() {
+  if (!state.workspaceItems || state.workspaceItems.length === 0) return;
+
+  if (!state.savedOriginalWorkspaceItems) {
+    state.savedOriginalWorkspaceItems = state.workspaceItems.map(item => ({ ...item }));
+  }
+
+  state.workspaceItems.forEach(item => {
+    item.removed = true;
+  });
+
+  state.removePagesProcessed = false;
+  state.lastSelectedIndex = null;
+
+  renderInteractiveWorkspace();
+  showToast('All pages marked for removal. Click any page you want to keep.');
+};
+
 // ==========================================
 // Interactive File Handling & In-Browser Preview
 // ==========================================
@@ -1958,11 +1976,19 @@ function updateRemovePagesActionState() {
   const remainingCount = state.workspaceItems.length - removedCount;
 
   const btnRestore = document.getElementById('btnToolbarRestoreAll');
+  const btnSelectAll = document.getElementById('btnToolbarSelectAll');
   if (btnRestore) {
     if (removedCount > 0) {
       btnRestore.classList.remove('hidden');
     } else {
       btnRestore.classList.add('hidden');
+    }
+  }
+  if (btnSelectAll) {
+    if (removedCount > 0) {
+      btnSelectAll.classList.add('hidden');
+    } else {
+      btnSelectAll.classList.remove('hidden');
     }
   }
 
@@ -2375,6 +2401,7 @@ function renderInteractiveWorkspace() {
   const layoutSwitcher = document.getElementById('pageLayoutSwitcher');
   const modeSwitcher = document.getElementById('workspaceModeSwitcher');
   const btnRestoreAll = document.getElementById('btnToolbarRestoreAll');
+  const btnSelectAll = document.getElementById('btnToolbarSelectAll');
   const btnAddMore = document.getElementById('btnToolbarAddMore');
   const btnEnterPages = document.getElementById('btnToolbarEnterPages');
   const btnSort = document.getElementById('btnToolbarSort');
@@ -2382,13 +2409,22 @@ function renderInteractiveWorkspace() {
   const btnClear = document.getElementById('btnClearFiles');
 
   if (toolId === 'remove-pages') {
-    // Hide stats text and strip toolbar bar background completely (فقط دکمه‌های Restore All و Page Numbers بدون بار و آمار)
+    // Hide stats text and strip toolbar bar background completely (دکمه‌های Select All / Restore All و Remove by Number بدون بار و آمار)
     if (statsBadge) statsBadge.classList.add('hidden');
     if (toolbar) toolbar.classList.add('clean-actions-only');
 
     if (layoutSwitcher) layoutSwitcher.classList.add('hidden');
     if (modeSwitcher) modeSwitcher.classList.add('hidden');
-    if (btnRestoreAll) btnRestoreAll.classList.remove('hidden');
+
+    const removedCount = state.workspaceItems.filter(i => i.removed).length;
+    if (removedCount > 0) {
+      if (btnRestoreAll) btnRestoreAll.classList.remove('hidden');
+      if (btnSelectAll) btnSelectAll.classList.add('hidden');
+    } else {
+      if (btnRestoreAll) btnRestoreAll.classList.add('hidden');
+      if (btnSelectAll) btnSelectAll.classList.remove('hidden');
+    }
+
     if (btnEnterPages) btnEnterPages.classList.remove('hidden');
     if (btnAddMore) btnAddMore.classList.add('hidden');
     if (btnSort) btnSort.classList.add('hidden');
@@ -2400,6 +2436,7 @@ function renderInteractiveWorkspace() {
 
     if (layoutSwitcher) layoutSwitcher.classList.add('hidden');
     if (btnRestoreAll) btnRestoreAll.classList.add('hidden');
+    if (btnSelectAll) btnSelectAll.classList.add('hidden');
     if (btnEnterPages) btnEnterPages.classList.add('hidden');
     if (btnAddMore) btnAddMore.classList.remove('hidden');
     if (btnSort) btnSort.classList.remove('hidden');

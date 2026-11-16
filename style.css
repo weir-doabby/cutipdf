@@ -245,8 +245,8 @@ html.dark .brand-logo {
   justify-content: center !important;
   align-items: center !important;
   width: 100% !important;
-  gap: 16px !important;
-  flex-wrap: wrap !important;
+  gap: 10px !important;
+  flex-wrap: nowrap !important;
   margin: 0 auto !important;
 }
 
@@ -566,11 +566,11 @@ html.dark .brand-logo {
 /* Thumbnail Preview Cards (iLovePDF Style) */
 .preview-card {
   background: var(--bg-card);
-  border: 1.5px solid var(--border-color);
+  border: 1.5px solid rgba(228, 228, 231, 0.85); /* Faint subtle gray when unselected */
   border-radius: 18px;
   overflow: hidden;
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, opacity 0.2s ease;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -582,6 +582,10 @@ html.dark .brand-logo {
   touch-action: pan-y;
   content-visibility: auto;
   contain-intrinsic-size: 200px 260px;
+}
+
+html.dark .preview-card {
+  border-color: rgba(63, 63, 70, 0.5);
 }
 
 .preview-card:active {
@@ -607,15 +611,18 @@ html.dark .brand-logo {
   transform: translateY(-4px);
 }
 
+/* Selected / Marked for Removal Card: Pink frame with soft glow */
 .preview-card.removed {
-  border-color: #ef4444 !important;
-  background-color: rgba(254, 242, 242, 0.7) !important;
-  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.35) !important;
+  border-color: #ff5277 !important;
+  border-width: 2px !important;
+  background-color: rgba(255, 241, 242, 0.65) !important;
+  box-shadow: 0 0 0 2.5px rgba(255, 82, 119, 0.32), 0 4px 14px rgba(255, 82, 119, 0.12) !important;
 }
 
 html.dark .preview-card.removed {
-  background-color: rgba(69, 10, 10, 0.3) !important;
-  border-color: #ef4444 !important;
+  background-color: rgba(255, 82, 119, 0.15) !important;
+  border-color: #ff5277 !important;
+  box-shadow: 0 0 0 2.5px rgba(255, 82, 119, 0.35), 0 4px 14px rgba(255, 82, 119, 0.15) !important;
 }
 
 .preview-card.removed img {
@@ -624,8 +631,8 @@ html.dark .preview-card.removed {
 }
 
 .preview-card.removed:hover {
-  border-color: #dc2626 !important;
-  box-shadow: 0 4px 18px rgba(239, 68, 68, 0.25) !important;
+  border-color: #ff3b65 !important;
+  box-shadow: 0 0 0 3px rgba(255, 82, 119, 0.45), 0 6px 18px rgba(255, 82, 119, 0.2) !important;
 }
 
 .preview-card.selected {
