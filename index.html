@@ -76,7 +76,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=20261116k">
+  <link rel="stylesheet" href="style.css?v=20261116l">
 </head>
 <body class="watercolor-paper-bg selection:bg-pink-500/20 selection:text-[#ff5277]">
 
@@ -238,6 +238,14 @@
                 <svg class="w-4 h-4 stroke-[2.4]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 1 0 2.34-5.66L4 8m0 0V3m0 5h5"/></svg>
               </span>
               <span>Restore All</span>
+            </button>
+
+            <!-- Page Numbers Button (For remove-pages tool: identical round pill shape & styling) -->
+            <button type="button" id="btnToolbarEnterPages" onclick="openEnterPagesModal()" class="hidden inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full text-sm sm:text-base font-bold bg-pink-50 dark:bg-zinc-800 hover:bg-pink-100 dark:hover:bg-zinc-700 text-[#ff5277] border border-pink-200 dark:border-zinc-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer" title="Remove pages by writing numbers or ranges">
+              <span class="w-6 h-6 rounded-full bg-pink-200/60 dark:bg-pink-900/50 flex items-center justify-center">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+              </span>
+              <span>Page Numbers</span>
             </button>
 
             <!-- Add More Button (Round design - Enriched & Centered) -->
@@ -442,9 +450,68 @@
     </div>
   </div>
 
+  <!-- ============================================================ -->
+  <!-- REMOVE PAGES BY NUMBER / RANGE MODAL -->
+  <!-- ============================================================ -->
+  <div id="enterPagesModal" onclick="if(event.target === this) closeEnterPagesModal()" class="fixed inset-0 z-[115] bg-black/80 dark:bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="relative w-full max-w-lg bg-white dark:bg-zinc-900 rounded-3xl border border-pink-200/70 dark:border-zinc-800 shadow-2xl p-5 sm:p-6 flex flex-col gap-4 transform scale-95 transition-all duration-300">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-pink-100 dark:bg-zinc-800 text-[#ff5277] flex items-center justify-center flex-shrink-0 shadow-2xs">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+          </div>
+          <div>
+            <h3 class="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100">Remove Pages by Number</h3>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400">Type page numbers or ranges to mark them for removal</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeEnterPagesModal()" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 flex items-center justify-center transition cursor-pointer" title="Close (Esc)">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Input Field Area -->
+      <div class="flex flex-col gap-2 pt-1">
+        <div class="flex items-center justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          <span>Enter pages / ranges:</span>
+          <span id="enterPagesTotalHint" class="text-[11px] text-zinc-400 font-normal">Total pages: 0</span>
+        </div>
+        
+        <div class="relative">
+          <textarea id="enterPagesInput" rows="3" oninput="updateEnterPagesLiveFeedback()" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); applyEnteredPagesToRemove();}" placeholder="e.g. 1, 2, 5-10, 15 and 20 or 25, 744" class="w-full px-4 py-3 text-sm sm:text-base font-mono rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#ff5277] focus:border-transparent transition resize-none"></textarea>
+        </div>
+
+        <!-- Format Badges & Tips -->
+        <div class="flex flex-wrap items-center gap-1.5 pt-0.5 text-[11px] text-zinc-500 dark:text-zinc-400">
+          <span class="font-medium text-zinc-600 dark:text-zinc-300">Formats:</span>
+          <span class="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-mono">1, 2, 3</span>
+          <span class="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-mono">5-10</span>
+          <span class="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-mono">1 and 2 and 3</span>
+          <span class="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-mono">1 or 2 or 3</span>
+        </div>
+
+        <!-- Live Feedback Message Area -->
+        <div id="enterPagesValidationMsg" class="text-xs min-h-[20px] font-medium transition-all"></div>
+      </div>
+
+      <!-- Modal Footer Actions -->
+      <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-zinc-100 dark:border-zinc-800">
+        <button type="button" onclick="closeEnterPagesModal()" class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer">
+          Cancel
+        </button>
+        <button type="button" id="btnApplyEnteredPages" onclick="applyEnteredPagesToRemove()" class="px-5 py-2 sm:px-6 sm:py-2.5 rounded-full text-xs sm:text-sm font-bold text-white bg-[#ff5277] hover:bg-[#ff3b65] transition shadow-md hover:shadow-lg active:scale-95 cursor-pointer">
+          Mark for Removal
+        </button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Vector Illustrations Library -->
-  <script src="vectors.js?v=20261116k"></script>
+  <script src="vectors.js?v=20261116l"></script>
   <!-- Main Application Script -->
-  <script src="app.js?v=20261116k"></script>
+  <script src="app.js?v=20261116l"></script>
 </body>
 </html>

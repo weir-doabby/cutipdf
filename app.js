@@ -318,6 +318,9 @@ const DOM = {
   btnModeFile: document.getElementById('btnModeFile'),
   btnModePage: document.getElementById('btnModePage'),
   btnToolbarAddMore: document.getElementById('btnToolbarAddMore'),
+  btnToolbarEnterPages: document.getElementById('btnToolbarEnterPages'),
+  enterPagesModal: document.getElementById('enterPagesModal'),
+  enterPagesInput: document.getElementById('enterPagesInput'),
   btnToolbarSort: document.getElementById('btnToolbarSort'),
   btnToolbarRotateAll: document.getElementById('btnToolbarRotateAll'),
   workspaceActionSummary: document.getElementById('workspaceActionSummary'),
@@ -1669,12 +1672,220 @@ window.closePagePreviewModal = function() {
   state.previewModalIndex = null;
 };
 
-// Keyboard listener for Page Preview Modal (Escape to close)
+// ==========================================
+// Remove Pages by Number Text Input Modal (حذف صفحات به صورت تایپ شماره و بازه)
+// ==========================================
+function parsePageNumbersInput(inputStr, totalPages) {
+  if (!inputStr || !inputStr.trim()) {
+    return { pages: [], invalid: [] };
+  }
+
+  // 1. Convert Persian/Arabic digits to English digits
+  let s = inputStr
+    .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+    .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+
+  // 2. English number words map
+  const wordToNum = {
+    'zero': 0, 'one': 1, 'two': 2, 'three': 3, 'four': 4,
+    'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9,
+    'ten': 10, 'eleven': 11, 'twelve': 12, 'thirteen': 13, 'fourteen': 14,
+    'fifteen': 15, 'sixteen': 16, 'seventeen': 17, 'eighteen': 18, 'nineteen': 19,
+    'twenty': 20, 'thirty': 30, 'forty': 40, 'fifty': 50,
+    'sixty': 60, 'seventy': 70, 'eighty': 80, 'ninety': 90, 'hundred': 100
+  };
+
+  s = s.replace(/\b(zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)\b/gi, (match) => {
+    return wordToNum[match.toLowerCase()] ?? match;
+  });
+
+  // 3. Normalize word separators ("n", "and", "or", "&", "comma", etc.)
+  s = s.replace(/\bcomma\b/gi, ',')
+       .replace(/\b(and|or|plus|\&|n)\b/gi, ',')
+       .replace(/\b(to|through|thru|until|till|تا)\b/gi, '-')
+       .replace(/[.;\n\r|/]/g, ',')
+       .replace(/\s*-\s*/g, '-');
+
+  const rawTokens = s.split(/[,\s]+/).map(t => t.trim()).filter(Boolean);
+  const pagesSet = new Set();
+  const invalidTokens = [];
+
+  for (const token of rawTokens) {
+    // Range: e.g. "5-10"
+    const rangeMatch = token.match(/^(\d+)-(\d+)$/);
+    if (rangeMatch) {
+      let start = parseInt(rangeMatch[1], 10);
+      let end = parseInt(rangeMatch[2], 10);
+      if (start > end) {
+        const tmp = start;
+        start = end;
+        end = tmp;
+      }
+      for (let p = start; p <= end; p++) {
+        if (p >= 1 && p <= totalPages) {
+          pagesSet.add(p);
+        } else {
+          invalidTokens.push(String(p));
+        }
+      }
+      continue;
+    }
+
+    // Single number: e.g. "7"
+    const numMatch = token.match(/^(\d+)$/);
+    if (numMatch) {
+      const p = parseInt(numMatch[1], 10);
+      if (p >= 1 && p <= totalPages) {
+        pagesSet.add(p);
+      } else {
+        invalidTokens.push(String(p));
+      }
+      continue;
+    }
+
+    if (token) {
+      invalidTokens.push(token);
+    }
+  }
+
+  const pages = Array.from(pagesSet).sort((a, b) => a - b);
+  return { pages, invalid: invalidTokens };
+}
+
+window.openEnterPagesModal = function() {
+  const modal = document.getElementById('enterPagesModal');
+  const input = document.getElementById('enterPagesInput');
+  const totalHint = document.getElementById('enterPagesTotalHint');
+  const valMsg = document.getElementById('enterPagesValidationMsg');
+
+  if (valMsg) valMsg.textContent = '';
+  const total = state.workspaceItems.length;
+  if (totalHint) totalHint.textContent = `Total pages: ${total}`;
+
+  // Pre-fill with currently removed pages if any exist
+  const currentlyRemoved = state.workspaceItems
+    .map((it, idx) => it.removed ? (it.pageNum || idx + 1) : null)
+    .filter(Boolean);
+
+  if (input) {
+    input.value = currentlyRemoved.length > 0 ? currentlyRemoved.join(', ') : '';
+  }
+
+  if (modal) {
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    modal.classList.add('opacity-100');
+    setTimeout(() => {
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }, 120);
+  }
+
+  updateEnterPagesLiveFeedback();
+};
+
+window.closeEnterPagesModal = function() {
+  const modal = document.getElementById('enterPagesModal');
+  if (modal) {
+    modal.classList.remove('opacity-100');
+    modal.classList.add('opacity-0', 'pointer-events-none');
+  }
+};
+
+window.updateEnterPagesLiveFeedback = function() {
+  const input = document.getElementById('enterPagesInput');
+  const valMsg = document.getElementById('enterPagesValidationMsg');
+  if (!input || !valMsg) return;
+
+  const total = state.workspaceItems.length;
+  if (!input.value.trim()) {
+    valMsg.innerHTML = '';
+    return;
+  }
+
+  const { pages, invalid } = parsePageNumbersInput(input.value, total);
+
+  if (pages.length > 0) {
+    let previewStr = pages.length <= 10 ? pages.join(', ') : `${pages.slice(0, 8).join(', ')}... (+${pages.length - 8} more)`;
+    let feedback = `<span class="text-pink-600 dark:text-pink-400 font-semibold">✓ ${pages.length} page(s) recognized: [${previewStr}]</span>`;
+    if (invalid.length > 0) {
+      feedback += ` <span class="text-amber-500 text-[11px]">(⚠️ Out of 1-${total}: ${invalid.slice(0, 3).join(', ')})</span>`;
+    }
+    valMsg.innerHTML = feedback;
+  } else if (invalid.length > 0) {
+    valMsg.innerHTML = `<span class="text-amber-600 dark:text-amber-400">⚠️ Out of range (1-${total}) or unrecognized: ${invalid.slice(0, 3).join(', ')}</span>`;
+  } else {
+    valMsg.innerHTML = '';
+  }
+};
+
+window.applyEnteredPagesToRemove = function() {
+  const inputEl = document.getElementById('enterPagesInput');
+  const valMsg = document.getElementById('enterPagesValidationMsg');
+  if (!inputEl) return;
+
+  const totalPages = state.workspaceItems.length;
+  if (totalPages === 0) {
+    if (valMsg) valMsg.textContent = 'No document loaded.';
+    return;
+  }
+
+  const { pages, invalid } = parsePageNumbersInput(inputEl.value, totalPages);
+
+  if (pages.length === 0) {
+    if (valMsg) {
+      valMsg.textContent = invalid.length > 0
+        ? `⚠️ Invalid or out-of-range: ${invalid.slice(0, 3).join(', ')} (Max: ${totalPages})`
+        : '⚠️ Please enter at least one valid page number.';
+    }
+    return;
+  }
+
+  // Check if user is trying to remove ALL pages
+  if (pages.length >= totalPages) {
+    if (valMsg) {
+      valMsg.textContent = '⚠️ You cannot remove all pages. Please keep at least one page.';
+    }
+    return;
+  }
+
+  const pagesSet = new Set(pages);
+
+  // Set removed state
+  state.workspaceItems.forEach((item, idx) => {
+    const pageNum = item.pageNum || (idx + 1);
+    if (pagesSet.has(pageNum)) {
+      item.removed = true;
+    }
+  });
+
+  state.removePagesProcessed = false;
+  state.lastSelectedIndex = null;
+
+  renderInteractiveWorkspace();
+  closeEnterPagesModal();
+
+  if (invalid.length > 0) {
+    showToast(`✅ ${pages.length} page(s) marked for removal (${invalid.slice(0, 2).join(', ')} ignored)`);
+  } else {
+    showToast(`✅ ${pages.length} page(s) marked for removal`);
+  }
+};
+
+// Keyboard listener for Modals (Escape to close)
 document.addEventListener('keydown', (e) => {
-  const modal = document.getElementById('pagePreviewModal');
-  if (!modal || modal.classList.contains('pointer-events-none')) return;
   if (e.key === 'Escape') {
-    closePagePreviewModal();
+    const previewModal = document.getElementById('pagePreviewModal');
+    if (previewModal && !previewModal.classList.contains('pointer-events-none')) {
+      closePagePreviewModal();
+      return;
+    }
+    const enterModal = document.getElementById('enterPagesModal');
+    if (enterModal && !enterModal.classList.contains('pointer-events-none')) {
+      closeEnterPagesModal();
+      return;
+    }
   }
 });
 
@@ -2142,19 +2353,21 @@ function renderInteractiveWorkspace() {
   const modeSwitcher = document.getElementById('workspaceModeSwitcher');
   const btnRestoreAll = document.getElementById('btnToolbarRestoreAll');
   const btnAddMore = document.getElementById('btnToolbarAddMore');
+  const btnEnterPages = document.getElementById('btnToolbarEnterPages');
   const btnSort = document.getElementById('btnToolbarSort');
   const btnRotate = document.getElementById('btnToolbarRotateAll');
   const btnClear = document.getElementById('btnClearFiles');
 
   if (toolId === 'remove-pages') {
-    // Hide stats text and strip toolbar bar background completely (فقط دکمه‌های Restore All و Add More بدون بار و آمار)
+    // Hide stats text and strip toolbar bar background completely (فقط دکمه‌های Restore All و Page Numbers بدون بار و آمار)
     if (statsBadge) statsBadge.classList.add('hidden');
     if (toolbar) toolbar.classList.add('clean-actions-only');
 
     if (layoutSwitcher) layoutSwitcher.classList.add('hidden');
     if (modeSwitcher) modeSwitcher.classList.add('hidden');
     if (btnRestoreAll) btnRestoreAll.classList.remove('hidden');
-    if (btnAddMore) btnAddMore.classList.remove('hidden');
+    if (btnEnterPages) btnEnterPages.classList.remove('hidden');
+    if (btnAddMore) btnAddMore.classList.add('hidden');
     if (btnSort) btnSort.classList.add('hidden');
     if (btnRotate) btnRotate.classList.add('hidden');
     if (btnClear) btnClear.classList.add('hidden');
@@ -2164,6 +2377,7 @@ function renderInteractiveWorkspace() {
 
     if (layoutSwitcher) layoutSwitcher.classList.add('hidden');
     if (btnRestoreAll) btnRestoreAll.classList.add('hidden');
+    if (btnEnterPages) btnEnterPages.classList.add('hidden');
     if (btnAddMore) btnAddMore.classList.remove('hidden');
     if (btnSort) btnSort.classList.remove('hidden');
     if (btnRotate) btnRotate.classList.remove('hidden');
