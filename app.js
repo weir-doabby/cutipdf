@@ -1672,6 +1672,25 @@ window.closePagePreviewModal = function() {
   state.previewModalIndex = null;
 };
 
+// Helper: Compactly format consecutive page numbers into ranges (e.g. [1,2,3,4,5,10] -> "1-5, 10")
+function formatPagesToRanges(pages) {
+  if (!pages || pages.length === 0) return '';
+  const ranges = [];
+  let start = pages[0];
+  let prev = pages[0];
+  for (let i = 1; i < pages.length; i++) {
+    if (pages[i] === prev + 1) {
+      prev = pages[i];
+    } else {
+      ranges.push(start === prev ? `${start}` : `${start}-${prev}`);
+      start = pages[i];
+      prev = pages[i];
+    }
+  }
+  ranges.push(start === prev ? `${start}` : `${start}-${prev}`);
+  return ranges.join(', ');
+}
+
 // ==========================================
 // Remove Pages by Number Text Input Modal (حذف صفحات به صورت تایپ شماره و بازه)
 // ==========================================
@@ -1680,10 +1699,12 @@ function parsePageNumbersInput(inputStr, totalPages) {
     return { pages: [], invalid: [] };
   }
 
-  // 1. Convert Persian/Arabic digits to English digits
+  // 1. Convert Persian/Arabic digits to English digits and normalize Unicode dashes
   let s = inputStr
     .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
-    .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+    .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
+    .replace(/[\u2013\u2014\u2212]/g, '-')
+    .replace(/\.{2,}/g, '-');
 
   // 2. English number words map
   const wordToNum = {
@@ -1699,8 +1720,9 @@ function parsePageNumbersInput(inputStr, totalPages) {
     return wordToNum[match.toLowerCase()] ?? match;
   });
 
-  // 3. Normalize word separators ("n", "and", "or", "&", "comma", etc.)
-  s = s.replace(/\bcomma\b/gi, ',')
+  // 3. Normalize word separators ("n", "and", "or", "&", "comma", "to", etc.)
+  s = s.replace(/\b(pages?|pgs?|p)\b/gi, ' ')
+       .replace(/\bcomma\b/gi, ',')
        .replace(/\b(and|or|plus|\&|n)\b/gi, ',')
        .replace(/\b(to|through|thru|until|till|تا)\b/gi, '-')
        .replace(/[.;\n\r|/]/g, ',')
@@ -1711,7 +1733,7 @@ function parsePageNumbersInput(inputStr, totalPages) {
   const invalidTokens = [];
 
   for (const token of rawTokens) {
-    // Range: e.g. "5-10"
+    // Range: e.g. "1-15" or "5-10"
     const rangeMatch = token.match(/^(\d+)-(\d+)$/);
     if (rangeMatch) {
       let start = parseInt(rangeMatch[1], 10);
@@ -1807,7 +1829,8 @@ window.updateEnterPagesLiveFeedback = function() {
   const { pages, invalid } = parsePageNumbersInput(input.value, total);
 
   if (pages.length > 0) {
-    let previewStr = pages.length <= 10 ? pages.join(', ') : `${pages.slice(0, 8).join(', ')}... (+${pages.length - 8} more)`;
+    const rangeSummary = formatPagesToRanges(pages);
+    const previewStr = rangeSummary.length <= 45 ? rangeSummary : `${rangeSummary.slice(0, 40)}...`;
     let feedback = `<span class="text-pink-600 dark:text-pink-400 font-semibold">✓ ${pages.length} page(s) recognized: [${previewStr}]</span>`;
     if (invalid.length > 0) {
       feedback += ` <span class="text-amber-500 text-[11px]">(⚠️ Out of 1-${total}: ${invalid.slice(0, 3).join(', ')})</span>`;
