@@ -1935,143 +1935,12 @@ document.addEventListener('keydown', (e) => {
 
 // ==========================================
 // Workspace Card Multi-Selection & Gesture Handlers
-// (Shift-Click Row/Range Selection + Touch Drag/Swipe Continuous Selection + iOS Photos Auto-Scroll)
+// (Shift-Click Row/Range Selection + Touch Drag/Swipe Continuous Selection)
 // ==========================================
 let touchSwipeState = null;
 let mouseDragState = null;
 let isMouseDown = false;
 let suppressNextClick = false;
-
-// Auto-Scroll Controller for Drag/Swipe Selection (iOS Photos Style)
-let autoScrollRaf = null;
-let autoScrollSpeed = 0;
-let currentDragPointer = null;
-
-function checkAndTriggerAutoScroll(clientX, clientY) {
-  const container = DOM.selectedFilesList;
-  if (!container) return;
-
-  currentDragPointer = { x: clientX, y: clientY };
-
-  const rect = container.getBoundingClientRect();
-  const topZone = rect.top + 75;
-  const bottomZone = Math.min(rect.bottom - 60, window.innerHeight - 80);
-
-  if (clientY > bottomZone) {
-    const dist = clientY - bottomZone;
-    autoScrollSpeed = Math.min(26, Math.max(4, Math.round(dist * 0.45)));
-  } else if (clientY < topZone) {
-    const dist = topZone - clientY;
-    autoScrollSpeed = -Math.min(26, Math.max(4, Math.round(dist * 0.45)));
-  } else {
-    autoScrollSpeed = 0;
-  }
-
-  if (autoScrollSpeed !== 0 && !autoScrollRaf) {
-    startAutoScrollLoop();
-  } else if (autoScrollSpeed === 0 && autoScrollRaf) {
-    stopAutoScrollLoop();
-  }
-}
-
-function startAutoScrollLoop() {
-  if (autoScrollRaf) return;
-
-  function loop() {
-    const isTouchActive = touchSwipeState && touchSwipeState.isSwiping;
-    const isMouseActive = mouseDragState && mouseDragState.isDragging;
-
-    if ((!isTouchActive && !isMouseActive) || autoScrollSpeed === 0) {
-      stopAutoScrollLoop();
-      return;
-    }
-
-    const container = DOM.selectedFilesList;
-    if (container) {
-      const prevScroll = container.scrollTop;
-      container.scrollTop += autoScrollSpeed;
-
-      // Also scroll window slightly if container hit bottom/top boundary
-      if (container.scrollTop === prevScroll && Math.abs(autoScrollSpeed) > 0) {
-        window.scrollBy(0, autoScrollSpeed * 0.4);
-      }
-
-      // Sample element currently passing under edge zone
-      if (currentDragPointer) {
-        const rect = container.getBoundingClientRect();
-        const probeX = Math.max(rect.left + 25, Math.min(currentDragPointer.x, rect.right - 25));
-        const probeY = autoScrollSpeed > 0
-          ? Math.min(rect.bottom - 35, Math.max(rect.top + 30, currentDragPointer.y))
-          : Math.max(rect.top + 35, Math.min(rect.bottom - 30, currentDragPointer.y));
-
-        const el = document.elementFromPoint(probeX, probeY);
-        const card = el ? el.closest('.preview-card[data-index]') : null;
-        if (card) {
-          const idx = parseInt(card.dataset.index, 10);
-          if (!isNaN(idx)) {
-            processCardInDragSelection(idx);
-          }
-        }
-      }
-    }
-
-    autoScrollRaf = requestAnimationFrame(loop);
-  }
-
-  autoScrollRaf = requestAnimationFrame(loop);
-}
-
-function stopAutoScrollLoop() {
-  if (autoScrollRaf) {
-    cancelAnimationFrame(autoScrollRaf);
-    autoScrollRaf = null;
-  }
-  autoScrollSpeed = 0;
-}
-
-// Unified card range selection processor for Touch, Mouse & Auto-Scroll
-function processCardInDragSelection(currentIndex) {
-  const toolId = state.activeTool ? state.activeTool.id : '';
-  if (toolId !== 'remove-pages' && toolId !== 'split-pdf' && toolId !== 'extract-pages') return;
-
-  const activeState = touchSwipeState || mouseDragState;
-  if (!activeState) return;
-
-  const targetState = activeState.targetState;
-  const startIndex = activeState.startIndex;
-  const touchedSet = activeState.touchedIndices || activeState.touchedCards;
-  if (!touchedSet) return;
-
-  const minIdx = Math.min(startIndex, currentIndex);
-  const maxIdx = Math.max(startIndex, currentIndex);
-  let newlyTouched = false;
-
-  for (let k = minIdx; k <= maxIdx; k++) {
-    if (!touchedSet.has(k)) {
-      touchedSet.add(k);
-      if (toolId === 'remove-pages') {
-        state.workspaceItems[k].removed = targetState;
-        const cardEl = document.getElementById(`workspace-card-${k}`);
-        if (cardEl) updateCardVisualState(cardEl, targetState);
-      } else {
-        state.workspaceItems[k].selected = targetState;
-        const cardEl = document.getElementById(`workspace-card-${k}`);
-        if (cardEl) {
-          if (targetState) cardEl.classList.add('selected');
-          else cardEl.classList.remove('selected');
-        }
-      }
-      newlyTouched = true;
-    }
-  }
-
-  if (newlyTouched) {
-    if (navigator.vibrate) navigator.vibrate(10);
-    updateRemovePagesActionState();
-  }
-
-  activeState.lastIndex = currentIndex;
-}
 
 // 1. Instant Visual Card State Update (60fps without full DOM rebuild)
 function updateCardVisualState(cardEl, isRemoved) {
@@ -2193,7 +2062,7 @@ function handleCardClick(e, index) {
   }
 }
 
-// 4. Mobile Touch Drag / Continuous Swipe Selection Handler (iOS Photos Style with Auto-Scroll)
+// 4. Mobile Touch Drag / Continuous Swipe Selection Handler
 function initCardTouchAndSwipe(card, index) {
   const toolId = state.activeTool ? state.activeTool.id : '';
   if (toolId !== 'remove-pages' && toolId !== 'split-pdf' && toolId !== 'extract-pages') return;
@@ -2226,7 +2095,7 @@ function initCardTouchAndSwipe(card, index) {
           }
           if (navigator.vibrate) navigator.vibrate(12);
         }
-      }, 140)
+      }, 180)
     };
   }, { passive: true });
 
@@ -2240,12 +2109,32 @@ function initCardTouchAndSwipe(card, index) {
     const absDx = Math.abs(dx);
     const absDy = Math.abs(dy);
 
-    if (!touchSwipeState.isSwiping) {
-      if (absDx > 10 || absDy > 10) {
+    if (absDx > 10 || absDy > 10) {
+      if (absDx > absDy || touchSwipeState.isSwiping) {
         if (touchSwipeState.holdTimer) {
           clearTimeout(touchSwipeState.holdTimer);
           touchSwipeState.holdTimer = null;
         }
+      } else if (!touchSwipeState.isSwiping) {
+        // Natural vertical scroll: cancel swipe selection
+        if (touchSwipeState.holdTimer) {
+          clearTimeout(touchSwipeState.holdTimer);
+          touchSwipeState.holdTimer = null;
+        }
+        touchSwipeState = null;
+        return;
+      }
+    }
+
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    const targetCard = el ? el.closest('.preview-card[data-index]') : null;
+    if (!targetCard) return;
+
+    const currentIndex = parseInt(targetCard.dataset.index, 10);
+    if (isNaN(currentIndex)) return;
+
+    if (currentIndex !== touchSwipeState.startIndex || touchSwipeState.isSwiping) {
+      if (!touchSwipeState.isSwiping) {
         touchSwipeState.isSwiping = true;
         if (toolId === 'remove-pages') {
           state.workspaceItems[touchSwipeState.startIndex].removed = touchSwipeState.targetState;
@@ -2253,36 +2142,45 @@ function initCardTouchAndSwipe(card, index) {
           if (startCardEl) updateCardVisualState(startCardEl, touchSwipeState.targetState);
         }
         if (navigator.vibrate) navigator.vibrate(10);
-      } else {
-        return;
       }
-    }
 
-    if (e.cancelable) {
-      e.preventDefault();
-    }
-
-    // Check proximity to top/bottom edge and trigger iOS Photos auto-scroll
-    checkAndTriggerAutoScroll(touch.clientX, touch.clientY);
-
-    // Direct probe under touch position
-    const container = DOM.selectedFilesList;
-    const rect = container ? container.getBoundingClientRect() : null;
-    const probeX = rect ? Math.max(rect.left + 20, Math.min(touch.clientX, rect.right - 20)) : touch.clientX;
-    const probeY = rect ? Math.max(rect.top + 20, Math.min(touch.clientY, rect.bottom - 20)) : touch.clientY;
-
-    const el = document.elementFromPoint(probeX, probeY);
-    const targetCard = el ? el.closest('.preview-card[data-index]') : null;
-    if (targetCard) {
-      const currentIndex = parseInt(targetCard.dataset.index, 10);
-      if (!isNaN(currentIndex)) {
-        processCardInDragSelection(currentIndex);
+      if (e.cancelable) {
+        e.preventDefault();
       }
+
+      const minIdx = Math.min(touchSwipeState.lastIndex, currentIndex);
+      const maxIdx = Math.max(touchSwipeState.lastIndex, currentIndex);
+      let newlyTouched = false;
+
+      for (let k = minIdx; k <= maxIdx; k++) {
+        if (!touchSwipeState.touchedIndices.has(k)) {
+          touchSwipeState.touchedIndices.add(k);
+          if (toolId === 'remove-pages') {
+            state.workspaceItems[k].removed = touchSwipeState.targetState;
+            const currentCardEl = document.getElementById(`workspace-card-${k}`);
+            if (currentCardEl) updateCardVisualState(currentCardEl, touchSwipeState.targetState);
+          } else {
+            state.workspaceItems[k].selected = touchSwipeState.targetState;
+            const currentCardEl = document.getElementById(`workspace-card-${k}`);
+            if (currentCardEl) {
+              if (touchSwipeState.targetState) currentCardEl.classList.add('selected');
+              else currentCardEl.classList.remove('selected');
+            }
+          }
+          newlyTouched = true;
+        }
+      }
+
+      if (newlyTouched) {
+        if (navigator.vibrate) navigator.vibrate(10);
+        updateRemovePagesActionState();
+      }
+
+      touchSwipeState.lastIndex = currentIndex;
     }
   }, { passive: false });
 
   const handleTouchEnd = () => {
-    stopAutoScrollLoop();
     if (!touchSwipeState) return;
     if (touchSwipeState.holdTimer) {
       clearTimeout(touchSwipeState.holdTimer);
@@ -2291,7 +2189,7 @@ function initCardTouchAndSwipe(card, index) {
 
     if (touchSwipeState.isSwiping) {
       suppressNextClick = true;
-      setTimeout(() => { suppressNextClick = false; }, 250);
+      setTimeout(() => { suppressNextClick = false; }, 300);
       state.removePagesProcessed = false;
       state.lastSelectedIndex = touchSwipeState.lastIndex;
       renderInteractiveWorkspace();
@@ -2303,7 +2201,7 @@ function initCardTouchAndSwipe(card, index) {
   card.addEventListener('touchcancel', handleTouchEnd);
 }
 
-// 5. Desktop Mouse Drag Selection Handler (with iOS Photos Style Auto-Scroll)
+// 5. Desktop Mouse Drag Selection Handler
 function initCardMouseDrag(card, index) {
   const toolId = state.activeTool ? state.activeTool.id : '';
   if (toolId !== 'remove-pages' && toolId !== 'split-pdf' && toolId !== 'extract-pages') return;
@@ -2339,34 +2237,37 @@ function initCardMouseDrag(card, index) {
       }
     }
 
-    processCardInDragSelection(index);
+    const minIdx = Math.min(mouseDragState.lastIndex, index);
+    const maxIdx = Math.max(mouseDragState.lastIndex, index);
+    let newlyTouched = false;
+
+    for (let k = minIdx; k <= maxIdx; k++) {
+      if (!mouseDragState.touchedCards.has(k)) {
+        mouseDragState.touchedCards.add(k);
+        if (toolId === 'remove-pages') {
+          state.workspaceItems[k].removed = mouseDragState.targetState;
+          const cardEl = document.getElementById(`workspace-card-${k}`);
+          if (cardEl) updateCardVisualState(cardEl, mouseDragState.targetState);
+        } else {
+          state.workspaceItems[k].selected = mouseDragState.targetState;
+          const cardEl = document.getElementById(`workspace-card-${k}`);
+          if (cardEl) {
+            if (mouseDragState.targetState) cardEl.classList.add('selected');
+            else cardEl.classList.remove('selected');
+          }
+        }
+        newlyTouched = true;
+      }
+    }
+
+    mouseDragState.lastIndex = index;
+    if (newlyTouched) {
+      updateRemovePagesActionState();
+    }
   });
 }
 
-// Global document listeners for smooth desktop dragging and auto-scrolling
-document.addEventListener('mousemove', (e) => {
-  if (!isMouseDown || !mouseDragState) return;
-
-  mouseDragState.isDragging = true;
-  checkAndTriggerAutoScroll(e.clientX, e.clientY);
-
-  const container = DOM.selectedFilesList;
-  const rect = container ? container.getBoundingClientRect() : null;
-  const probeX = rect ? Math.max(rect.left + 20, Math.min(e.clientX, rect.right - 20)) : e.clientX;
-  const probeY = rect ? Math.max(rect.top + 20, Math.min(e.clientY, rect.bottom - 20)) : e.clientY;
-
-  const el = document.elementFromPoint(probeX, probeY);
-  const targetCard = el ? el.closest('.preview-card[data-index]') : null;
-  if (targetCard) {
-    const currentIndex = parseInt(targetCard.dataset.index, 10);
-    if (!isNaN(currentIndex)) {
-      processCardInDragSelection(currentIndex);
-    }
-  }
-});
-
 document.addEventListener('mouseup', () => {
-  stopAutoScrollLoop();
   if (isMouseDown && mouseDragState) {
     if (mouseDragState.isDragging) {
       suppressNextClick = true;
