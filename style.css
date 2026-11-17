@@ -570,22 +570,21 @@ html.dark .brand-logo {
 /* Thumbnail Preview Cards (iLovePDF Style) */
 .preview-card {
   background: var(--bg-card);
-  border: 1.5px solid rgba(228, 228, 231, 0.85); /* Faint subtle gray when unselected */
+  border: 2px solid rgba(228, 228, 231, 0.85); /* Fixed 2px border prevents layout shifts on selection */
   border-radius: 18px;
   overflow: hidden;
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, opacity 0.2s ease;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  cursor: grab;
+  cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   touch-action: pan-y;
-  content-visibility: auto;
-  contain-intrinsic-size: 200px 260px;
 }
 
 html.dark .preview-card {
@@ -596,15 +595,24 @@ html.dark .preview-card {
   cursor: grabbing;
 }
 
-.preview-card:hover {
-  border-color: rgba(203, 213, 225, 0.95);
-  box-shadow: 0 8px 22px -4px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
-}
-
-html.dark .preview-card:hover {
-  border-color: rgba(82, 82, 91, 0.8);
-  box-shadow: 0 8px 22px -4px rgba(0, 0, 0, 0.3);
+/* Hover effects restricted to mouse/pointer devices so touch scrolling never shifts or jumps */
+@media (hover: hover) and (pointer: fine) {
+  .preview-card {
+    transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.15s ease, background-color 0.15s ease, opacity 0.15s ease;
+  }
+  .preview-card:hover {
+    border-color: rgba(203, 213, 225, 0.95);
+    box-shadow: 0 8px 22px -4px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+  }
+  html.dark .preview-card:hover {
+    border-color: rgba(82, 82, 91, 0.8);
+    box-shadow: 0 8px 22px -4px rgba(0, 0, 0, 0.3);
+  }
+  .preview-card.removed:hover {
+    border-color: #ff3b65 !important;
+    box-shadow: 0 0 0 3px rgba(255, 82, 119, 0.45), 0 6px 18px rgba(255, 82, 119, 0.2) !important;
+  }
 }
 
 .preview-card.dragging {
@@ -623,7 +631,6 @@ html.dark .preview-card:hover {
 /* Selected / Marked for Removal Card: Pink frame with soft glow */
 .preview-card.removed {
   border-color: #ff5277 !important;
-  border-width: 2px !important;
   background-color: rgba(255, 241, 242, 0.65) !important;
   box-shadow: 0 0 0 2.5px rgba(255, 82, 119, 0.32), 0 4px 14px rgba(255, 82, 119, 0.12) !important;
 }
@@ -639,14 +646,18 @@ html.dark .preview-card.removed {
   filter: grayscale(40%);
 }
 
-.preview-card.removed:hover {
-  border-color: #ff3b65 !important;
-  box-shadow: 0 0 0 3px rgba(255, 82, 119, 0.45), 0 6px 18px rgba(255, 82, 119, 0.2) !important;
-}
-
 .preview-card.selected:not(.removed) {
   border-color: var(--color-pink-primary);
   box-shadow: 0 0 0 2px var(--color-pink-primary);
+}
+
+/* Silky Smooth 60/120fps Hardware-Accelerated Scrolling Container */
+#selectedFilesList {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  scroll-behavior: smooth;
+  will-change: scroll-position;
+  transform: translateZ(0);
 }
 
 /* Card hover overlay actions */
