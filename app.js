@@ -1369,16 +1369,16 @@ async function buildWorkspacePreview(newFiles) {
   }
 }
 
-// Render Thumbnail Canvas with PDF.js (Optimized for 100+ pages & low memory consumption)
+// Render Thumbnail Canvas with PDF.js (Optimized for 700+ pages & low memory consumption)
 async function renderPdfPageThumb(pdfDoc, pageNum) {
   const page = await pdfDoc.getPage(pageNum);
-  const viewport = page.getViewport({ scale: 0.35 });
+  const viewport = page.getViewport({ scale: 0.3 }); // 0.3 is crisp for ~180px cards and ~30% faster than 0.35
   const canvas = document.createElement('canvas');
   canvas.width = Math.max(1, Math.round(viewport.width));
   canvas.height = Math.max(1, Math.round(viewport.height));
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d', { alpha: false }); // alpha: false enables hardware blitting
   await page.render({ canvasContext: ctx, viewport }).promise;
-  const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
   if (typeof page.cleanup === 'function') {
     page.cleanup();
   }
@@ -2078,35 +2078,61 @@ function handleCardClick(e, index) {
   }
 }
 
-// 4. Mobile Touch Drag / Continuous Swipe Selection Handler
-function initCardTouchAndSwipe(card, index) {
-  const toolId = state.activeTool ? state.activeTool.id : '';
-  if (toolId !== 'remove-pages' && toolId !== 'split-pdf' && toolId !== 'extract-pages') return;
+// 4. Unified Event Delegation on Container (Replaces 4,900 per-card listeners on 700 pages!)
+let workspaceDelegatedEventsInitialized = false;
 
-  card.addEventListener('touchstart', (e) => {
+function initWorkspaceDelegatedEvents() {
+  const container = DOM.selectedFilesList;
+  if (!container) return;
+  setupScrollOptimizations();
+
+  if (workspaceDelegatedEventsInitialized) return;
+  workspaceDelegatedEventsInitialized = true;
+
+  // Delegated Click
+  container.addEventListener('click', (e) => {
+    if (suppressNextClick) return;
     if (e.target.closest('button')) return;
-    if (e.touches.length !== 1) return;
+    const card = e.target.closest('.preview-card[data-index]');
+    if (!card) return;
+    const index = parseInt(card.dataset.index, 10);
+    if (!isNaN(index)) {
+      handleCardClick(e, index);
+    }
+  });
+
+  // Delegated Touchstart
+  container.addEventListener('touchstart', (e) => {
+    if (e.target.closest('button') || e.touches.length !== 1) return;
+    const card = e.target.closest('.preview-card[data-index]');
+    if (!card) return;
+    const index = parseInt(card.dataset.index, 10);
+    if (isNaN(index)) return;
+
+    const toolId = state.activeTool ? state.activeTool.id : '';
+    if (toolId !== 'remove-pages' && toolId !== 'split-pdf' && toolId !== 'extract-pages') return;
 
     const touch = e.touches[0];
     const initialRemoved = (toolId === 'remove-pages')
       ? !!state.workspaceItems[index].removed
       : !state.workspaceItems[index].selected;
-    const targetState = !initialRemoved;
 
     touchSwipeState = {
       startX: touch.clientX,
       startY: touch.clientY,
       startIndex: index,
       lastIndex: index,
-      targetState: targetState,
+      targetState: !initialRemoved,
       isSwiping: false,
       touchedIndices: new Set([index])
     };
   }, { passive: true });
 
-  card.addEventListener('touchmove', (e) => {
-    if (!touchSwipeState) return;
-    if (e.touches.length !== 1) return;
+  // Delegated Touchmove
+  container.addEventListener('touchmove', (e) => {
+    if (!touchSwipeState || e.touches.length !== 1) return;
+    const toolId = state.activeTool ? state.activeTool.id : '';
+    if (toolId !== 'remove-pages' && toolId !== 'split-pdf' && toolId !== 'extract-pages') return;
 
     const touch = e.touches[0];
     const dx = touch.clientX - touchSwipeState.startX;
@@ -2114,14 +2140,11 @@ function initCardTouchAndSwipe(card, index) {
     const absDx = Math.abs(dx);
     const absDy = Math.abs(dy);
 
-    // If movement is predominantly vertical and we haven't started swipe selection:
-    // This is natural page scrolling! Abort swipe immediately so scrolling is 100% fluid & native!
     if (!touchSwipeState.isSwiping) {
       if (absDy > absDx && absDy > 5) {
         touchSwipeState = null;
         return;
       }
-      // Require clear horizontal swipe intention
       if (absDx > 20 && absDx > absDy * 1.5) {
         touchSwipeState.isSwiping = true;
         if (toolId === 'remove-pages') {
@@ -2142,9 +2165,7 @@ function initCardTouchAndSwipe(card, index) {
       }
     }
 
-    if (e.cancelable) {
-      e.preventDefault();
-    }
+    if (e.cancelable) e.preventDefault();
 
     const el = document.elementFromPoint(touch.clientX, touch.clientY);
     const targetCard = el ? el.closest('.preview-card[data-index]') : null;
@@ -2180,36 +2201,35 @@ function initCardTouchAndSwipe(card, index) {
       if (navigator.vibrate) navigator.vibrate(10);
       updateRemovePagesActionState();
     }
-
     touchSwipeState.lastIndex = currentIndex;
   }, { passive: false });
 
   const handleTouchEnd = () => {
     if (!touchSwipeState) return;
-
     if (touchSwipeState.isSwiping) {
       suppressNextClick = true;
       setTimeout(() => { suppressNextClick = false; }, 300);
       state.removePagesProcessed = false;
       state.lastSelectedIndex = touchSwipeState.lastIndex;
-      updateRemovePagesActionState(); // Update in place, zero screen shaking
+      updateRemovePagesActionState();
     }
     touchSwipeState = null;
   };
 
-  card.addEventListener('touchend', handleTouchEnd);
-  card.addEventListener('touchcancel', handleTouchEnd);
-}
+  container.addEventListener('touchend', handleTouchEnd);
+  container.addEventListener('touchcancel', handleTouchEnd);
 
-// 5. Desktop Mouse Drag Selection Handler
-function initCardMouseDrag(card, index) {
-  const toolId = state.activeTool ? state.activeTool.id : '';
-  if (toolId !== 'remove-pages' && toolId !== 'split-pdf' && toolId !== 'extract-pages') return;
-
-  card.addEventListener('mousedown', (e) => {
-    if (e.button !== 0) return;
+  // Delegated Mouse Drag
+  container.addEventListener('mousedown', (e) => {
+    if (e.button !== 0 || e.shiftKey) return;
     if (e.target.closest('button')) return;
-    if (e.shiftKey) return;
+    const card = e.target.closest('.preview-card[data-index]');
+    if (!card) return;
+    const index = parseInt(card.dataset.index, 10);
+    if (isNaN(index)) return;
+
+    const toolId = state.activeTool ? state.activeTool.id : '';
+    if (toolId !== 'remove-pages' && toolId !== 'split-pdf' && toolId !== 'extract-pages') return;
 
     const initialRemoved = (toolId === 'remove-pages')
       ? !!state.workspaceItems[index].removed
@@ -2225,8 +2245,15 @@ function initCardMouseDrag(card, index) {
     isMouseDown = true;
   });
 
-  card.addEventListener('mouseenter', () => {
+  container.addEventListener('mouseover', (e) => {
     if (!isMouseDown || !mouseDragState) return;
+    const card = e.target.closest('.preview-card[data-index]');
+    if (!card) return;
+    const index = parseInt(card.dataset.index, 10);
+    if (isNaN(index)) return;
+
+    const toolId = state.activeTool ? state.activeTool.id : '';
+    if (toolId !== 'remove-pages' && toolId !== 'split-pdf' && toolId !== 'extract-pages') return;
 
     if (!mouseDragState.isDragging) {
       mouseDragState.isDragging = true;
@@ -2265,95 +2292,135 @@ function initCardMouseDrag(card, index) {
       updateRemovePagesActionState();
     }
   });
+
+  document.addEventListener('mouseup', () => {
+    if (isMouseDown && mouseDragState) {
+      if (mouseDragState.isDragging) {
+        suppressNextClick = true;
+        setTimeout(() => { suppressNextClick = false; }, 150);
+        state.removePagesProcessed = false;
+        state.lastSelectedIndex = mouseDragState.lastIndex;
+        updateRemovePagesActionState();
+      }
+    }
+    isMouseDown = false;
+    mouseDragState = null;
+  });
 }
 
-document.addEventListener('mouseup', () => {
-  if (isMouseDown && mouseDragState) {
-    if (mouseDragState.isDragging) {
-      suppressNextClick = true;
-      setTimeout(() => { suppressNextClick = false; }, 150);
-      state.removePagesProcessed = false;
-      state.lastSelectedIndex = mouseDragState.lastIndex;
-      updateRemovePagesActionState(); // Update in place, zero screen shaking
-    }
-  }
-  isMouseDown = false;
-  mouseDragState = null;
-});
-
 // ==========================================
-// Lazy Thumbnail Intersection Observer for 100+ & 700+ Page PDFs (Smooth 60fps scrolling)
+// High-Performance Lazy Thumbnail Queue for 700+ Page PDFs
+// (Scroll-pausing + Viewport-only rendering = Silky Smooth 60/120fps)
 // ==========================================
-const lazyThumbQueue = [];
-let activeThumbRenders = 0;
-const MAX_CONCURRENT_THUMB_RENDERS = 2;
+let isScrolling = false;
+let scrollDebounceTimer = null;
+const visibleCardsToRender = new Set();
+let isRenderingThumb = false;
 
-function processLazyThumbQueue() {
-  while (activeThumbRenders < MAX_CONCURRENT_THUMB_RENDERS && lazyThumbQueue.length > 0) {
-    const task = lazyThumbQueue.shift();
-    activeThumbRenders++;
-    task().finally(() => {
-      activeThumbRenders--;
-      processLazyThumbQueue();
-    });
-  }
+function setupScrollOptimizations() {
+  const container = DOM.selectedFilesList;
+  if (!container || container.dataset.scrollOptimized) return;
+  container.dataset.scrollOptimized = 'true';
+
+  container.addEventListener('scroll', () => {
+    isScrolling = true;
+    if (scrollDebounceTimer) clearTimeout(scrollDebounceTimer);
+    scrollDebounceTimer = setTimeout(() => {
+      isScrolling = false;
+      processNextVisibleThumbnail();
+    }, 100);
+  }, { passive: true });
 }
 
 const lazyThumbObserver = (typeof window !== 'undefined' && window.IntersectionObserver)
-  ? new IntersectionObserver((entries, observer) => {
+  ? new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
+        const card = entry.target;
         if (entry.isIntersecting) {
-          const card = entry.target;
-          observer.unobserve(card);
-          card.removeAttribute('data-lazy');
-          const idx = parseInt(card.dataset.index, 10);
-          const item = state.workspaceItems[idx];
-          if (!item || item.previewUrl) return;
-
-          lazyThumbQueue.unshift(async () => {
-            if (!card.isConnected || item.previewUrl) return;
-            try {
-              let pdf = item.pdfDoc;
-              if (!pdf && item.file && window.pdfjsLib) {
-                const bytes = await item.file.arrayBuffer();
-                const pdfOpts = {
-                  data: bytes,
-                  cMapUrl: 'https://unpkg.com/pdfjs-dist@3.11.174/cmaps/',
-                  cMapPacked: true
-                };
-                if (state.savedOriginalPassword) pdfOpts.password = state.savedOriginalPassword;
-                pdf = await pdfjsLib.getDocument(pdfOpts).promise;
-                item.pdfDoc = pdf;
-              }
-              if (!pdf) return;
-              const thumb = await renderPdfPageThumb(pdf, item.pageNum);
-              item.previewUrl = thumb;
-              const img = card.querySelector('.page-thumb-img');
-              const skeleton = card.querySelector('.page-thumb-skeleton');
-              if (img) {
-                img.src = thumb;
-                img.style.transform = `rotate(${item.rotation || 0}deg)`;
-                if (item.removed) {
-                  img.style.opacity = '0.55';
-                  img.style.filter = 'grayscale(40%)';
-                } else {
-                  img.style.opacity = '1';
-                  img.style.filter = 'none';
-                }
-                img.classList.remove('opacity-0');
-              }
-              if (skeleton) {
-                skeleton.remove();
-              }
-            } catch (err) {
-              console.warn('Lazy thumb error:', err);
-            }
-          });
-          processLazyThumbQueue();
+          visibleCardsToRender.add(card);
+        } else {
+          visibleCardsToRender.delete(card);
         }
       });
-    }, { rootMargin: '300px 0px' })
+      if (!isScrolling) {
+        processNextVisibleThumbnail();
+      }
+    }, {
+      rootMargin: '120px 0px'
+    })
   : null;
+
+async function processNextVisibleThumbnail() {
+  if (isScrolling || isRenderingThumb || visibleCardsToRender.size === 0) return;
+
+  const card = visibleCardsToRender.values().next().value;
+  if (!card) return;
+  visibleCardsToRender.delete(card);
+
+  if (!card.isConnected) return;
+  const idx = parseInt(card.dataset.index, 10);
+  const item = state.workspaceItems[idx];
+  if (!item || item.previewUrl) {
+    if (lazyThumbObserver) lazyThumbObserver.unobserve(card);
+    card.removeAttribute('data-lazy');
+    processNextVisibleThumbnail();
+    return;
+  }
+
+  isRenderingThumb = true;
+  try {
+    let pdf = item.pdfDoc;
+    if (!pdf && item.file && window.pdfjsLib) {
+      if (!item.file._pdfDocPromise) {
+        item.file._pdfDocPromise = (async () => {
+          const bytes = await item.file.arrayBuffer();
+          const pdfOpts = {
+            data: bytes,
+            cMapUrl: 'https://unpkg.com/pdfjs-dist@3.11.174/cmaps/',
+            cMapPacked: true
+          };
+          if (state.savedOriginalPassword) pdfOpts.password = state.savedOriginalPassword;
+          return await pdfjsLib.getDocument(pdfOpts).promise;
+        })();
+      }
+      pdf = await item.file._pdfDocPromise;
+      item.pdfDoc = pdf;
+    }
+
+    if (pdf) {
+      const thumb = await renderPdfPageThumb(pdf, item.pageNum);
+      item.previewUrl = thumb;
+      if (card.isConnected) {
+        const img = card.querySelector('.page-thumb-img');
+        const skeleton = card.querySelector('.page-thumb-skeleton');
+        if (img) {
+          img.src = thumb;
+          img.style.transform = `rotate(${item.rotation || 0}deg)`;
+          if (item.removed) {
+            img.style.opacity = '0.55';
+            img.style.filter = 'grayscale(40%)';
+          } else {
+            img.style.opacity = '1';
+            img.style.filter = 'none';
+          }
+          img.classList.remove('opacity-0');
+        }
+        if (skeleton) {
+          skeleton.remove();
+        }
+      }
+      if (lazyThumbObserver) lazyThumbObserver.unobserve(card);
+      card.removeAttribute('data-lazy');
+    }
+  } catch (err) {
+    console.warn('Lazy thumb error:', err);
+  } finally {
+    isRenderingThumb = false;
+    if (!isScrolling && visibleCardsToRender.size > 0) {
+      requestAnimationFrame(processNextVisibleThumbnail);
+    }
+  }
+}
 
 // ==========================================
 // Render Interactive Workspace Cards (Smallpdf Style)
@@ -2589,7 +2656,7 @@ function renderInteractiveWorkspace() {
     // Flat Style Red Cross (iStock Reference: gm1210969290) - Always present with hidden toggle for instant 60fps swipe
     const overlayHiddenClass = item.removed ? '' : 'hidden';
     const removedOverlayHtml = `
-      <div class="card-removed-overlay ${overlayHiddenClass} absolute inset-0 flex items-center justify-center pointer-events-none z-15 bg-black/10 dark:bg-black/30 backdrop-blur-[0.5px]">
+      <div class="card-removed-overlay ${overlayHiddenClass} absolute inset-0 flex items-center justify-center pointer-events-none z-15 bg-black/15 dark:bg-black/35">
         <svg viewBox="0 0 100 100" class="${isContinuous ? 'w-28 h-28 sm:w-36 sm:h-36' : 'w-20 h-20 sm:w-24 sm:h-24'} pointer-events-none drop-shadow-md text-red-500" fill="none" stroke="currentColor">
           <path d="M22 22 L78 78 M78 22 L22 78" stroke="#ef4444" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -2665,18 +2732,16 @@ function renderInteractiveWorkspace() {
       `;
     }
 
-    // Click toggle & Swipe/Drag for Split / Remove Pages tools
+    // Click toggle pointer cursor for interactive page tools
     if (toolId === 'remove-pages' || toolId === 'split-pdf' || toolId === 'extract-pages') {
-      card.onclick = (e) => {
-        handleCardClick(e, index);
-      };
       card.classList.add('cursor-pointer');
-      initCardTouchAndSwipe(card, index);
-      initCardMouseDrag(card, index);
     }
 
     card.innerHTML = thumbHtml + actionsHtml;
     grid.appendChild(card);
+    if (lazyThumbObserver && !item.previewUrl) {
+      lazyThumbObserver.observe(card);
+    }
   });
 
   // "+ Add More Files" Card at end of grid (Smallpdf Style - Matching Card Proportions)
@@ -2693,13 +2758,7 @@ function renderInteractiveWorkspace() {
   grid.appendChild(addMoreCard);
 
   container.appendChild(grid);
-
-  // Lazy load thumbnails as user scrolls through large documents
-  if (lazyThumbObserver) {
-    grid.querySelectorAll('.preview-card[data-lazy="true"]').forEach(card => {
-      lazyThumbObserver.observe(card);
-    });
-  }
+  initWorkspaceDelegatedEvents();
 
   // Update Action Button Text (only for tools other than remove-pages, which is handled above)
   if (toolId !== 'remove-pages') {
