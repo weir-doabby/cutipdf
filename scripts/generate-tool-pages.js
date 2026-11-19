@@ -97,7 +97,8 @@ for (const tool of tools) {
     .replace(/src="vectors\.js\?/g, 'src="../vectors.js?')
     .replace(/src="app\.js\?/g, 'src="../app.js?')
     .replace(/href="assets\//g, 'href="../assets/')
-    .replace(/href="\.\/"/g, 'href="../"');
+    .replace(/src="assets\//g, 'src="../assets/')
+    .replace(/href="\.\//g, 'href="../');
 
   const toolHtmlPath = path.join(toolDir, 'index.html');
   fs.writeFileSync(toolHtmlPath, html, 'utf8');

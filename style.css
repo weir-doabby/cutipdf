@@ -167,176 +167,11 @@ html.dark .brand-logo {
   }
 }
 
-.floating-tools-btn {
-  position: fixed;
-  bottom: 24px;
-  right: 24px;
-  bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-  right: calc(20px + env(safe-area-inset-right, 0px));
-  z-index: 75;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3px;
-  width: 66px;
-  height: 66px;
-  min-width: 66px;
-  min-height: 66px;
-  max-width: 66px;
-  max-height: 66px;
-  aspect-ratio: 1 / 1;
-  padding: 0 !important;
-  margin: 0;
-  border: 1.5px solid rgba(255, 255, 255, 0.4);
-  border-radius: 18px;
-  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 55%, #3b82f6 100%);
-  box-shadow: 0 10px 28px -4px rgba(37, 99, 235, 0.5), 0 4px 12px rgba(0, 0, 0, 0.12);
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-  color: #ffffff;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-  box-sizing: border-box;
-  animation: none; /* Button itself remains completely stationary */
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .floating-tools-btn:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 16px 36px -4px rgba(37, 99, 235, 0.65), 0 8px 20px rgba(0, 0, 0, 0.18);
-  }
-}
-
-.floating-tools-btn:active {
-  transform: translateY(0) scale(0.92) !important;
-  box-shadow: 0 6px 16px -2px rgba(37, 99, 235, 0.6) !important;
-  transition: transform 0.08s ease !important;
-}
-
-.floating-tools-btn.active {
-  animation: none;
-  background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%);
-  box-shadow: 0 0 0 3px rgba(147, 197, 253, 0.6), 0 12px 28px -4px rgba(29, 78, 216, 0.55);
-  border-color: #93c5fd;
-}
-
-/* Floating / Sticky Transparent Top Bar for Remove Pages */
-.workspace-toolbar.clean-actions-only {
-  position: sticky !important;
-  top: 8px !important;
-  z-index: 35 !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  margin: 0 auto !important;
-  width: min(calc(100% - 32px), 560px) !important;
-  max-width: 560px !important;
-  display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  pointer-events: none; /* Let touches pass through the transparent bar to scroll cards underneath */
-}
-
-.workspace-toolbar.clean-actions-only > div:first-child {
-  display: none !important;
-}
-
-.workspace-toolbar.clean-actions-only > .workspace-top-actions,
-.workspace-toolbar.clean-actions-only > .flex:last-child {
-  display: flex !important;
-  pointer-events: auto !important;
-  justify-content: space-between !important;
-  align-items: center !important;
-  width: 100% !important;
-  gap: 12px !important;
-  flex-wrap: nowrap !important;
-  margin: 0 !important;
-}
-
-.workspace-toolbar.clean-actions-only button {
-  border-radius: 18px !important;
-  height: 52px !important;
-  min-height: 52px !important;
-  flex: 1 1 50% !important;
-  width: 50% !important;
-  min-width: 0 !important;
-  font-size: 14px !important;
-  font-weight: 800 !important;
-  border: none !important;
-  padding: 0 14px !important;
-  align-items: center !important;
-  justify-content: center !important;
-  white-space: nowrap !important;
-  cursor: pointer !important;
-  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease !important;
-}
-
-.workspace-toolbar.clean-actions-only button:not(.hidden) {
-  display: inline-flex !important;
-}
-
-.workspace-toolbar.clean-actions-only button.hidden {
-  display: none !important;
-}
-
-@media (max-width: 480px) {
-  .workspace-toolbar.clean-actions-only button {
-    font-size: 12px !important;
-    padding: 0 8px !important;
-  }
-}
-
-/* Real vibrant colors for remove-pages top buttons (NO pastel) */
-#btnToolbarRestoreAll {
-  background-color: #059669 !important;
-  color: #ffffff !important;
-  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3) !important;
-}
-#btnToolbarRestoreAll:hover {
-  background-color: #047857 !important;
-}
-
-#btnToolbarSelectAll {
-  background-color: #18181b !important;
-  color: #ffffff !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15) !important;
-}
-html.dark #btnToolbarSelectAll {
-  background-color: #f4f4f5 !important;
-  color: #18181b !important;
-  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.15) !important;
-}
-#btnToolbarSelectAll:hover {
-  opacity: 0.92 !important;
-}
-
-#btnToolbarEnterPages {
-  background-color: #ff5277 !important;
-  color: #ffffff !important;
-  box-shadow: 0 4px 14px rgba(255, 82, 119, 0.35) !important;
-}
-#btnToolbarEnterPages:hover {
-  background-color: #ff3b65 !important;
-}
-
-/* Seamless Full-Canvas View for Remove Pages (Cards scroll smoothly under sticky top buttons) */
-.remove-pages-workspace #selectedFilesList {
-  max-height: none !important;
-  overflow-y: visible !important;
-  margin-top: -56px !important;
-  padding-top: 60px !important;
-}
-
-/* Floating Action Bar (Remove Pages: دقیقا هم‌عرض و هم‌راستا با نوار بالای صفحه، انتهای چپ و راست منطبق) */
+/* Floating Action Bar (Remove Pages & Unified Control Center)
+   Stacked Aligned Controls: Top row = 2 White Buttons (split 50/50), Bottom row = 1 Royal Pink Button (100% width) */
 .workspace-action-bar.floating-mode {
   position: fixed !important;
-  bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+  bottom: calc(18px + env(safe-area-inset-bottom, 0px)) !important;
   left: 50% !important;
   right: auto !important;
   transform: translateX(-50%) !important;
@@ -347,10 +182,11 @@ html.dark #btnToolbarSelectAll {
   border: none !important;
   box-shadow: none !important;
   display: flex !important;
+  flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  width: min(calc(100% - 32px), 560px) !important;
-  max-width: 560px !important;
+  width: min(calc(100% - 32px), 520px) !important;
+  max-width: 520px !important;
   pointer-events: none;
   animation: floatInUpCenter 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
@@ -359,31 +195,106 @@ html.dark #btnToolbarSelectAll {
   pointer-events: auto;
 }
 
-.workspace-action-bar.floating-mode > div:first-child,
-.workspace-action-bar.floating-mode #workspaceActionSummary {
+.workspace-action-bar.floating-mode #workspaceActionControlsContainer {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+/* Row 1: The two white buttons, split 50/50 with clean gap */
+.workspace-action-bar.floating-mode #workspaceActionSubButtons {
+  display: flex !important;
+  width: 100% !important;
+  gap: 10px !important;
+}
+
+.workspace-action-bar.floating-mode #workspaceActionSubButtons button {
+  flex: 1 1 50% !important;
+  width: 50% !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  border-radius: 18px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  border: 1px solid rgba(228, 228, 231, 0.9) !important;
+  background-color: #ffffff !important;
+  color: #18181b !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  transition: transform 0.12s ease, background-color 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button {
+  background-color: #27272a !important;
+  color: #f4f4f5 !important;
+  border-color: rgba(63, 63, 70, 0.9) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28) !important;
+}
+
+.workspace-action-bar.floating-mode #workspaceActionSubButtons button:hover {
+  background-color: #f4f4f5 !important;
+}
+
+html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:hover {
+  background-color: #3f3f46 !important;
+}
+
+.workspace-action-bar.floating-mode #workspaceActionSubButtons button:active {
+  transform: scale(0.98) !important;
+}
+
+.workspace-action-bar.floating-mode #workspaceActionSubButtons button.hidden {
   display: none !important;
 }
 
+/* Row 2: Royal Pink Primary Action Button (Exact same total width as Row 1, aligned) */
 .workspace-action-bar.floating-mode #btnExecuteAction {
   width: 100% !important;
   border-radius: 18px !important;
-  padding: 16px 28px !important;
+  padding: 14px 28px !important;
   min-height: 52px !important;
   height: 52px !important;
   font-size: 15px !important;
   font-weight: 800 !important;
+  background-color: #ff5277 !important;
+  color: #ffffff !important;
   box-shadow: 0 14px 34px -4px rgba(255, 82, 119, 0.5), 0 6px 16px rgba(0, 0, 0, 0.12) !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   gap: 10px !important;
   white-space: nowrap !important;
+  border: none !important;
+  cursor: pointer !important;
+  transition: transform 0.12s ease, background-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
-/* Tools Button in Remove Pages mode: هم‌راستا با انتهای سمت راست دکمه Remove، بالای آن (هم‌تراز نیستند) در تمام ابعاد */
-.floating-tools-btn.elevated-remove-pages {
-  right: max(16px, calc(50% - 280px)) !important;
-  bottom: calc(78px + env(safe-area-inset-bottom, 0px)) !important;
+.workspace-action-bar.floating-mode #btnExecuteAction:hover {
+  background-color: #ff3b65 !important;
+  box-shadow: 0 18px 38px -4px rgba(255, 82, 119, 0.6), 0 8px 20px rgba(0, 0, 0, 0.16) !important;
+}
+
+.workspace-action-bar.floating-mode #btnExecuteAction:active {
+  transform: scale(0.99) !important;
+}
+
+.workspace-action-bar.floating-mode #workspaceActionSummary,
+.workspace-action-bar.floating-mode #workspaceActionSummaryWrapper {
+  display: none !important;
+}
+
+/* Full-Canvas View for Remove Pages: extra bottom padding so cards aren't obscured by floating controls */
+.remove-pages-workspace #selectedFilesList {
+  max-height: none !important;
+  overflow-y: visible !important;
+  margin-top: 0 !important;
+  padding-top: 8px !important;
+  padding-bottom: 140px !important;
 }
 
 @keyframes floatInUpCenter {
@@ -395,66 +306,6 @@ html.dark #btnToolbarSelectAll {
     opacity: 1;
     transform: translate(-50%, 0) scale(1);
   }
-}
-
-/* Tools Icon Stage (Exact Adobe Stock Tool Logo: Gear & Concentric Wrench - Zoomed In) */
-.tools-btn-icon-box {
-  position: relative;
-  width: 35px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-}
-
-.tool-svg {
-  position: absolute;
-  width: 35px;
-  height: 35px;
-  min-width: 35px;
-  min-height: 35px;
-  top: 0;
-  left: 0;
-  fill: #ffffff;
-  color: #ffffff;
-  pointer-events: none;
-}
-
-/* 8-Tooth Outer Gear: Smooth Calm Zoom Around Center (50% 50% / 256, 256) - Zero Rotation */
-.tool-gear {
-  fill: #ffffff;
-  color: #ffffff;
-  transform-box: view-box;
-  transform-origin: 50% 50%;
-  animation: gearSmoothZoom 3.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-/* Interactive Snap on click/active */
-.floating-tools-btn:active .tool-gear,
-.floating-tools-btn.clashing .tool-gear {
-  animation: gearZoomSnap 0.65s cubic-bezier(0.34, 1.25, 0.64, 1) !important;
-}
-
-/* Stationary Wrench: Fixed Rock-Solid in Center, Zero Movement */
-.tool-wrench {
-  fill: #ffffff;
-  color: #ffffff;
-  animation: none !important;
-  transform: none !important;
-  pointer-events: none;
-}
-
-.floating-tools-btn span {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: #ffffff;
-  line-height: 1;
-  display: block;
-  text-align: center;
-  pointer-events: none;
 }
 
 /* Container for Action Buttons (Mobile: Select on Top, Cloud Row Underneath; Desktop: Inline Row) */

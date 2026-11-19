@@ -530,10 +530,8 @@ function showAllToolsCatalogView() {
   DOM.viewAllTools.classList.add('active');
   const actionBar = document.getElementById('workspaceActionBar');
   if (actionBar) actionBar.classList.remove('floating-mode');
-  const toolsBtn = document.getElementById('floatingToolsBtn');
-  if (toolsBtn) toolsBtn.classList.remove('elevated', 'elevated-mobile');
   const toolbar = document.querySelector('.workspace-toolbar');
-  if (toolbar) toolbar.classList.remove('clean-actions-only');
+  if (toolbar) toolbar.classList.remove('hidden', 'clean-actions-only');
   document.title = 'CutiPDF • Clean, Fast & Complete PDF Studio';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -598,29 +596,12 @@ function initRouting() {
 }
 
 // ==========================================
-// Quick Tools Preview Drawer (Non-Disruptive Side Pop Menu)
+// Quick Tools Preview Drawer & Mobile Navigation
 // ==========================================
 function initQuickToolsModal() {
-  if (!DOM.quickToolsDrawer || !DOM.floatingToolsBtn) return;
+  if (!DOM.quickToolsDrawer) return;
 
   renderQuickToolsModalGrid('');
-
-  // Floating button toggles drawer on both desktop and mobile
-  DOM.floatingToolsBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    // Trigger wrench tightening nut animation
-    DOM.floatingToolsBtn.classList.remove('clashing');
-    void DOM.floatingToolsBtn.offsetWidth; // force reflow
-    DOM.floatingToolsBtn.classList.add('clashing');
-
-    setTimeout(() => {
-      DOM.floatingToolsBtn.classList.remove('clashing');
-    }, 650);
-
-    toggleQuickTools();
-  });
 
   // Close button in header
   if (DOM.btnCloseQuickTools) {
@@ -674,9 +655,7 @@ function openQuickTools() {
   DOM.quickToolsDrawer.classList.remove('translate-x-full', 'pointer-events-none');
   DOM.quickToolsDrawer.classList.add('translate-x-0', 'pointer-events-auto');
 
-  DOM.floatingToolsBtn.classList.add('active');
-
-  // Prevent background scrolling on mobile while drawer is open
+  // Prevent background scrolling while drawer is open
   document.body.classList.add('overflow-hidden');
 
   if (DOM.quickToolSearch) {
@@ -695,55 +674,40 @@ function closeQuickTools() {
   DOM.quickToolsDrawer.classList.remove('translate-x-0', 'pointer-events-auto');
   DOM.quickToolsDrawer.classList.add('translate-x-full', 'pointer-events-none');
 
-  DOM.floatingToolsBtn.classList.remove('active');
-
   // Restore background scrolling
   document.body.classList.remove('overflow-hidden');
 }
 
-// Dynamically align floating tools button right edge with bottom action button (Responsive Mobile, Tablet & Desktop)
+// Mobile Slide-in Navigation Drawer
+window.toggleMobileNav = function() {
+  const drawer = document.getElementById('mobileMenuDrawer');
+  const backdrop = document.getElementById('mobileMenuBackdrop');
+  if (!drawer || !backdrop) return;
+  const isClosed = drawer.classList.contains('translate-x-full');
+  if (isClosed) {
+    drawer.classList.remove('translate-x-full', 'pointer-events-none');
+    drawer.classList.add('translate-x-0', 'pointer-events-auto');
+    backdrop.classList.remove('opacity-0', 'pointer-events-none');
+    backdrop.classList.add('opacity-100', 'pointer-events-auto');
+    document.body.classList.add('overflow-hidden');
+  } else {
+    window.closeMobileNav();
+  }
+};
+
+window.closeMobileNav = function() {
+  const drawer = document.getElementById('mobileMenuDrawer');
+  const backdrop = document.getElementById('mobileMenuBackdrop');
+  if (!drawer || !backdrop) return;
+  drawer.classList.remove('translate-x-0', 'pointer-events-auto');
+  drawer.classList.add('translate-x-full', 'pointer-events-none');
+  backdrop.classList.remove('opacity-100', 'pointer-events-auto');
+  backdrop.classList.add('opacity-0', 'pointer-events-none');
+  document.body.classList.remove('overflow-hidden');
+};
+
 function alignFloatingToolsButton() {
-  const toolsBtn = document.getElementById('floatingToolsBtn');
-  const actionBtn = document.getElementById('btnExecuteAction');
-  const actionBar = document.getElementById('workspaceActionBar');
-  if (!toolsBtn || !actionBtn || !actionBar) return;
-
-  const toolId = state.activeTool ? state.activeTool.id : '';
-  const isRemovePagesFloating = (toolId === 'remove-pages' && state.workspaceItems && state.workspaceItems.length > 0 && !DOM.filesSelectedArea.classList.contains('hidden'));
-
-  if (isRemovePagesFloating) {
-    const rect = actionBtn.getBoundingClientRect();
-    if (rect.width > 0 && rect.height > 0) {
-      // Calculate exact left position so right edge of toolsBtn is 100% flush with rect.right on all screen sizes:
-      const btnWidth = toolsBtn.offsetWidth || 66;
-      const exactLeft = Math.round(rect.right - btnWidth);
-      // Distance from bottom of viewport to top of actionBtn + 12px gap (هم‌تراز نیستند، بالای دکمه Remove قرار می‌گیرد):
-      const bottomFromViewport = Math.round(window.innerHeight - rect.top) + 12;
-
-      toolsBtn.style.setProperty('left', `${exactLeft}px`, 'important');
-      toolsBtn.style.setProperty('right', 'auto', 'important');
-      toolsBtn.style.setProperty('bottom', `${bottomFromViewport}px`, 'important');
-      toolsBtn.classList.add('elevated-remove-pages');
-      return;
-    }
-  }
-
-  // Reset to default CSS positioning
-  toolsBtn.style.removeProperty('right');
-  toolsBtn.style.removeProperty('bottom');
-  toolsBtn.style.removeProperty('left');
-  toolsBtn.classList.remove('elevated', 'elevated-mobile', 'elevated-remove-pages');
-}
-
-window.addEventListener('resize', alignFloatingToolsButton);
-window.addEventListener('scroll', alignFloatingToolsButton, { passive: true });
-window.addEventListener('orientationchange', alignFloatingToolsButton);
-
-if (window.ResizeObserver) {
-  const executeBtn = document.getElementById('btnExecuteAction');
-  if (executeBtn) {
-    new ResizeObserver(alignFloatingToolsButton).observe(executeBtn);
-  }
+  // Tools button removed as per minimalist design
 }
 
 function renderQuickToolsModalGrid(query = '') {
@@ -885,10 +849,8 @@ function openToolDedicatedPage(tool) {
 
   const actionBar = document.getElementById('workspaceActionBar');
   if (actionBar) actionBar.classList.remove('floating-mode');
-  const toolsBtn = document.getElementById('floatingToolsBtn');
-  if (toolsBtn) toolsBtn.classList.remove('elevated', 'elevated-mobile');
   const toolbar = document.querySelector('.workspace-toolbar');
-  if (toolbar) toolbar.classList.remove('clean-actions-only');
+  if (toolbar) toolbar.classList.remove('hidden', 'clean-actions-only');
 
   DOM.viewAllTools.classList.remove('active');
   DOM.viewToolActive.classList.add('active');
@@ -1628,10 +1590,8 @@ function resetWorkspaceToDropzone() {
 
   const actionBar = document.getElementById('workspaceActionBar');
   if (actionBar) actionBar.classList.remove('floating-mode');
-  const toolsBtn = document.getElementById('floatingToolsBtn');
-  if (toolsBtn) toolsBtn.classList.remove('elevated', 'elevated-mobile');
   const toolbar = document.querySelector('.workspace-toolbar');
-  if (toolbar) toolbar.classList.remove('clean-actions-only');
+  if (toolbar) toolbar.classList.remove('hidden', 'clean-actions-only');
 }
 
 // ==========================================
@@ -2523,12 +2483,9 @@ function renderInteractiveWorkspace() {
     if (toolHeader) toolHeader.classList.add('hidden');
     if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.add('remove-pages-workspace');
 
-    // Hide stats text and strip toolbar bar background completely (دکمه‌های Select All / Restore All و Remove by Number بدون بار و آمار)
-    if (statsBadge) statsBadge.classList.add('hidden');
-    if (toolbar) toolbar.classList.add('clean-actions-only');
-
-    if (layoutSwitcher) layoutSwitcher.classList.add('hidden');
-    if (modeSwitcher) modeSwitcher.classList.add('hidden');
+    // For remove-pages, the top toolbar is hidden completely, maximizing full-canvas view!
+    // Sub-actions (Restore/Select All + Remove by Number) are cleanly hosted in the bottom action bar.
+    if (toolbar) toolbar.classList.add('hidden');
 
     const removedCount = state.workspaceItems.filter(i => i.removed).length;
     if (removedCount > 0) {
@@ -2540,15 +2497,11 @@ function renderInteractiveWorkspace() {
     }
 
     if (btnEnterPages) btnEnterPages.classList.remove('hidden');
-    if (btnAddMore) btnAddMore.classList.add('hidden');
-    if (btnSort) btnSort.classList.add('hidden');
-    if (btnRotate) btnRotate.classList.add('hidden');
-    if (btnClear) btnClear.classList.add('hidden');
   } else {
     if (toolHeader) toolHeader.classList.remove('hidden');
     if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.remove('remove-pages-workspace');
     if (statsBadge) statsBadge.classList.remove('hidden');
-    if (toolbar) toolbar.classList.remove('clean-actions-only');
+    if (toolbar) toolbar.classList.remove('hidden', 'clean-actions-only');
 
     if (layoutSwitcher) layoutSwitcher.classList.add('hidden');
     if (btnRestoreAll) btnRestoreAll.classList.add('hidden');
@@ -2567,21 +2520,11 @@ function renderInteractiveWorkspace() {
     }
   }
 
-  // Floating Action Bar & Elevating Floating Tools Button for remove-pages
+  // Floating Action Bar for remove-pages
   const actionBar = document.getElementById('workspaceActionBar');
-  const toolsBtn = document.getElementById('floatingToolsBtn');
 
   if (toolId === 'remove-pages') {
     if (actionBar) actionBar.classList.add('floating-mode');
-    // On desktop (>= 1024px), tools button stays in bottom-right corner; on mobile/tablet it elevates above remove button
-    if (toolsBtn) {
-      toolsBtn.classList.remove('elevated');
-      if (window.innerWidth < 1024) {
-        toolsBtn.classList.add('elevated-mobile');
-      } else {
-        toolsBtn.classList.remove('elevated-mobile');
-      }
-    }
 
     const removedCount = state.workspaceItems.filter(i => i.removed).length;
     if (state.removePagesProcessed) {
@@ -3499,17 +3442,11 @@ async function processRemovePagesAndShowDoneScreen(marked, remaining) {
 }
 
 function showRemovePagesDoneScreen(removedCount, remainingCount) {
-  // Hide workspace grid & floating action bar
+  // Hide workspace grid & dropzone & floating action bar
+  if (DOM.toolDropzone) DOM.toolDropzone.classList.add('hidden');
   if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.add('hidden');
   const actionBar = document.getElementById('workspaceActionBar');
   if (actionBar) actionBar.classList.remove('floating-mode');
-  const toolsBtn = document.getElementById('floatingToolsBtn');
-  if (toolsBtn) {
-    toolsBtn.classList.remove('elevated', 'elevated-mobile', 'elevated-remove-pages');
-    toolsBtn.style.removeProperty('left');
-    toolsBtn.style.removeProperty('right');
-    toolsBtn.style.removeProperty('bottom');
-  }
 
   // Keep tool header hidden on done screen as requested
   const toolHeader = document.getElementById('toolHeaderContainer');
@@ -3520,12 +3457,8 @@ function showRemovePagesDoneScreen(removedCount, remainingCount) {
   if (doneScreen) {
     doneScreen.classList.remove('hidden');
     const doneTitle = document.getElementById('doneScreenTitle');
-    const doneSubtitle = document.getElementById('doneScreenSubtitle');
     if (doneTitle) {
-      doneTitle.textContent = `${removedCount} ${removedCount === 1 ? 'Page' : 'Pages'} Removed!`;
-    }
-    if (doneSubtitle) {
-      doneSubtitle.textContent = `Your new PDF contains ${remainingCount} ${remainingCount === 1 ? 'page' : 'pages'} and is ready to download.`;
+      doneTitle.textContent = `${removedCount} Removed`;
     }
   }
 
@@ -3545,6 +3478,7 @@ window.downloadLastProcessedPdf = function() {
 window.reopenRemovePagesWorkspace = function() {
   const doneScreen = document.getElementById('workspaceDoneScreen');
   if (doneScreen) doneScreen.classList.add('hidden');
+  if (DOM.toolDropzone) DOM.toolDropzone.classList.add('hidden');
 
   const toolbar = document.querySelector('.workspace-toolbar');
   if (toolbar) toolbar.classList.remove('hidden');
