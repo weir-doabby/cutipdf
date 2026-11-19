@@ -228,15 +228,15 @@ html.dark .brand-logo {
 /* Floating / Sticky Transparent Top Bar for Remove Pages */
 .workspace-toolbar.clean-actions-only {
   position: sticky !important;
-  top: 0 !important;
+  top: 8px !important;
   z-index: 35 !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  padding: 6px 0 10px 0 !important;
-  margin: 0 auto 4px auto !important;
-  width: 100% !important;
-  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 auto !important;
+  width: min(calc(100% - 32px), 560px) !important;
+  max-width: 560px !important;
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
@@ -261,55 +261,96 @@ html.dark .brand-logo {
 
 .workspace-toolbar.clean-actions-only button {
   border-radius: 18px !important;
-  height: 44px !important;
-  min-height: 44px !important;
-  font-size: 13px !important;
-  font-weight: 700 !important;
-  backdrop-filter: blur(12px) !important;
-  -webkit-backdrop-filter: blur(12px) !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05) !important;
+  height: 52px !important;
+  min-height: 52px !important;
+  flex: 1 1 50% !important;
+  width: 50% !important;
+  min-width: 0 !important;
+  font-size: 14px !important;
+  font-weight: 800 !important;
+  border: none !important;
+  padding: 0 14px !important;
+  align-items: center !important;
+  justify-content: center !important;
+  white-space: nowrap !important;
+  cursor: pointer !important;
+  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
-@media (max-width: 639px) {
-  .workspace-toolbar.clean-actions-only {
-    padding: 2px 0 8px 0 !important;
-  }
+.workspace-toolbar.clean-actions-only button:not(.hidden) {
+  display: inline-flex !important;
+}
 
+.workspace-toolbar.clean-actions-only button.hidden {
+  display: none !important;
+}
+
+@media (max-width: 480px) {
   .workspace-toolbar.clean-actions-only button {
-    flex: 1 1 50% !important;
-    width: 50% !important;
-    min-width: 0 !important;
-    padding-left: 8px !important;
-    padding-right: 8px !important;
     font-size: 12px !important;
+    padding: 0 8px !important;
   }
+}
+
+/* Real vibrant colors for remove-pages top buttons (NO pastel) */
+#btnToolbarRestoreAll {
+  background-color: #059669 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3) !important;
+}
+#btnToolbarRestoreAll:hover {
+  background-color: #047857 !important;
+}
+
+#btnToolbarSelectAll {
+  background-color: #18181b !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15) !important;
+}
+html.dark #btnToolbarSelectAll {
+  background-color: #f4f4f5 !important;
+  color: #18181b !important;
+  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.15) !important;
+}
+#btnToolbarSelectAll:hover {
+  opacity: 0.92 !important;
+}
+
+#btnToolbarEnterPages {
+  background-color: #ff5277 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(255, 82, 119, 0.35) !important;
+}
+#btnToolbarEnterPages:hover {
+  background-color: #ff3b65 !important;
 }
 
 /* Seamless Full-Canvas View for Remove Pages (Cards scroll smoothly under sticky top buttons) */
 .remove-pages-workspace #selectedFilesList {
   max-height: none !important;
   overflow-y: visible !important;
-  margin-top: -52px !important;
-  padding-top: 56px !important;
+  margin-top: -56px !important;
+  padding-top: 60px !important;
 }
 
-/* Floating Action Bar (Remove Pages: پایین وسط، بزرگتر، زاویه گوشه‌ها ۱۸px مثل دکمه تولز) */
+/* Floating Action Bar (Remove Pages: دقیقا هم‌عرض و هم‌راستا با نوار بالای صفحه، انتهای چپ و راست منطبق) */
 .workspace-action-bar.floating-mode {
   position: fixed !important;
-  bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
   left: 50% !important;
   right: auto !important;
   transform: translateX(-50%) !important;
   z-index: 70 !important;
   padding: 0 !important;
-  margin: 0 !important;
+  margin: 0 auto !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: auto !important;
+  width: min(calc(100% - 32px), 560px) !important;
+  max-width: 560px !important;
   pointer-events: none;
   animation: floatInUpCenter 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
@@ -318,15 +359,18 @@ html.dark .brand-logo {
   pointer-events: auto;
 }
 
+.workspace-action-bar.floating-mode > div:first-child,
 .workspace-action-bar.floating-mode #workspaceActionSummary {
   display: none !important;
 }
 
 .workspace-action-bar.floating-mode #btnExecuteAction {
-  border-radius: 18px !important; /* دقیقا هم‌اندازه زاویه گوشه دکمه تولز (18px) */
-  padding: 16px 36px !important; /* یکم بزرگتر و کشیده‌تر */
-  min-height: 56px !important;
-  font-size: 16px !important;
+  width: 100% !important;
+  border-radius: 18px !important;
+  padding: 16px 28px !important;
+  min-height: 52px !important;
+  height: 52px !important;
+  font-size: 15px !important;
   font-weight: 800 !important;
   box-shadow: 0 14px 34px -4px rgba(255, 82, 119, 0.5), 0 6px 16px rgba(0, 0, 0, 0.12) !important;
   display: inline-flex !important;
@@ -336,28 +380,10 @@ html.dark .brand-logo {
   white-space: nowrap !important;
 }
 
-@media (max-width: 639px) {
-  .workspace-action-bar.floating-mode {
-    bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
-    left: 16px !important;
-    right: 16px !important;
-    transform: none !important;
-    width: calc(100% - 32px) !important;
-    max-width: 440px !important;
-    margin: 0 auto !important;
-  }
-
-  .workspace-action-bar.floating-mode #btnExecuteAction {
-    width: 100% !important;
-    padding: 15px 20px !important;
-    font-size: 15px !important;
-  }
-
-  /* در موبایل و تبلت سمت راست دکمه تولز دقیقا هم‌راستای خط سمت راست دکمه ریموو/دانلود قرار می‌گیرد */
-  .floating-tools-btn.elevated-mobile {
-    right: calc(16px + env(safe-area-inset-right, 0px)) !important;
-    bottom: calc(88px + env(safe-area-inset-bottom, 0px)) !important;
-  }
+/* Tools Button in Remove Pages mode: هم‌راستا با انتهای سمت راست دکمه Remove، بالای آن (هم‌تراز نیستند) در تمام ابعاد */
+.floating-tools-btn.elevated-remove-pages {
+  right: max(16px, calc(50% - 280px)) !important;
+  bottom: calc(78px + env(safe-area-inset-bottom, 0px)) !important;
 }
 
 @keyframes floatInUpCenter {

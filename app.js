@@ -701,7 +701,7 @@ function closeQuickTools() {
   document.body.classList.remove('overflow-hidden');
 }
 
-// Dynamically align floating tools button right edge with bottom action button (Responsive Mobile & Tablet)
+// Dynamically align floating tools button right edge with bottom action button (Responsive Mobile, Tablet & Desktop)
 function alignFloatingToolsButton() {
   const toolsBtn = document.getElementById('floatingToolsBtn');
   const actionBtn = document.getElementById('btnExecuteAction');
@@ -711,32 +711,28 @@ function alignFloatingToolsButton() {
   const toolId = state.activeTool ? state.activeTool.id : '';
   const isRemovePagesFloating = (toolId === 'remove-pages' && state.workspaceItems && state.workspaceItems.length > 0 && !DOM.filesSelectedArea.classList.contains('hidden'));
 
-  // On desktop (>= 1024px), tools button stays in its original place in the bottom-right corner!
-  // On mobile & tablet (< 1024px), tools button elevates directly above action button with flush right-edge alignment.
-  const isResponsiveScreen = window.innerWidth < 1024;
-
-  if (isRemovePagesFloating && isResponsiveScreen) {
+  if (isRemovePagesFloating) {
     const rect = actionBtn.getBoundingClientRect();
     if (rect.width > 0 && rect.height > 0) {
-      // Calculate exact left position so right edge of toolsBtn is 100% flush with rect.right:
+      // Calculate exact left position so right edge of toolsBtn is 100% flush with rect.right on all screen sizes:
       const btnWidth = toolsBtn.offsetWidth || 66;
       const exactLeft = Math.round(rect.right - btnWidth);
-      // Distance from bottom of viewport to top of actionBtn + 12px gap:
+      // Distance from bottom of viewport to top of actionBtn + 12px gap (هم‌تراز نیستند، بالای دکمه Remove قرار می‌گیرد):
       const bottomFromViewport = Math.round(window.innerHeight - rect.top) + 12;
 
       toolsBtn.style.setProperty('left', `${exactLeft}px`, 'important');
       toolsBtn.style.setProperty('right', 'auto', 'important');
       toolsBtn.style.setProperty('bottom', `${bottomFromViewport}px`, 'important');
-      toolsBtn.classList.add('elevated-mobile');
+      toolsBtn.classList.add('elevated-remove-pages');
       return;
     }
   }
 
-  // Reset to default CSS positioning (desktop bottom-right corner: bottom 24px, right 24px)
+  // Reset to default CSS positioning
   toolsBtn.style.removeProperty('right');
   toolsBtn.style.removeProperty('bottom');
   toolsBtn.style.removeProperty('left');
-  toolsBtn.classList.remove('elevated', 'elevated-mobile');
+  toolsBtn.classList.remove('elevated', 'elevated-mobile', 'elevated-remove-pages');
 }
 
 window.addEventListener('resize', alignFloatingToolsButton);
@@ -799,13 +795,23 @@ function renderQuickToolsModalGrid(query = '') {
   }
 }
 
-window.selectToolFromModal = function(e, toolId) {
+window.selectToolFromModal = async function(e, toolId) {
   if (e) {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
     e.preventDefault();
   }
   closeQuickTools();
+  const fileToPass = state.lastProcessedPdfFile;
+  if (fileToPass) {
+    state.workspaceItems = [];
+    state.removePagesProcessed = false;
+    const doneScreen = document.getElementById('workspaceDoneScreen');
+    if (doneScreen) doneScreen.classList.add('hidden');
+  }
   navigateTo(toolId);
+  if (fileToPass) {
+    await handleFilesSelected([fileToPass]);
+  }
 };
 
 function openToolDedicatedPage(tool) {
@@ -2062,6 +2068,7 @@ function updateRemovePagesActionState() {
 
   requestAnimationFrame(alignFloatingToolsButton);
 }
+window.updateRemovePagesActionState = updateRemovePagesActionState;
 
 // 3. Shift-Click Range Selection & Card Click Handler
 function handleCardClick(e, index) {
@@ -3497,7 +3504,12 @@ function showRemovePagesDoneScreen(removedCount, remainingCount) {
   const actionBar = document.getElementById('workspaceActionBar');
   if (actionBar) actionBar.classList.remove('floating-mode');
   const toolsBtn = document.getElementById('floatingToolsBtn');
-  if (toolsBtn) toolsBtn.classList.remove('elevated', 'elevated-mobile');
+  if (toolsBtn) {
+    toolsBtn.classList.remove('elevated', 'elevated-mobile', 'elevated-remove-pages');
+    toolsBtn.style.removeProperty('left');
+    toolsBtn.style.removeProperty('right');
+    toolsBtn.style.removeProperty('bottom');
+  }
 
   // Keep tool header hidden on done screen as requested
   const toolHeader = document.getElementById('toolHeaderContainer');
@@ -3553,6 +3565,10 @@ window.reopenRemovePagesWorkspace = function() {
 };
 
 window.continueWithTool = async function(targetToolId) {
+  if (targetToolId === 'see-more') {
+    openQuickTools();
+    return;
+  }
   if (!state.lastProcessedPdfFile) {
     showToast('⚠️ No processed PDF available.');
     return;
@@ -3560,6 +3576,9 @@ window.continueWithTool = async function(targetToolId) {
   const fileToPass = state.lastProcessedPdfFile;
   const doneScreen = document.getElementById('workspaceDoneScreen');
   if (doneScreen) doneScreen.classList.add('hidden');
+
+  state.workspaceItems = [];
+  state.removePagesProcessed = false;
 
   // Navigate to target tool and pass file
   navigateTo(targetToolId);
