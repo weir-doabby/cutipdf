@@ -423,7 +423,7 @@ function renderAllToolsCatalog() {
               <div class="w-12 h-12 flex-shrink-0 group-hover:scale-105 transition-transform duration-200 mb-3">
                 ${vectorSvg}
               </div>
-              <h3 class="font-bold text-sm text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff5277] transition-colors">${tool.title}</h3>
+              <h3 class="font-bold text-sm text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff2a5f] transition-colors">${tool.title}</h3>
               <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-2 leading-relaxed">${tool.desc}</p>
             </a>
           `;
@@ -734,12 +734,12 @@ function renderQuickToolsModalGrid(query = '') {
         <h4 class="category-title text-xs uppercase tracking-wider">${category}</h4>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           ${filtered.map(tool => `
-            <a href="${basePath}${tool.id}" onclick="selectToolFromModal(event, '${tool.id}')" class="p-2.5 rounded-xl border border-pink-100 dark:border-zinc-800 hover:border-[#ff5277] bg-white dark:bg-zinc-800/80 hover:shadow-sm cursor-pointer transition-all flex items-center gap-2.5 group no-underline text-inherit">
+            <a href="${basePath}${tool.id}" onclick="selectToolFromModal(event, '${tool.id}')" class="p-2.5 rounded-xl border border-pink-100 dark:border-zinc-800 hover:border-[#ff2a5f] bg-white dark:bg-zinc-800/80 hover:shadow-sm cursor-pointer transition-all flex items-center gap-2.5 group no-underline text-inherit">
               <div class="w-8 h-8 flex-shrink-0 group-hover:scale-105 transition-transform flex items-center justify-center">
                 ${VECTORS[tool.id] || '<div class="text-xs font-bold text-zinc-400">PDF</div>'}
               </div>
               <div class="overflow-hidden min-w-0 flex-1">
-                <h5 class="font-bold text-xs text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff5277] transition-colors truncate">${tool.title}</h5>
+                <h5 class="font-bold text-xs text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff2a5f] transition-colors truncate">${tool.title}</h5>
                 <p class="text-[10px] text-zinc-400 truncate">${tool.desc}</p>
               </div>
             </a>
@@ -927,7 +927,7 @@ function renderToolOptionsDrawer(toolId) {
     drawer.innerHTML = `
       <div class="space-y-3">
         <label class="text-xs font-bold text-zinc-800 dark:text-zinc-200">Watermark Text:</label>
-        <input type="text" id="watermarkTextInput" value="CONFIDENTIAL" class="w-full px-3.5 py-2 text-xs rounded-xl border border-pink-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 outline-none focus:border-[#ff5277]">
+        <input type="text" id="watermarkTextInput" value="CONFIDENTIAL" class="w-full px-3.5 py-2 text-xs rounded-xl border border-pink-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 outline-none focus:border-[#ff2a5f]">
         <div class="flex items-center justify-between text-xs pt-1">
           <span class="text-zinc-500">Opacity:</span>
           <div class="segmented-control">
@@ -944,7 +944,7 @@ function renderToolOptionsDrawer(toolId) {
     drawer.innerHTML = `
       <div class="space-y-2.5">
         <label class="text-xs font-bold text-zinc-800 dark:text-zinc-200">Set Document Password:</label>
-        <input type="password" id="protectPasswordInput" placeholder="Enter password to encrypt PDF" class="w-full px-3.5 py-2 text-xs rounded-xl border border-pink-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 outline-none focus:border-[#ff5277]">
+        <input type="password" id="protectPasswordInput" placeholder="Enter password to encrypt PDF" class="w-full px-3.5 py-2 text-xs rounded-xl border border-pink-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 outline-none focus:border-[#ff2a5f]">
       </div>
     `;
   } else if (toolId === 'unlock-pdf') {
@@ -952,7 +952,7 @@ function renderToolOptionsDrawer(toolId) {
     drawer.innerHTML = `
       <div class="space-y-2.5">
         <label class="text-xs font-bold text-zinc-800 dark:text-zinc-200">Document Password:</label>
-        <input type="password" id="unlockPasswordInput" placeholder="Enter password to unlock and decrypt" class="w-full px-3.5 py-2 text-xs rounded-xl border border-pink-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 outline-none focus:border-[#ff5277]">
+        <input type="password" id="unlockPasswordInput" placeholder="Enter password to unlock and decrypt" class="w-full px-3.5 py-2 text-xs rounded-xl border border-pink-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 outline-none focus:border-[#ff2a5f]">
       </div>
     `;
   } else if (toolId === 'rotate-pdf') {
@@ -961,8 +961,8 @@ function renderToolOptionsDrawer(toolId) {
       <div class="flex items-center justify-between text-xs">
         <span class="font-bold text-zinc-800 dark:text-zinc-200">Rotate All Pages:</span>
         <div class="flex items-center gap-2">
-          <button type="button" class="px-3 py-1.5 rounded-xl border border-pink-200 text-xs text-[#ff5277] hover:bg-pink-50 dark:hover:bg-zinc-800 font-semibold" onclick="rotateAllWorkspace(90)">Rotate All 90° ↻</button>
-          <button type="button" class="px-3 py-1.5 rounded-xl border border-pink-200 text-xs text-[#ff5277] hover:bg-pink-50 dark:hover:bg-zinc-800 font-semibold" onclick="rotateAllWorkspace(180)">Flip 180°</button>
+          <button type="button" class="px-3 py-1.5 rounded-xl border border-pink-200 text-xs text-[#ff2a5f] hover:bg-pink-50 dark:hover:bg-zinc-800 font-semibold" onclick="rotateAllWorkspace(90)">Rotate All 90° ↻</button>
+          <button type="button" class="px-3 py-1.5 rounded-xl border border-pink-200 text-xs text-[#ff2a5f] hover:bg-pink-50 dark:hover:bg-zinc-800 font-semibold" onclick="rotateAllWorkspace(180)">Flip 180°</button>
         </div>
       </div>
     `;
@@ -998,7 +998,7 @@ function renderToolOptionsDrawer(toolId) {
       <div class="space-y-2">
         <div class="flex items-center justify-between">
           <label class="text-xs font-bold text-zinc-800 dark:text-zinc-200">Draw Your Signature:</label>
-          <button type="button" onclick="clearSignaturePad()" class="text-[11px] text-[#ff5277] hover:underline">Clear</button>
+          <button type="button" onclick="clearSignaturePad()" class="text-[11px] text-[#ff2a5f] hover:underline">Clear</button>
         </div>
         <canvas id="signCanvas" width="400" height="120" class="w-full h-28 bg-white border border-pink-200 dark:border-zinc-700 rounded-xl cursor-crosshair"></canvas>
       </div>
@@ -2629,14 +2629,14 @@ function renderInteractiveWorkspace() {
         </div>
       `;
       zoomPreviewBtn = `
-        <button type="button" onclick="openPagePreviewModal(${index}); event.stopPropagation();" class="absolute top-2 right-2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/95 dark:bg-zinc-800/95 text-zinc-700 dark:text-zinc-200 hover:text-[#ff5277] hover:bg-pink-50 dark:hover:bg-zinc-700 shadow-sm border border-zinc-200/80 dark:border-zinc-700 flex items-center justify-center transition-all hover:scale-110 active:scale-95 cursor-pointer" title="Zoom & Preview Page">
+        <button type="button" onclick="openPagePreviewModal(${index}); event.stopPropagation();" class="absolute top-2 right-2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/95 dark:bg-zinc-800/95 text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50 dark:hover:bg-zinc-700 shadow-sm border border-zinc-200/80 dark:border-zinc-700 flex items-center justify-center transition-all hover:scale-110 active:scale-95 cursor-pointer" title="Zoom & Preview Page">
           <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
         </button>
       `;
     } else {
       orderBadge = `<div class="absolute top-2 left-2 z-10 bg-zinc-900/80 dark:bg-black/80 backdrop-blur-md text-white text-[11px] font-bold px-2 py-0.5 rounded-lg border border-white/10 shadow-xs">${index + 1}</div>`;
       if (item.type === 'pdf-file') {
-        infoBadge = `<div class="absolute top-2 right-2 z-10 bg-[#ff5277] text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-xs">${item.pageCount || 1} pgs</div>`;
+        infoBadge = `<div class="absolute top-2 right-2 z-10 bg-[#ff2a5f] text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-xs">${item.pageCount || 1} pgs</div>`;
       } else if (item.type === 'pdf-page') {
         infoBadge = `<div class="absolute top-2 right-2 z-10 bg-white/90 dark:bg-zinc-800/90 text-zinc-700 dark:text-zinc-200 text-[10px] font-bold px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-zinc-700 shadow-xs truncate max-w-[80px]" title="${item.fileName || ''}">${item.name || `P. ${item.pageNum}`}</div>`;
       }
@@ -2648,7 +2648,7 @@ function renderInteractiveWorkspace() {
     if (isRemoveTool) {
       removedOverlayHtml = `
         <div class="card-removed-overlay ${overlayHiddenClass} absolute inset-0 flex items-center justify-center pointer-events-none z-15 bg-black/5 dark:bg-black/25">
-          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/95 dark:bg-zinc-800/95 border border-zinc-200/90 dark:border-zinc-700 shadow-sm flex items-center justify-center text-[#ff5277]">
+          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/95 dark:bg-zinc-800/95 border border-zinc-200/90 dark:border-zinc-700 shadow-sm flex items-center justify-center text-[#ff2a5f]">
             <svg class="w-5 h-5 stroke-[2.4]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
             </svg>
@@ -2670,7 +2670,7 @@ function renderInteractiveWorkspace() {
     if (!item.removed && toolId !== 'remove-pages') {
       hoverActionsHtml = `
         <div class="card-hover-actions absolute inset-0 bg-black/35 backdrop-blur-[1px] flex items-center justify-center gap-2 z-20">
-          <button type="button" onclick="rotateWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-[#ff5277] hover:bg-pink-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Rotate 90 degrees">
+          <button type="button" onclick="rotateWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Rotate 90 degrees">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
           </button>
           <button type="button" onclick="removeWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-400 hover:text-red-500 hover:bg-red-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Delete">
@@ -2703,7 +2703,7 @@ function renderInteractiveWorkspace() {
             ${infoBadge}
             ${zoomPreviewBtn}
             <div class="page-thumb-skeleton absolute inset-0 flex flex-col items-center justify-center p-3 text-center pointer-events-none bg-zinc-50 dark:bg-zinc-800/40">
-              <div class="w-9 h-9 rounded-xl bg-pink-100 dark:bg-zinc-700 text-[#ff5277] flex items-center justify-center font-bold text-xs mb-1">P.${item.pageNum}</div>
+              <div class="w-9 h-9 rounded-xl bg-pink-100 dark:bg-zinc-700 text-[#ff2a5f] flex items-center justify-center font-bold text-xs mb-1">P.${item.pageNum}</div>
               <p class="text-[10px] text-zinc-400">Page ${item.pageNum}</p>
             </div>
             <img src="" alt="${item.name}" class="page-thumb-img opacity-0 w-full h-full object-contain pointer-events-none select-none transition-opacity duration-150">
@@ -2730,7 +2730,7 @@ function renderInteractiveWorkspace() {
             ${infoBadge}
             ${zoomPreviewBtn}
             <div class="page-thumb-skeleton absolute inset-0 flex flex-col items-center justify-center p-3 text-center pointer-events-none bg-zinc-50 dark:bg-zinc-800/40">
-              <div class="w-9 h-9 rounded-xl bg-pink-100 dark:bg-zinc-700 text-[#ff5277] flex items-center justify-center font-bold text-xs mb-1">P.${item.pageNum}</div>
+              <div class="w-9 h-9 rounded-xl bg-pink-100 dark:bg-zinc-700 text-[#ff2a5f] flex items-center justify-center font-bold text-xs mb-1">P.${item.pageNum}</div>
               <p class="text-[10px] text-zinc-400">Page ${item.pageNum}</p>
             </div>
             <img src="" alt="${item.name}" class="page-thumb-img opacity-0 max-h-full max-w-full object-contain transition-opacity duration-200 rounded-md shadow-xs pointer-events-none">
@@ -2751,10 +2751,10 @@ function renderInteractiveWorkspace() {
             ${item.size ? `<span class="text-[10px] text-zinc-400">${item.size}</span>` : ''}
           </div>
           <div class="flex items-center gap-0.5 flex-shrink-0">
-            <button type="button" onclick="moveWorkspaceItem(${index}, -1); event.stopPropagation();" ${index === 0 ? 'disabled' : ''} class="w-6 h-6 rounded-md hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff5277] flex items-center justify-center disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer" title="Move Left">
+            <button type="button" onclick="moveWorkspaceItem(${index}, -1); event.stopPropagation();" ${index === 0 ? 'disabled' : ''} class="w-6 h-6 rounded-md hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff2a5f] flex items-center justify-center disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer" title="Move Left">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
             </button>
-            <button type="button" onclick="moveWorkspaceItem(${index}, 1); event.stopPropagation();" ${index === state.workspaceItems.length - 1 ? 'disabled' : ''} class="w-6 h-6 rounded-md hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff5277] flex items-center justify-center disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer" title="Move Right">
+            <button type="button" onclick="moveWorkspaceItem(${index}, 1); event.stopPropagation();" ${index === state.workspaceItems.length - 1 ? 'disabled' : ''} class="w-6 h-6 rounded-md hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff2a5f] flex items-center justify-center disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer" title="Move Right">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
             </button>
           </div>
@@ -2776,10 +2776,10 @@ function renderInteractiveWorkspace() {
 
   // "+ Add More Files" Card at end of grid (Smallpdf Style - Matching Card Proportions)
   const addMoreCard = document.createElement('div');
-  addMoreCard.className = 'preview-card min-h-[220px] sm:min-h-[250px] border-2 border-dashed border-pink-200/90 dark:border-zinc-700 hover:border-[#ff5277] bg-pink-50/20 hover:bg-pink-50/50 dark:hover:bg-zinc-800/40 flex flex-col items-center justify-center p-5 text-center cursor-pointer transition-all group';
+  addMoreCard.className = 'preview-card min-h-[220px] sm:min-h-[250px] border-2 border-dashed border-pink-200/90 dark:border-zinc-700 hover:border-[#ff2a5f] bg-pink-50/20 hover:bg-pink-50/50 dark:hover:bg-zinc-800/40 flex flex-col items-center justify-center p-5 text-center cursor-pointer transition-all group';
   addMoreCard.onclick = () => DOM.fileInput.click();
   addMoreCard.innerHTML = `
-    <div class="w-11 h-11 rounded-full bg-pink-100 dark:bg-zinc-800 text-[#ff5277] flex items-center justify-center text-xl font-bold mb-2 group-hover:scale-110 transition-transform shadow-2xs">
+    <div class="w-11 h-11 rounded-full bg-pink-100 dark:bg-zinc-800 text-[#ff2a5f] flex items-center justify-center text-xl font-bold mb-2 group-hover:scale-110 transition-transform shadow-2xs">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
     </div>
     <span class="text-xs font-bold text-zinc-800 dark:text-zinc-200">Add More</span>
@@ -3907,7 +3907,7 @@ function downloadBlob(blob, filename) {
       particleCount: 80,
       spread: 70,
       origin: { y: 0.7 },
-      colors: ['#ff5277', '#ff7597', '#ffd1df', '#ff3366']
+      colors: ['#ff2a5f', '#ff7597', '#ffd1df', '#ff3366']
     });
   }
 

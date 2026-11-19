@@ -5,7 +5,7 @@
   --font-brush: 'Kaushan Script', 'Caveat', cursive;
   
   /* CutiPDF Signature Watercolor Palette */
-  --color-pink-primary: #ff5277;
+  --color-pink-primary: #ff2a5f;
   --color-pink-deep: #ff3366;
   --color-pink-wash: #fff0f4;
   --color-pink-border: #ffd1df;
@@ -16,7 +16,7 @@
   --bg-card: #ffffff;
   --bg-card-hover: #ffffff;
   --border-color: #f7d5df;
-  --border-hover: #ff5277;
+  --border-hover: #ff2a5f;
   --text-main: #1f2024;
   --text-muted: #6b7280;
   --text-faint: #9ca3af;
@@ -31,7 +31,7 @@ html.dark {
   --bg-card: #18181d;
   --bg-card-hover: #202026;
   --border-color: #2e262a;
-  --border-hover: #ff5277;
+  --border-hover: #ff2a5f;
   --text-main: #f9fafb;
   --text-muted: #9ca3af;
   --text-faint: #6b7280;
@@ -252,7 +252,7 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
   display: none !important;
 }
 
-/* Row 2: Royal Pink Primary Action Button (Exact same total width as Row 1, aligned) */
+/* Row 2: Punchy Royal Pink Primary Action Button (Exact same total width as Row 1, aligned, NO SHADOW) */
 .workspace-action-bar.floating-mode #btnExecuteAction {
   width: 100% !important;
   border-radius: 18px !important;
@@ -261,9 +261,9 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
   height: 52px !important;
   font-size: 15px !important;
   font-weight: 800 !important;
-  background-color: #ff5277 !important;
+  background-color: #ff2a5f !important;
   color: #ffffff !important;
-  box-shadow: 0 14px 34px -4px rgba(255, 82, 119, 0.5), 0 6px 16px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: none !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -271,12 +271,12 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
   white-space: nowrap !important;
   border: none !important;
   cursor: pointer !important;
-  transition: transform 0.12s ease, background-color 0.15s ease, box-shadow 0.15s ease !important;
+  transition: transform 0.12s ease, background-color 0.15s ease !important;
 }
 
 .workspace-action-bar.floating-mode #btnExecuteAction:hover {
-  background-color: #ff3b65 !important;
-  box-shadow: 0 18px 38px -4px rgba(255, 82, 119, 0.6), 0 8px 20px rgba(0, 0, 0, 0.16) !important;
+  background-color: #e01a4f !important;
+  box-shadow: none !important;
 }
 
 .workspace-action-bar.floating-mode #btnExecuteAction:active {
@@ -347,7 +347,7 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
 
 /* Big Watercolor Action Button (iLovePDF Style - Prominent & Responsive) */
 .btn-primary-action {
-  background: linear-gradient(135deg, #ff5277 0%, #ff3366 50%, #e91e63 100%);
+  background: linear-gradient(135deg, #ff2a5f 0%, #ff3366 50%, #e91e63 100%);
   color: #ffffff;
   font-weight: 700;
   border-radius: 18px;
@@ -420,7 +420,7 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
   height: 44px;
   min-width: 44px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ff5277 0%, #ff3366 50%, #e91e63 100%);
+  background: linear-gradient(135deg, #ff2a5f 0%, #ff3366 50%, #e91e63 100%);
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -681,7 +681,7 @@ html.dark .segmented-control {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #ff5277;
+  background: #ff2a5f;
 }
 
 html.dark ::-webkit-scrollbar-thumb {
