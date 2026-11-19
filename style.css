@@ -337,7 +337,7 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
 @media (min-width: 640px) {
   .desktop-balancer {
     display: block;
-    width: 48px;
+    width: 38px;
     flex-shrink: 0;
     visibility: hidden;
     pointer-events: none;
@@ -351,12 +351,12 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
   color: #ffffff;
   font-weight: 700;
   border-radius: 18px;
-  min-height: 70px;
-  height: 70px;
+  min-height: 56px;
+  height: 56px;
   width: 100%;
   max-width: 320px;
-  padding: 16px 24px;
-  font-size: 20px;
+  padding: 14px 22px;
+  font-size: 17px;
   letter-spacing: -0.2px;
   display: inline-flex;
   align-items: center;
@@ -371,12 +371,12 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
 
 @media (min-width: 640px) {
   .btn-primary-action {
-    min-height: 74px;
-    height: 74px;
+    min-height: 58px;
+    height: 58px;
     width: auto;
     max-width: none;
-    padding: 18px 48px;
-    font-size: 21px;
+    padding: 14px 40px;
+    font-size: 18px;
   }
 }
 
@@ -406,19 +406,19 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
   .cloud-buttons-wrap {
     flex-direction: column;
     justify-content: space-between;
-    height: 74px;
-    width: 48px;
-    max-width: 48px;
-    gap: 8px;
+    height: 58px;
+    width: 38px;
+    max-width: 38px;
+    gap: 6px;
     flex-shrink: 0;
   }
 }
 
 /* Cloud Source Button (Google Drive & Dropbox) */
 .btn-cloud-source {
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
   border-radius: 50%;
   background: linear-gradient(135deg, #ff2a5f 0%, #ff3366 50%, #e91e63 100%);
   color: #ffffff;
@@ -435,10 +435,10 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
 
 @media (min-width: 640px) {
   .btn-cloud-source {
-    width: 48px;
-    min-width: 48px;
-    height: calc(50% - 4px);
-    border-radius: 12px;
+    width: 38px;
+    min-width: 38px;
+    height: calc(50% - 3px);
+    border-radius: 10px;
   }
 }
 
@@ -453,12 +453,12 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-/* Upload Dropzone (Responsive: Clean No-Box on Mobile Phones, Comfortable Dropzone on Desktop) */
+/* Upload Dropzone (Responsive: Clean No-Box on Mobile Phones, Compact Dropzone on Desktop) */
 .tool-dropzone {
-  border: 2px dashed var(--border-color);
+  border: 1.5px dashed var(--border-color);
   background: var(--dropzone-bg);
-  border-radius: 24px;
-  padding: 1.5rem 1.5rem;
+  border-radius: 20px;
+  padding: 0.75rem 1rem;
   transition: all 0.2s ease;
 }
 

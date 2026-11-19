@@ -1084,30 +1084,81 @@ window.selectAllPagesForRemoval = function() {
 function initDropzoneEvents() {
   const dropzone = DOM.toolDropzone;
 
-  ['dragenter', 'dragover'].forEach(name => {
-    dropzone.addEventListener(name, (e) => {
+  if (dropzone) {
+    ['dragenter', 'dragover'].forEach(name => {
+      dropzone.addEventListener(name, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.add('drag-active');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach(name => {
+      dropzone.addEventListener(name, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropzone.classList.remove('drag-active');
+      });
+    });
+
+    dropzone.addEventListener('drop', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      dropzone.classList.add('drag-active');
+      const files = Array.from(e.dataTransfer.files);
+      if (files.length > 0) handleFilesSelected(files);
     });
-  });
 
-  ['dragleave', 'drop'].forEach(name => {
-    dropzone.addEventListener(name, (e) => {
-      e.preventDefault();
+    DOM.btnSelectFiles.addEventListener('click', (e) => {
       e.stopPropagation();
-      dropzone.classList.remove('drag-active');
+      DOM.fileInput.click();
     });
+  }
+
+  // Window-Wide Drag & Drop: Drop files anywhere on page
+  let windowDragCounter = 0;
+  const globalOverlay = document.getElementById('globalDropOverlay');
+
+  window.addEventListener('dragenter', (e) => {
+    e.preventDefault();
+    if (e.dataTransfer && e.dataTransfer.types && Array.from(e.dataTransfer.types).includes('Files')) {
+      windowDragCounter++;
+      if (globalOverlay) {
+        globalOverlay.classList.remove('opacity-0', 'pointer-events-none');
+        globalOverlay.classList.add('opacity-100');
+      }
+    }
   });
 
-  dropzone.addEventListener('drop', (e) => {
-    const files = Array.from(e.dataTransfer.files);
-    handleFilesSelected(files);
+  window.addEventListener('dragover', (e) => {
+    e.preventDefault();
   });
 
-  DOM.btnSelectFiles.addEventListener('click', (e) => {
-    e.stopPropagation();
-    DOM.fileInput.click();
+  window.addEventListener('dragleave', (e) => {
+    e.preventDefault();
+    windowDragCounter--;
+    if (windowDragCounter <= 0) {
+      windowDragCounter = 0;
+      if (globalOverlay) {
+        globalOverlay.classList.add('opacity-0', 'pointer-events-none');
+        globalOverlay.classList.remove('opacity-100');
+      }
+    }
+  });
+
+  window.addEventListener('drop', (e) => {
+    e.preventDefault();
+    windowDragCounter = 0;
+    if (globalOverlay) {
+      globalOverlay.classList.add('opacity-0', 'pointer-events-none');
+      globalOverlay.classList.remove('opacity-100');
+    }
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const files = Array.from(e.dataTransfer.files);
+      if (!state.activeTool) {
+        navigateToTool('remove-pages');
+      }
+      handleFilesSelected(files);
+    }
   });
 
   if (DOM.btnGoogleDrive) {
@@ -1942,9 +1993,41 @@ window.applyEnteredPagesToRemove = function() {
   }
 };
 
+// ==========================================
+// About CutiPDF Info Modal
+// ==========================================
+window.openInfoModal = function() {
+  const modal = document.getElementById('infoModal');
+  if (!modal) return;
+  modal.classList.remove('opacity-0', 'pointer-events-none');
+  modal.classList.add('opacity-100');
+  const inner = modal.querySelector('div');
+  if (inner) {
+    inner.classList.remove('scale-95');
+    inner.classList.add('scale-100');
+  }
+};
+
+window.closeInfoModal = function() {
+  const modal = document.getElementById('infoModal');
+  if (!modal) return;
+  modal.classList.add('opacity-0', 'pointer-events-none');
+  modal.classList.remove('opacity-100');
+  const inner = modal.querySelector('div');
+  if (inner) {
+    inner.classList.add('scale-95');
+    inner.classList.remove('scale-100');
+  }
+};
+
 // Keyboard listener for Modals (Escape to close)
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
+    const infoModal = document.getElementById('infoModal');
+    if (infoModal && !infoModal.classList.contains('pointer-events-none')) {
+      closeInfoModal();
+      return;
+    }
     const previewModal = document.getElementById('pagePreviewModal');
     if (previewModal && !previewModal.classList.contains('pointer-events-none')) {
       closePagePreviewModal();
