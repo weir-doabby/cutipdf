@@ -272,6 +272,9 @@ const state = {
   workspaceViewMode: 'file', // 'file' or 'page'
   pageLayoutMode: 'grid', // 'grid' or 'continuous'
   removePagesProcessed: false,
+  lastProcessedPdfBlob: null,
+  lastProcessedPdfFilename: '',
+  lastProcessedPdfFile: null,
   savedOriginalFile: null,
   savedOriginalWorkspaceItems: null,
   savedOriginalPassword: null,
@@ -513,6 +516,15 @@ function showAllToolsCatalogView() {
   state.savedOriginalFile = null;
   state.savedOriginalWorkspaceItems = null;
   state.lastSelectedIndex = null;
+  state.lastProcessedPdfBlob = null;
+  state.lastProcessedPdfFilename = '';
+  state.lastProcessedPdfFile = null;
+
+  const toolHeader = document.getElementById('toolHeaderContainer');
+  if (toolHeader) toolHeader.classList.remove('hidden');
+  const doneScreen = document.getElementById('workspaceDoneScreen');
+  if (doneScreen) doneScreen.classList.add('hidden');
+  if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.remove('remove-pages-workspace');
 
   DOM.viewToolActive.classList.remove('active');
   DOM.viewAllTools.classList.add('active');
@@ -852,6 +864,15 @@ function openToolDedicatedPage(tool) {
   state.savedOriginalFile = null;
   state.savedOriginalWorkspaceItems = null;
   state.lastSelectedIndex = null;
+  state.lastProcessedPdfBlob = null;
+  state.lastProcessedPdfFilename = '';
+  state.lastProcessedPdfFile = null;
+
+  const toolHeader = document.getElementById('toolHeaderContainer');
+  if (toolHeader) toolHeader.classList.remove('hidden');
+  const doneScreen = document.getElementById('workspaceDoneScreen');
+  if (doneScreen) doneScreen.classList.add('hidden');
+  if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.remove('remove-pages-workspace');
 
   DOM.filesSelectedArea.classList.add('hidden');
   DOM.toolDropzone.classList.remove('hidden');
@@ -1586,6 +1607,15 @@ function resetWorkspaceToDropzone() {
   state.savedOriginalWorkspaceItems = null;
   state.savedOriginalPassword = null;
   state.lastSelectedIndex = null;
+  state.lastProcessedPdfBlob = null;
+  state.lastProcessedPdfFilename = '';
+  state.lastProcessedPdfFile = null;
+
+  const toolHeader = document.getElementById('toolHeaderContainer');
+  if (toolHeader) toolHeader.classList.remove('hidden');
+  const doneScreen = document.getElementById('workspaceDoneScreen');
+  if (doneScreen) doneScreen.classList.add('hidden');
+  if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.remove('remove-pages-workspace');
 
   if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.add('hidden');
   if (DOM.toolDropzone) DOM.toolDropzone.classList.remove('hidden');
@@ -1969,8 +1999,8 @@ function updateCardVisualState(cardEl, isRemoved) {
   const img = cardEl.querySelector('img');
   if (img) {
     if (isRemoved) {
-      img.style.opacity = '0.55';
-      img.style.filter = 'grayscale(40%)';
+      img.style.opacity = '0.45';
+      img.style.filter = 'none';
     } else {
       img.style.opacity = '1';
       img.style.filter = 'none';
@@ -2468,6 +2498,9 @@ function renderInteractiveWorkspace() {
   // Toolbar & Stats visibility based on active tool
   const statsBadge = document.getElementById('workspaceStatsBadge');
   const toolbar = document.querySelector('.workspace-toolbar');
+  const toolHeader = document.getElementById('toolHeaderContainer');
+  const doneScreen = document.getElementById('workspaceDoneScreen');
+  if (doneScreen) doneScreen.classList.add('hidden');
   const layoutSwitcher = document.getElementById('pageLayoutSwitcher');
   const modeSwitcher = document.getElementById('workspaceModeSwitcher');
   const btnRestoreAll = document.getElementById('btnToolbarRestoreAll');
@@ -2479,6 +2512,10 @@ function renderInteractiveWorkspace() {
   const btnClear = document.getElementById('btnClearFiles');
 
   if (toolId === 'remove-pages') {
+    // Hide tool header (logo, title, description) on PDF open for remove pages as requested
+    if (toolHeader) toolHeader.classList.add('hidden');
+    if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.add('remove-pages-workspace');
+
     // Hide stats text and strip toolbar bar background completely (دکمه‌های Select All / Restore All و Remove by Number بدون بار و آمار)
     if (statsBadge) statsBadge.classList.add('hidden');
     if (toolbar) toolbar.classList.add('clean-actions-only');
@@ -2501,6 +2538,8 @@ function renderInteractiveWorkspace() {
     if (btnRotate) btnRotate.classList.add('hidden');
     if (btnClear) btnClear.classList.add('hidden');
   } else {
+    if (toolHeader) toolHeader.classList.remove('hidden');
+    if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.remove('remove-pages-workspace');
     if (statsBadge) statsBadge.classList.remove('hidden');
     if (toolbar) toolbar.classList.remove('clean-actions-only');
 
@@ -2653,15 +2692,28 @@ function renderInteractiveWorkspace() {
       }
     }
 
-    // Flat Style Red Cross (iStock Reference: gm1210969290) - Always present with hidden toggle for instant 60fps swipe
+    // Flat Style Minimal Cross for remove-pages, Large Red Cross for other modes
     const overlayHiddenClass = item.removed ? '' : 'hidden';
-    const removedOverlayHtml = `
-      <div class="card-removed-overlay ${overlayHiddenClass} absolute inset-0 flex items-center justify-center pointer-events-none z-15 bg-black/15 dark:bg-black/35">
-        <svg viewBox="0 0 100 100" class="${isContinuous ? 'w-28 h-28 sm:w-36 sm:h-36' : 'w-20 h-20 sm:w-24 sm:h-24'} pointer-events-none drop-shadow-md text-red-500" fill="none" stroke="currentColor">
-          <path d="M22 22 L78 78 M78 22 L22 78" stroke="#ef4444" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </div>
-    `;
+    let removedOverlayHtml = '';
+    if (isRemoveTool) {
+      removedOverlayHtml = `
+        <div class="card-removed-overlay ${overlayHiddenClass} absolute inset-0 flex items-center justify-center pointer-events-none z-15 bg-black/5 dark:bg-black/25">
+          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/95 dark:bg-zinc-800/95 border border-zinc-200/90 dark:border-zinc-700 shadow-sm flex items-center justify-center text-[#ff5277]">
+            <svg class="w-5 h-5 stroke-[2.4]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </div>
+        </div>
+      `;
+    } else {
+      removedOverlayHtml = `
+        <div class="card-removed-overlay ${overlayHiddenClass} absolute inset-0 flex items-center justify-center pointer-events-none z-15 bg-black/15 dark:bg-black/35">
+          <svg viewBox="0 0 100 100" class="${isContinuous ? 'w-28 h-28 sm:w-36 sm:h-36' : 'w-20 h-20 sm:w-24 sm:h-24'} pointer-events-none drop-shadow-md text-red-500" fill="none" stroke="currentColor">
+            <path d="M22 22 L78 78 M78 22 L22 78" stroke="#ef4444" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      `;
+    }
 
     // Hover Action Buttons (shown only when NOT removed and NOT remove-pages)
     let hoverActionsHtml = '';
@@ -2678,37 +2730,65 @@ function renderInteractiveWorkspace() {
       `;
     }
 
-    // Thumbnail Area (Proper portrait A4 proportions matching Add More card)
+    // Thumbnail Area: For remove-pages, NO extra inner frame (bg-transparent p-0), page sits directly inside the 18px rounded card
     const thumbHeight = isContinuous
       ? 'h-80 sm:h-96'
-      : (toolId === 'remove-pages' ? 'h-full min-h-[220px] sm:min-h-[250px]' : 'h-44');
+      : (isRemoveTool ? 'h-full min-h-[220px] sm:min-h-[250px]' : 'h-44');
     let thumbHtml = '';
-    if (item.previewUrl) {
-      thumbHtml = `
-        <div class="${thumbHeight} bg-zinc-100 dark:bg-zinc-800/60 flex items-center justify-center overflow-hidden p-2 relative group/thumb">
-          ${orderBadge}
-          ${infoBadge}
-          ${zoomPreviewBtn}
-          <img src="${item.previewUrl}" alt="${item.name}" style="transform: rotate(${item.rotation || 0}deg); ${item.removed ? 'opacity: 0.55; filter: grayscale(40%);' : ''}" class="page-thumb-img max-h-full max-w-full object-contain transition-transform duration-200 rounded-md shadow-xs pointer-events-none">
-          ${removedOverlayHtml}
-          ${hoverActionsHtml}
-        </div>
-      `;
-    } else {
-      thumbHtml = `
-        <div class="${thumbHeight} bg-zinc-100/70 dark:bg-zinc-800/60 flex items-center justify-center overflow-hidden p-2 relative group/thumb">
-          ${orderBadge}
-          ${infoBadge}
-          ${zoomPreviewBtn}
-          <div class="page-thumb-skeleton absolute inset-0 flex flex-col items-center justify-center p-3 text-center pointer-events-none bg-zinc-50 dark:bg-zinc-800/40">
-            <div class="w-9 h-9 rounded-xl bg-pink-100 dark:bg-zinc-700 text-[#ff5277] flex items-center justify-center font-bold text-xs mb-1">P.${item.pageNum}</div>
-            <p class="text-[10px] text-zinc-400">Page ${item.pageNum}</p>
+    if (isRemoveTool) {
+      if (item.previewUrl) {
+        thumbHtml = `
+          <div class="${thumbHeight} bg-white dark:bg-zinc-900 flex items-center justify-center overflow-hidden p-0 relative group/thumb">
+            ${orderBadge}
+            ${infoBadge}
+            ${zoomPreviewBtn}
+            <img src="${item.previewUrl}" alt="${item.name}" style="transform: rotate(${item.rotation || 0}deg); ${item.removed ? 'opacity: 0.45;' : ''}" class="page-thumb-img w-full h-full object-contain pointer-events-none select-none transition-opacity duration-150">
+            ${removedOverlayHtml}
           </div>
-          <img src="" alt="${item.name}" class="page-thumb-img opacity-0 max-h-full max-w-full object-contain transition-opacity duration-200 rounded-md shadow-xs pointer-events-none">
-          ${removedOverlayHtml}
-          ${hoverActionsHtml}
-        </div>
-      `;
+        `;
+      } else {
+        thumbHtml = `
+          <div class="${thumbHeight} bg-white dark:bg-zinc-900 flex items-center justify-center overflow-hidden p-0 relative group/thumb">
+            ${orderBadge}
+            ${infoBadge}
+            ${zoomPreviewBtn}
+            <div class="page-thumb-skeleton absolute inset-0 flex flex-col items-center justify-center p-3 text-center pointer-events-none bg-zinc-50 dark:bg-zinc-800/40">
+              <div class="w-9 h-9 rounded-xl bg-pink-100 dark:bg-zinc-700 text-[#ff5277] flex items-center justify-center font-bold text-xs mb-1">P.${item.pageNum}</div>
+              <p class="text-[10px] text-zinc-400">Page ${item.pageNum}</p>
+            </div>
+            <img src="" alt="${item.name}" class="page-thumb-img opacity-0 w-full h-full object-contain pointer-events-none select-none transition-opacity duration-150">
+            ${removedOverlayHtml}
+          </div>
+        `;
+      }
+    } else {
+      if (item.previewUrl) {
+        thumbHtml = `
+          <div class="${thumbHeight} bg-zinc-100 dark:bg-zinc-800/60 flex items-center justify-center overflow-hidden p-2 relative group/thumb">
+            ${orderBadge}
+            ${infoBadge}
+            ${zoomPreviewBtn}
+            <img src="${item.previewUrl}" alt="${item.name}" style="transform: rotate(${item.rotation || 0}deg); ${item.removed ? 'opacity: 0.55; filter: grayscale(40%);' : ''}" class="page-thumb-img max-h-full max-w-full object-contain transition-transform duration-200 rounded-md shadow-xs pointer-events-none">
+            ${removedOverlayHtml}
+            ${hoverActionsHtml}
+          </div>
+        `;
+      } else {
+        thumbHtml = `
+          <div class="${thumbHeight} bg-zinc-100/70 dark:bg-zinc-800/60 flex items-center justify-center overflow-hidden p-2 relative group/thumb">
+            ${orderBadge}
+            ${infoBadge}
+            ${zoomPreviewBtn}
+            <div class="page-thumb-skeleton absolute inset-0 flex flex-col items-center justify-center p-3 text-center pointer-events-none bg-zinc-50 dark:bg-zinc-800/40">
+              <div class="w-9 h-9 rounded-xl bg-pink-100 dark:bg-zinc-700 text-[#ff5277] flex items-center justify-center font-bold text-xs mb-1">P.${item.pageNum}</div>
+              <p class="text-[10px] text-zinc-400">Page ${item.pageNum}</p>
+            </div>
+            <img src="" alt="${item.name}" class="page-thumb-img opacity-0 max-h-full max-w-full object-contain transition-opacity duration-200 rounded-md shadow-xs pointer-events-none">
+            ${removedOverlayHtml}
+            ${hoverActionsHtml}
+          </div>
+        `;
+      }
     }
 
     // Card Footer with Name and Touch Arrows (omitted for remove-pages for clean look)
@@ -2976,55 +3056,41 @@ async function executeActiveToolAction() {
     else if (toolId === 'split-pdf' || toolId === 'extract-pages') {
       await engineSplitPdf();
     }
-    // 4. Remove Pages (2-Step: Step 1 removes marked from workspace; Step 2 downloads final PDF)
+    // 4. Remove Pages (Generates clean PDF and displays Done Screen with 2 buttons & 4 Continue To tools)
     else if (toolId === 'remove-pages') {
-      if (!state.removePagesProcessed) {
-        const marked = state.workspaceItems.filter(i => i.removed);
-        if (marked.length === 0) {
-          showToast('⚠️ Please click on at least one page to mark it for removal (✕).');
-          DOM.btnExecuteAction.disabled = false;
-          return;
-        }
-        const remaining = state.workspaceItems.filter(i => !i.removed);
-        if (remaining.length === 0) {
-          showToast('⚠️ You cannot remove all pages. Please keep at least one page.');
-          DOM.btnExecuteAction.disabled = false;
-          return;
-        }
-
-        // Show Processing in Browser... on the button as requested
-        DOM.btnExecuteAction.disabled = true;
-        DOM.btnExecuteAction.innerHTML = `
-          <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          <span id="actionButtonText">Processing in Browser...</span>
-        `;
-
-        // Brief delay so user clearly sees "Processing in Browser..." on the button
-        await new Promise(r => setTimeout(r, 450));
-
-        // Save reference to master file and original items
-        if (!state.savedOriginalFile && state.workspaceItems[0]) {
-          state.savedOriginalFile = state.workspaceItems[0].file;
-        }
-        if (!state.savedOriginalWorkspaceItems) {
-          state.savedOriginalWorkspaceItems = state.workspaceItems.map(item => ({ ...item }));
-        }
-
-        // Apply removal to workspace
-        state.workspaceItems = remaining;
-        state.removePagesProcessed = true;
-
-        // Re-render so marked pages immediately vanish from the grid and button turns into Download PDF
-        renderInteractiveWorkspace();
-        showToast(`✅ ${marked.length} ${marked.length === 1 ? 'page' : 'pages'} removed! Click Download PDF to save.`);
-        return;
-      } else {
-        await engineRemovePagesDownload();
+      const marked = state.workspaceItems.filter(i => i.removed);
+      if (marked.length === 0) {
+        showToast('⚠️ Please click on at least one page to mark it for removal (✕).');
+        DOM.btnExecuteAction.disabled = false;
         return;
       }
+      const remaining = state.workspaceItems.filter(i => !i.removed);
+      if (remaining.length === 0) {
+        showToast('⚠️ You cannot remove all pages. Please keep at least one page.');
+        DOM.btnExecuteAction.disabled = false;
+        return;
+      }
+
+      // Show Processing in Browser... on the button as requested
+      DOM.btnExecuteAction.disabled = true;
+      DOM.btnExecuteAction.innerHTML = `
+        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span id="actionButtonText">Processing in Browser...</span>
+      `;
+
+      // Save reference to master file and original items if not already saved
+      if (!state.savedOriginalFile && state.workspaceItems[0]) {
+        state.savedOriginalFile = state.workspaceItems[0].file;
+      }
+      if (!state.savedOriginalWorkspaceItems) {
+        state.savedOriginalWorkspaceItems = state.workspaceItems.map(item => ({ ...item }));
+      }
+
+      await processRemovePagesAndShowDoneScreen(marked, remaining);
+      return;
     }
     // 5. Organize PDF
     else if (toolId === 'organize-pdf') {
@@ -3298,12 +3364,12 @@ async function engineSplitPdf() {
   downloadBlob(new Blob([out], { type: 'application/pdf' }), `Extracted_Pages_${masterFile.name}`);
 }
 
-// 5. Remove Pages (Downloads PDF with kept pages, preserving 100% of links, bookmarks, forms & metadata)
-async function engineRemovePagesDownload() {
+// 5. Remove Pages Execution (Generates PDF in browser and shows Clean Done Screen)
+async function processRemovePagesAndShowDoneScreen(marked, remaining) {
   const { PDFDocument } = PDFLib;
 
   if (!state.workspaceItems || state.workspaceItems.length === 0) {
-    showToast('⚠️ No pages in the document to download.');
+    showToast('⚠️ No pages in the document to process.');
     DOM.btnExecuteAction.disabled = false;
     return;
   }
@@ -3318,7 +3384,9 @@ async function engineRemovePagesDownload() {
         fileToPagesMap.set(f, []);
         uniqueFiles.push(f);
       }
-      fileToPagesMap.get(f).push(item);
+      if (!item.removed) {
+        fileToPagesMap.get(f).push(item);
+      }
     }
   });
 
@@ -3327,17 +3395,6 @@ async function engineRemovePagesDownload() {
     DOM.btnExecuteAction.disabled = false;
     return;
   }
-
-  DOM.btnExecuteAction.disabled = true;
-  DOM.btnExecuteAction.innerHTML = `
-    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-    </svg>
-    <span id="actionButtonText">Processing in Browser...</span>
-  `;
-
-  showToast('Generating your new PDF...');
 
   try {
     let out;
@@ -3356,7 +3413,7 @@ async function engineRemovePagesDownload() {
       const totalCount = doc.getPageCount();
 
       const keepSet = new Set(
-        fileToPagesMap.get(masterFile)
+        (fileToPagesMap.get(masterFile) || [])
           .map(item => (item.pageNum ? item.pageNum - 1 : 0))
           .filter(idx => idx >= 0 && idx < totalCount)
       );
@@ -3364,7 +3421,6 @@ async function engineRemovePagesDownload() {
       if (keepSet.size === 0) {
         showToast('⚠️ No pages to keep in the new PDF.');
         DOM.btnExecuteAction.disabled = false;
-        DOM.btnExecuteAction.innerHTML = `<span id="actionButtonText">Download PDF</span>`;
         return;
       }
 
@@ -3416,25 +3472,99 @@ async function engineRemovePagesDownload() {
       if (combinedDoc.getPageCount() === 0) {
         showToast('⚠️ No pages to keep in the new PDF.');
         DOM.btnExecuteAction.disabled = false;
-        DOM.btnExecuteAction.innerHTML = `<span id="actionButtonText">Download PDF</span>`;
         return;
       }
 
       out = await combinedDoc.save({ updateFieldAppearances: false });
     }
 
-    downloadBlob(new Blob([out], { type: 'application/pdf' }), downloadFileName);
-    showToast(`✅ Successfully downloaded! Document has ${state.workspaceItems.length} page(s).`);
+    state.lastProcessedPdfBlob = new Blob([out], { type: 'application/pdf' });
+    state.lastProcessedPdfFilename = downloadFileName;
+    state.lastProcessedPdfFile = new File([out], downloadFileName, { type: 'application/pdf' });
+
+    showRemovePagesDoneScreen(marked.length, remaining.length);
   } catch (err) {
     console.error('Error generating PDF:', err);
     showToast('⚠️ Error generating PDF. Please ensure the file is valid and password is correct.');
   } finally {
     DOM.btnExecuteAction.disabled = false;
-    DOM.btnExecuteAction.innerHTML = `
-      <span id="actionButtonText">Download PDF</span>
-    `;
   }
 }
+
+function showRemovePagesDoneScreen(removedCount, remainingCount) {
+  // Hide workspace grid & floating action bar
+  if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.add('hidden');
+  const actionBar = document.getElementById('workspaceActionBar');
+  if (actionBar) actionBar.classList.remove('floating-mode');
+  const toolsBtn = document.getElementById('floatingToolsBtn');
+  if (toolsBtn) toolsBtn.classList.remove('elevated', 'elevated-mobile');
+
+  // Keep tool header hidden on done screen as requested
+  const toolHeader = document.getElementById('toolHeaderContainer');
+  if (toolHeader) toolHeader.classList.add('hidden');
+
+  // Show Done Screen
+  const doneScreen = document.getElementById('workspaceDoneScreen');
+  if (doneScreen) {
+    doneScreen.classList.remove('hidden');
+    const doneTitle = document.getElementById('doneScreenTitle');
+    const doneSubtitle = document.getElementById('doneScreenSubtitle');
+    if (doneTitle) {
+      doneTitle.textContent = `${removedCount} ${removedCount === 1 ? 'Page' : 'Pages'} Removed!`;
+    }
+    if (doneSubtitle) {
+      doneSubtitle.textContent = `Your new PDF contains ${remainingCount} ${remainingCount === 1 ? 'page' : 'pages'} and is ready to download.`;
+    }
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  showToast(`✅ ${removedCount} ${removedCount === 1 ? 'page' : 'pages'} removed! Document ready.`);
+}
+
+window.downloadLastProcessedPdf = function() {
+  if (!state.lastProcessedPdfBlob) {
+    showToast('⚠️ No PDF file available to download.');
+    return;
+  }
+  downloadBlob(state.lastProcessedPdfBlob, state.lastProcessedPdfFilename || 'Pages_Removed_Document.pdf');
+  showToast('✅ Download started!');
+};
+
+window.reopenRemovePagesWorkspace = function() {
+  const doneScreen = document.getElementById('workspaceDoneScreen');
+  if (doneScreen) doneScreen.classList.add('hidden');
+
+  const toolbar = document.querySelector('.workspace-toolbar');
+  if (toolbar) toolbar.classList.remove('hidden');
+
+  const actionBar = document.getElementById('workspaceActionBar');
+  if (actionBar) {
+    actionBar.classList.remove('hidden');
+    actionBar.classList.add('floating-mode');
+  }
+
+  if (DOM.filesSelectedArea) {
+    DOM.filesSelectedArea.classList.remove('hidden');
+    DOM.filesSelectedArea.classList.add('remove-pages-workspace');
+  }
+
+  renderInteractiveWorkspace();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+window.continueWithTool = async function(targetToolId) {
+  if (!state.lastProcessedPdfFile) {
+    showToast('⚠️ No processed PDF available.');
+    return;
+  }
+  const fileToPass = state.lastProcessedPdfFile;
+  const doneScreen = document.getElementById('workspaceDoneScreen');
+  if (doneScreen) doneScreen.classList.add('hidden');
+
+  // Navigate to target tool and pass file
+  navigateTo(targetToolId);
+  await handleFilesSelected([fileToPass]);
+};
 
 // 6. Organize PDF (Saves new user arrangement)
 async function engineOrganizePdf() {

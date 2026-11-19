@@ -165,7 +165,7 @@
     <div id="view-tool-active" class="view-container max-w-4xl mx-auto space-y-3 sm:space-y-4">
 
       <!-- Tool Header with Gorgeous Vector (Centered, Clean Spacing to Header & Title) -->
-      <div class="text-center flex flex-col items-center space-y-0.5 sm:space-y-1">
+      <div id="toolHeaderContainer" class="text-center flex flex-col items-center space-y-0.5 sm:space-y-1">
         <div id="toolVectorContainer" class="w-14 h-14 sm:w-16 sm:h-16 mx-auto flex items-center justify-center drop-shadow-xs mb-0.5">
           <!-- Injected SVG Vector -->
         </div>
@@ -262,22 +262,22 @@
           </div>
 
           <!-- Right: Quick Actions (Select All / Restore All, Remove by Number, Add More) -->
-          <div class="flex items-center justify-center flex-nowrap gap-2 sm:gap-2.5 max-w-full">
+          <div class="workspace-top-actions flex items-center justify-between gap-2.5 sm:gap-3 w-full">
+            <!-- Remove by Number Button (No hashtag, clean & compact, matching 18px radius) -->
+            <button type="button" id="btnToolbarEnterPages" onclick="openEnterPagesModal()" class="hidden inline-flex items-center justify-center px-4 py-2 sm:px-5 sm:py-2.5 rounded-[18px] text-xs sm:text-sm font-bold bg-pink-50 dark:bg-zinc-800 hover:bg-pink-100 dark:hover:bg-zinc-700 text-[#ff5277] border border-pink-200 dark:border-zinc-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap" title="Remove pages by entering numbers or ranges">
+              <span>Remove by Number</span>
+            </button>
+
             <!-- Select All Pages Button (Shown when 0 pages removed) -->
-            <button type="button" id="btnToolbarSelectAll" onclick="selectAllPagesForRemoval()" class="hidden inline-flex items-center justify-center gap-1.5 w-[110px] sm:w-[130px] py-2 sm:py-2.5 rounded-[18px] text-xs sm:text-sm font-bold bg-pink-50 dark:bg-zinc-800 hover:bg-pink-100 dark:hover:bg-zinc-700 text-[#ff5277] border border-pink-200 dark:border-zinc-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer flex-shrink-0 whitespace-nowrap" title="Select all pages for removal">
+            <button type="button" id="btnToolbarSelectAll" onclick="selectAllPagesForRemoval()" class="hidden inline-flex items-center justify-center gap-1.5 px-4 py-2 sm:px-5 sm:py-2.5 rounded-[18px] text-xs sm:text-sm font-bold bg-pink-50 dark:bg-zinc-800 hover:bg-pink-100 dark:hover:bg-zinc-700 text-[#ff5277] border border-pink-200 dark:border-zinc-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap" title="Select all pages for removal">
               <svg class="w-3.5 h-3.5 stroke-[2.4]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
               <span>Select All</span>
             </button>
 
             <!-- Restore All Pages Button (Shown when >= 1 page removed) -->
-            <button type="button" id="btnToolbarRestoreAll" onclick="resetRemovedPages()" class="hidden inline-flex items-center justify-center gap-1.5 w-[110px] sm:w-[130px] py-2 sm:py-2.5 rounded-[18px] text-xs sm:text-sm font-bold bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer flex-shrink-0 whitespace-nowrap" title="Restore all removed pages">
+            <button type="button" id="btnToolbarRestoreAll" onclick="resetRemovedPages()" class="hidden inline-flex items-center justify-center gap-1.5 px-4 py-2 sm:px-5 sm:py-2.5 rounded-[18px] text-xs sm:text-sm font-bold bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap" title="Restore all removed pages">
               <svg class="w-3.5 h-3.5 stroke-[2.4]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 1 0 2.34-5.66L4 8m0 0V3m0 5h5"/></svg>
               <span>Restore All</span>
-            </button>
-
-            <!-- Remove by Number Button (No hashtag, clean & compact, matching 18px radius) -->
-            <button type="button" id="btnToolbarEnterPages" onclick="openEnterPagesModal()" class="hidden inline-flex items-center justify-center px-4 py-2 sm:px-5 sm:py-2.5 rounded-[18px] text-xs sm:text-sm font-bold bg-pink-50 dark:bg-zinc-800 hover:bg-pink-100 dark:hover:bg-zinc-700 text-[#ff5277] border border-pink-200 dark:border-zinc-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer flex-shrink-0 whitespace-nowrap" title="Remove pages by entering numbers or ranges">
-              <span>Remove by Number</span>
             </button>
 
             <!-- Add More Button (Round design - Enriched & Centered) -->
@@ -325,6 +325,90 @@
           </button>
         </div>
 
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- POST-PROCESS SUCCESS / DONE SCREEN (Clean White iOS Card) -->
+      <!-- ============================================================ -->
+      <div id="workspaceDoneScreen" class="hidden max-w-xl mx-auto py-4 sm:py-6">
+        <div class="bg-white dark:bg-zinc-900 rounded-[28px] border border-zinc-200/80 dark:border-zinc-800 shadow-sm p-6 sm:p-8 flex flex-col items-center text-center space-y-6">
+          
+          <!-- Success Status Icon & Title -->
+          <div class="flex flex-col items-center space-y-2">
+            <div class="w-14 h-14 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-center shadow-2xs">
+              <svg class="w-7 h-7 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <h3 id="doneScreenTitle" class="text-xl sm:text-2xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight">Pages Removed Successfully!</h3>
+            <p id="doneScreenSubtitle" class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-sm">Your PDF is ready to download or continue editing with other tools.</p>
+          </div>
+
+          <!-- Primary Actions: Download PDF + Back to Pages -->
+          <div class="flex flex-col sm:flex-row items-center gap-3 w-full">
+            <button type="button" id="btnDoneDownload" onclick="downloadLastProcessedPdf()" class="w-full sm:flex-1 py-3.5 px-6 rounded-[18px] text-base font-extrabold text-white bg-[#ff5277] hover:bg-[#ff3b65] active:scale-98 shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <svg class="w-5 h-5 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              <span>Download PDF</span>
+            </button>
+            <button type="button" id="btnDoneBack" onclick="reopenRemovePagesWorkspace()" class="w-full sm:w-auto py-3.5 px-5 rounded-[18px] text-sm font-bold text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-200 dark:border-zinc-700 active:scale-98 transition-all flex items-center justify-center gap-2 cursor-pointer">
+              <svg class="w-4 h-4 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+              <span>Back to Pages</span>
+            </button>
+          </div>
+
+          <!-- Continue to Other Tools Section ("و زیر اون دو تا دکمه، چهار تا دکمه دیگه هم بیاد و Continue to باشه") -->
+          <div class="w-full pt-4 border-t border-zinc-100 dark:border-zinc-800 flex flex-col items-center space-y-3.5">
+            <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+              <span>Continue to</span>
+            </div>
+
+            <!-- 4 Quick Tool Cards in 2x2 Grid with 18px Radius -->
+            <div class="grid grid-cols-2 gap-2.5 sm:gap-3 w-full">
+              <!-- 1. Compress PDF -->
+              <button type="button" onclick="continueWithTool('compress-pdf')" class="group p-3 sm:p-3.5 rounded-[18px] bg-zinc-50 dark:bg-zinc-800/60 hover:bg-pink-50/60 dark:hover:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700/80 hover:border-pink-300 dark:hover:border-pink-800/60 transition-all text-left flex items-center gap-2.5 sm:gap-3 cursor-pointer">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-50 dark:bg-amber-950/40 text-amber-500 border border-amber-200/70 dark:border-amber-800/50 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                  <svg class="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                </div>
+                <div class="truncate">
+                  <h4 class="text-xs sm:text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff5277] transition-colors truncate">Compress PDF</h4>
+                  <p class="text-[10px] sm:text-[11px] text-zinc-400 truncate">Reduce size</p>
+                </div>
+              </button>
+
+              <!-- 2. Merge PDF -->
+              <button type="button" onclick="continueWithTool('merge-pdf')" class="group p-3 sm:p-3.5 rounded-[18px] bg-zinc-50 dark:bg-zinc-800/60 hover:bg-pink-50/60 dark:hover:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700/80 hover:border-pink-300 dark:hover:border-pink-800/60 transition-all text-left flex items-center gap-2.5 sm:gap-3 cursor-pointer">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-pink-50 dark:bg-pink-950/40 text-[#ff5277] border border-pink-200/70 dark:border-pink-800/50 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                  <svg class="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2"/></svg>
+                </div>
+                <div class="truncate">
+                  <h4 class="text-xs sm:text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff5277] transition-colors truncate">Merge PDF</h4>
+                  <p class="text-[10px] sm:text-[11px] text-zinc-400 truncate">Combine files</p>
+                </div>
+              </button>
+
+              <!-- 3. Add Page Number -->
+              <button type="button" onclick="continueWithTool('page-numbers')" class="group p-3 sm:p-3.5 rounded-[18px] bg-zinc-50 dark:bg-zinc-800/60 hover:bg-pink-50/60 dark:hover:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700/80 hover:border-pink-300 dark:hover:border-pink-800/60 transition-all text-left flex items-center gap-2.5 sm:gap-3 cursor-pointer">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-purple-50 dark:bg-purple-950/40 text-purple-500 border border-purple-200/70 dark:border-purple-800/50 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                  <svg class="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+                </div>
+                <div class="truncate">
+                  <h4 class="text-xs sm:text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff5277] transition-colors truncate">Page Numbers</h4>
+                  <p class="text-[10px] sm:text-[11px] text-zinc-400 truncate">Number pages</p>
+                </div>
+              </button>
+
+              <!-- 4. Add Watermark -->
+              <button type="button" onclick="continueWithTool('watermark-pdf')" class="group p-3 sm:p-3.5 rounded-[18px] bg-zinc-50 dark:bg-zinc-800/60 hover:bg-pink-50/60 dark:hover:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700/80 hover:border-pink-300 dark:hover:border-pink-800/60 transition-all text-left flex items-center gap-2.5 sm:gap-3 cursor-pointer">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-blue-500 border border-blue-200/70 dark:border-blue-800/50 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform">
+                  <svg class="w-4 h-4 sm:w-5 sm:h-5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                </div>
+                <div class="truncate">
+                  <h4 class="text-xs sm:text-sm font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff5277] transition-colors truncate">Add Watermark</h4>
+                  <p class="text-[10px] sm:text-[11px] text-zinc-400 truncate">Stamp watermark</p>
+                </div>
+              </button>
+            </div>
+          </div>
+
+        </div>
       </div>
 
     </div>
@@ -482,55 +566,47 @@
   </div>
 
   <!-- ============================================================ -->
-  <!-- REMOVE PAGES BY NUMBER / RANGE MODAL -->
+  <!-- REMOVE PAGES BY NUMBER / RANGE MODAL (Apple iOS Alert Style) -->
   <!-- ============================================================ -->
   <div id="enterPagesModal" onclick="if(event.target === this) closeEnterPagesModal()" class="fixed inset-0 z-[115] bg-zinc-950/40 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 opacity-0 pointer-events-none transition-all duration-300">
-    <div class="relative w-full max-w-lg bg-white dark:bg-zinc-900 rounded-3xl border border-pink-200/70 dark:border-zinc-800 shadow-2xl p-5 sm:p-6 flex flex-col gap-4 transform scale-95 transition-all duration-300">
+    <div class="relative w-full max-w-md bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200/80 dark:border-zinc-800 shadow-2xl p-5 sm:p-6 flex flex-col gap-3.5 transform scale-95 transition-all duration-300">
       
-      <!-- Modal Header (Minimalist & Clean - No Hashtag) -->
-      <div class="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
-        <div class="flex items-center gap-2.5 sm:gap-3">
-          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-[18px] bg-pink-100 dark:bg-zinc-800 text-[#ff5277] flex items-center justify-center flex-shrink-0 shadow-2xs">
-            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          </div>
-          <h3 class="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">Remove Pages by Number</h3>
+      <!-- Modal Header (Clean iOS Style - No Colorful Logo Box) -->
+      <div class="flex items-center justify-between pb-1">
+        <div class="flex flex-col">
+          <h3 class="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">Remove by Number</h3>
+          <span id="enterPagesTotalHint" class="text-xs text-zinc-400 font-normal">Total pages: 0</span>
         </div>
-        <button type="button" onclick="closeEnterPagesModal()" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-300 flex items-center justify-center transition cursor-pointer" title="Close (Esc)">
+        <button type="button" onclick="closeEnterPagesModal()" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500 dark:text-zinc-400 flex items-center justify-center transition cursor-pointer" title="Close (Esc)">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
 
       <!-- Input Field Area -->
-      <div class="flex flex-col gap-2 pt-1">
-        <div class="flex items-center justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300">
-          <span>Enter pages or ranges:</span>
-          <span id="enterPagesTotalHint" class="text-[11px] text-zinc-400 font-normal">Total pages: 0</span>
-        </div>
-        
+      <div class="flex flex-col gap-2">
         <div class="relative">
-          <textarea id="enterPagesInput" rows="3" oninput="updateEnterPagesLiveFeedback()" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); applyEnteredPagesToRemove();}" placeholder="e.g. 1-15 or 1 to 15 or 1, 2, 3, 19, 1005 or 1 n 2 n 9 n 25" class="w-full px-4 py-3 text-sm sm:text-base font-mono rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#ff5277] focus:border-transparent transition resize-none"></textarea>
+          <textarea id="enterPagesInput" rows="3" oninput="updateEnterPagesLiveFeedback()" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); applyEnteredPagesToRemove();}" placeholder="e.g. 1 to 15, 1, 2, 3 or 1 n 2 n 9" class="w-full px-3.5 py-2.5 text-sm sm:text-base font-mono rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#ff5277] focus:border-transparent transition resize-none"></textarea>
         </div>
 
-        <!-- Format Badges & Tips (Clean & Minimal) -->
-        <div class="flex flex-wrap items-center gap-1.5 pt-0.5 text-[11px] text-zinc-500 dark:text-zinc-400">
-          <span class="font-medium text-zinc-600 dark:text-zinc-300">Formats:</span>
-          <span class="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-mono">1-15</span>
-          <span class="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-mono">1 to 15</span>
-          <span class="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-mono">1, 2, 3</span>
-          <span class="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 font-mono">1 n 2 n 9</span>
+        <!-- Format Badges & Tips (Only 3 clean formats: 1 to 15, 1, 2, 3, and 1 n 2 n 9) -->
+        <div class="flex flex-wrap items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
+          <span class="font-medium text-zinc-500 dark:text-zinc-400">Formats:</span>
+          <span class="px-2 py-0.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-[11px] font-mono text-zinc-700 dark:text-zinc-300">1 to 15</span>
+          <span class="px-2 py-0.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-[11px] font-mono text-zinc-700 dark:text-zinc-300">1, 2, 3</span>
+          <span class="px-2 py-0.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-[11px] font-mono text-zinc-700 dark:text-zinc-300">1 n 2 n 9</span>
         </div>
 
         <!-- Live Feedback Message Area -->
-        <div id="enterPagesValidationMsg" class="text-xs min-h-[20px] font-medium transition-all"></div>
+        <div id="enterPagesValidationMsg" class="text-xs min-h-[18px] font-medium transition-all"></div>
       </div>
 
-      <!-- Modal Footer Actions (Apple-Consistent 18px Radius) -->
-      <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-zinc-100 dark:border-zinc-800">
-        <button type="button" onclick="closeEnterPagesModal()" class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-[18px] text-xs sm:text-sm font-semibold text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer">
+      <!-- Modal Footer (iOS-Style 2 Equal Halves with Divider: Left Cancel, Right Pink Text Mark for Remove) -->
+      <div class="grid grid-cols-2 divide-x divide-zinc-200 dark:divide-zinc-800 border-t border-zinc-200 dark:border-zinc-800 -mx-5 -mb-5 sm:-mx-6 sm:-mb-6 overflow-hidden rounded-b-3xl">
+        <button type="button" onclick="closeEnterPagesModal()" class="w-full py-3.5 text-sm sm:text-base font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 active:bg-zinc-100 dark:active:bg-zinc-800 transition cursor-pointer">
           Cancel
         </button>
-        <button type="button" id="btnApplyEnteredPages" onclick="applyEnteredPagesToRemove()" class="px-5 py-2 sm:px-6 sm:py-2.5 rounded-[18px] text-xs sm:text-sm font-bold text-white bg-[#ff5277] hover:bg-[#ff3b65] transition shadow-md hover:shadow-lg active:scale-95 cursor-pointer">
-          Mark for Removal
+        <button type="button" id="btnApplyEnteredPages" onclick="applyEnteredPagesToRemove()" class="w-full py-3.5 text-sm sm:text-base font-bold text-[#ff5277] hover:bg-pink-50/60 dark:hover:bg-pink-950/20 active:bg-pink-100/60 transition cursor-pointer">
+          Mark for Remove
         </button>
       </div>
 
