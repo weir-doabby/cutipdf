@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
   <title>Merge PDF Online • CutiPDF</title>
   
-  <meta name="description" content="Combine PDFs in the order you want with the easiest PDF merger available. 100% free, private, client-side PDF tool in your browser.">
+  <meta name="description" content="Combine multiple PDF files into one single document in any order you want. 100% free, private, client-side PDF tool in your browser.">
   <link rel="canonical" href="https://cutipdf.com/merge-pdf">
   <meta name="7c5f415417bfdf7647b7" content="ba9fd24064e70cfe0dd2">
   <!-- Cute Strawberry Favicon (توت فرنگی) -->
@@ -93,12 +93,12 @@
   <!-- Open Graph / Social Media Meta Tags -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Merge PDF Online • CutiPDF">
-  <meta property="og:description" content="Combine PDFs in the order you want with the easiest PDF merger available. 100% free, private, client-side PDF tool in your browser.">
+  <meta property="og:description" content="Combine multiple PDF files into one single document in any order you want. 100% free, private, client-side PDF tool in your browser.">
   <meta property="og:url" content="https://cutipdf.com/merge-pdf">
   <meta property="og:site_name" content="CutiPDF">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Merge PDF Online • CutiPDF">
-  <meta name="twitter:description" content="Combine PDFs in the order you want with the easiest PDF merger available. 100% free, private, client-side PDF tool in your browser.">
+  <meta name="twitter:description" content="Combine multiple PDF files into one single document in any order you want. 100% free, private, client-side PDF tool in your browser.">
 
   <!-- Schema.org WebApplication Structured Data -->
   <script type="application/ld+json">
@@ -107,7 +107,7 @@
     "@type": "WebApplication",
     "name": "Merge PDF - CutiPDF",
     "url": "https://cutipdf.com/merge-pdf",
-    "description": "Combine PDFs in the order you want with the easiest PDF merger available.",
+    "description": "Combine multiple PDF files into one single document in any order you want.",
     "applicationCategory": "UtilitiesApplication",
     "operatingSystem": "All",
     "offers": {
@@ -140,11 +140,11 @@
 
       <!-- Desktop Navigation Bar (iLovePDF Style Dropdown & Mega Menus) -->
       <nav class="hidden md:flex items-center gap-1 lg:gap-1.5 relative">
-        <a href="../merge-pdf" class="px-3 py-1.5 rounded-xl text-sm font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800 transition-colors">Merge PDF</a>
-        <a href="../split-pdf" class="px-3 py-1.5 rounded-xl text-sm font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800 transition-colors">Split PDF</a>
-        <a href="../compress-pdf" class="px-3 py-1.5 rounded-xl text-sm font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800 transition-colors">Compress PDF</a>
+        <a href="../merge-pdf" data-tool-id="merge-pdf" class="px-3 py-1.5 rounded-xl text-sm font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800 transition-colors">Merge PDF</a>
+        <a href="../split-pdf" data-tool-id="split-pdf" class="px-3 py-1.5 rounded-xl text-sm font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800 transition-colors">Split PDF</a>
+        <a href="../compress-pdf" data-tool-id="compress-pdf" class="px-3 py-1.5 rounded-xl text-sm font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800 transition-colors">Compress PDF</a>
         
-        <!-- Convert PDF Dropdown Menu (iLovePDF Style) -->
+        <!-- Convert PDF Dropdown Menu (Pure Client-Side In-Browser) -->
         <div class="relative group/convert">
           <button type="button" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-sm font-bold text-zinc-700 dark:text-zinc-200 group-hover/convert:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800 transition-colors cursor-pointer">
             <span>Convert PDF</span>
@@ -153,119 +153,72 @@
           
           <!-- Dropdown Panel (2 columns: Convert TO PDF & Convert FROM PDF) -->
           <div class="absolute top-full left-0 pt-2 opacity-0 pointer-events-none translate-y-2 group-hover/convert:opacity-100 group-hover/convert:pointer-events-auto group-hover/convert:translate-y-0 transition-all duration-200 z-50">
-            <div class="w-[420px] bg-white dark:bg-[#18181d] border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl p-4 grid grid-cols-2 gap-4">
+            <div class="w-[360px] bg-white dark:bg-[#18181d] border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl p-4 grid grid-cols-2 gap-4">
               <!-- Convert TO PDF -->
               <div class="space-y-1">
                 <div class="text-[10px] font-black uppercase tracking-wider text-zinc-400 dark:text-zinc-500 px-2 pb-1 border-b border-zinc-100 dark:border-zinc-800">Convert to PDF</div>
-                <a href="../jpg-to-pdf" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800/80 transition">
+                <a href="../jpg-to-pdf" data-tool-id="jpg-to-pdf" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800/80 transition">
                   <span class="w-2 h-2 rounded-full bg-amber-400"></span>
                   <span>JPG to PDF</span>
-                </a>
-                <a href="../word-to-pdf" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800/80 transition">
-                  <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                  <span>WORD to PDF</span>
-                </a>
-                <a href="../powerpoint-to-pdf" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800/80 transition">
-                  <span class="w-2 h-2 rounded-full bg-orange-500"></span>
-                  <span>POWERPOINT to PDF</span>
-                </a>
-                <a href="../excel-to-pdf" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800/80 transition">
-                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                  <span>EXCEL to PDF</span>
-                </a>
-                <a href="../html-to-pdf" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800/80 transition">
-                  <span class="w-2 h-2 rounded-full bg-zinc-400"></span>
-                  <span>HTML to PDF</span>
                 </a>
               </div>
 
               <!-- Convert FROM PDF -->
               <div class="space-y-1">
                 <div class="text-[10px] font-black uppercase tracking-wider text-zinc-400 dark:text-zinc-500 px-2 pb-1 border-b border-zinc-100 dark:border-zinc-800">Convert from PDF</div>
-                <a href="../pdf-to-jpg" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800/80 transition">
+                <a href="../pdf-to-jpg" data-tool-id="pdf-to-jpg" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800/80 transition">
                   <span class="w-2 h-2 rounded-full bg-amber-400"></span>
                   <span>PDF to JPG</span>
-                </a>
-                <a href="../pdf-to-word" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800/80 transition">
-                  <span class="w-2 h-2 rounded-full bg-blue-500"></span>
-                  <span>PDF to WORD</span>
-                </a>
-                <a href="../pdf-to-powerpoint" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800/80 transition">
-                  <span class="w-2 h-2 rounded-full bg-orange-500"></span>
-                  <span>PDF to POWERPOINT</span>
-                </a>
-                <a href="../pdf-to-excel" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800/80 transition">
-                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                  <span>PDF to EXCEL</span>
-                </a>
-                <a href="../pdf-to-pdfa" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800/80 transition">
-                  <span class="w-2 h-2 rounded-full bg-rose-500"></span>
-                  <span>PDF to PDF/A</span>
                 </a>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- All PDF Tools Dropdown (Mega Menu) -->
+        <!-- All PDF Tools Dropdown (Mega Menu with 4 Client-Side Categories) -->
         <div class="relative group/alltools">
           <button type="button" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-sm font-bold text-zinc-700 dark:text-zinc-200 group-hover/alltools:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800 transition-colors cursor-pointer">
             <span>All PDF Tools</span>
             <svg class="w-3.5 h-3.5 opacity-60 group-hover/alltools:rotate-180 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
           </button>
 
-          <!-- Mega Menu Panel (5 Columns matching iLovePDF) -->
+          <!-- Mega Menu Panel (4 Columns matching Client-Side Suite) -->
           <div class="absolute top-full -left-20 lg:-left-36 pt-2 opacity-0 pointer-events-none translate-y-2 group-hover/alltools:opacity-100 group-hover/alltools:pointer-events-auto group-hover/alltools:translate-y-0 transition-all duration-200 z-50">
-            <div class="w-[880px] max-w-[94vw] bg-white dark:bg-[#18181d] border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl p-6 grid grid-cols-5 gap-4">
+            <div class="w-[820px] max-w-[94vw] bg-white dark:bg-[#18181d] border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl p-6 grid grid-cols-4 gap-4">
               <!-- 1. Organize -->
               <div class="space-y-1.5">
                 <div class="text-[10px] font-black uppercase tracking-wider text-[#ff2a5f] pb-1 border-b border-zinc-100 dark:border-zinc-800">Organize PDF</div>
-                <a href="../merge-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Merge PDF</a>
-                <a href="../split-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Split PDF</a>
-                <a href="../remove-pages" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Remove Pages</a>
-                <a href="../extract-pages" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Extract Pages</a>
-                <a href="../organize-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Organize PDF</a>
-                <a href="../scan-to-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Scan to PDF</a>
+                <a href="../merge-pdf" data-tool-id="merge-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Merge PDF</a>
+                <a href="../split-pdf" data-tool-id="split-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Split PDF</a>
+                <a href="../remove-pages" data-tool-id="remove-pages" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Remove Pages</a>
+                <a href="../extract-pages" data-tool-id="extract-pages" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Extract Pages</a>
+                <a href="../organize-pdf" data-tool-id="organize-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Organize PDF</a>
               </div>
 
-              <!-- 2. Optimize -->
+              <!-- 2. Optimize & Convert -->
               <div class="space-y-1.5">
-                <div class="text-[10px] font-black uppercase tracking-wider text-[#ff2a5f] pb-1 border-b border-zinc-100 dark:border-zinc-800">Optimize PDF</div>
-                <a href="../compress-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Compress PDF</a>
-                <a href="../repair-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Repair PDF</a>
-                <a href="../ocr-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">OCR PDF</a>
+                <div class="text-[10px] font-black uppercase tracking-wider text-[#ff2a5f] pb-1 border-b border-zinc-100 dark:border-zinc-800">Optimize & Convert</div>
+                <a href="../compress-pdf" data-tool-id="compress-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Compress PDF</a>
+                <a href="../jpg-to-pdf" data-tool-id="jpg-to-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">JPG to PDF</a>
+                <a href="../pdf-to-jpg" data-tool-id="pdf-to-jpg" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">PDF to JPG</a>
               </div>
 
-              <!-- 3. Convert TO PDF -->
+              <!-- 3. Edit & Enhance -->
               <div class="space-y-1.5">
-                <div class="text-[10px] font-black uppercase tracking-wider text-[#ff2a5f] pb-1 border-b border-zinc-100 dark:border-zinc-800">Convert to PDF</div>
-                <a href="../jpg-to-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">JPG to PDF</a>
-                <a href="../word-to-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">WORD to PDF</a>
-                <a href="../powerpoint-to-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">PPT to PDF</a>
-                <a href="../excel-to-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">EXCEL to PDF</a>
-                <a href="../html-to-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">HTML to PDF</a>
+                <div class="text-[10px] font-black uppercase tracking-wider text-[#ff2a5f] pb-1 border-b border-zinc-100 dark:border-zinc-800">Edit & Enhance</div>
+                <a href="../rotate-pdf" data-tool-id="rotate-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Rotate PDF</a>
+                <a href="../page-numbers" data-tool-id="page-numbers" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Page Numbers</a>
+                <a href="../watermark-pdf" data-tool-id="watermark-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Watermark PDF</a>
+                <a href="../crop-pdf" data-tool-id="crop-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Crop PDF</a>
+                <a href="../edit-pdf" data-tool-id="edit-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Edit PDF</a>
               </div>
 
-              <!-- 4. Convert FROM PDF -->
+              <!-- 4. Security & Sign -->
               <div class="space-y-1.5">
-                <div class="text-[10px] font-black uppercase tracking-wider text-[#ff2a5f] pb-1 border-b border-zinc-100 dark:border-zinc-800">Convert from PDF</div>
-                <a href="../pdf-to-jpg" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">PDF to JPG</a>
-                <a href="../pdf-to-word" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">PDF to WORD</a>
-                <a href="../pdf-to-powerpoint" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">PDF to PPT</a>
-                <a href="../pdf-to-excel" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">PDF to EXCEL</a>
-                <a href="../pdf-to-pdfa" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">PDF to PDF/A</a>
-              </div>
-
-              <!-- 5. Edit & Security -->
-              <div class="space-y-1.5">
-                <div class="text-[10px] font-black uppercase tracking-wider text-[#ff2a5f] pb-1 border-b border-zinc-100 dark:border-zinc-800">Edit & Security</div>
-                <a href="../rotate-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Rotate PDF</a>
-                <a href="../page-numbers" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Page Numbers</a>
-                <a href="../watermark-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Watermark</a>
-                <a href="../edit-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Edit PDF</a>
-                <a href="../protect-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Protect PDF</a>
-                <a href="../unlock-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Unlock PDF</a>
-                <a href="../sign-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Sign PDF</a>
+                <div class="text-[10px] font-black uppercase tracking-wider text-[#ff2a5f] pb-1 border-b border-zinc-100 dark:border-zinc-800">PDF Security</div>
+                <a href="../unlock-pdf" data-tool-id="unlock-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Unlock PDF</a>
+                <a href="../protect-pdf" data-tool-id="protect-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Protect PDF</a>
+                <a href="../sign-pdf" data-tool-id="sign-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Sign PDF</a>
               </div>
             </div>
           </div>
@@ -308,7 +261,7 @@
       </button>
     </div>
 
-    <!-- Drawer Navigation Content: 2-Column Rounded Cards Grouped by Categories (Scrollable) -->
+        <!-- Drawer Navigation Content: 2-Column Rounded Cards Grouped by Categories (Scrollable) -->
     <div class="p-4 flex-1 overflow-y-auto space-y-6 overscroll-contain">
       
       <!-- 1. ORGANIZE PDF -->
@@ -319,7 +272,7 @@
         </div>
         <div class="grid grid-cols-2 gap-2.5 sm:gap-3">
           <!-- Merge PDF -->
-          <a href="../merge-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
+          <a href="../merge-pdf" data-tool-id="merge-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
             <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
               <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
                 <rect x="5" y="5" width="20" height="20" rx="6" fill="#f87171" fill-opacity="0.3"/>
@@ -332,7 +285,7 @@
           </a>
 
           <!-- Split PDF -->
-          <a href="../split-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
+          <a href="../split-pdf" data-tool-id="split-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
             <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
               <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
                 <rect x="5" y="5" width="20" height="20" rx="6" fill="#f87171" fill-opacity="0.3"/>
@@ -345,7 +298,7 @@
           </a>
 
           <!-- Remove Pages -->
-          <a href="../remove-pages" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
+          <a href="../remove-pages" data-tool-id="remove-pages" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
             <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
               <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
                 <rect x="7" y="7" width="30" height="30" rx="9" fill="#ff2a5f" fill-opacity="0.2"/>
@@ -358,7 +311,7 @@
           </a>
 
           <!-- Extract Pages -->
-          <a href="../extract-pages" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
+          <a href="../extract-pages" data-tool-id="extract-pages" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
             <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
               <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
                 <rect x="7" y="7" width="30" height="30" rx="9" fill="#6366f1" fill-opacity="0.25"/>
@@ -370,7 +323,7 @@
           </a>
 
           <!-- Organize PDF -->
-          <a href="../organize-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
+          <a href="../organize-pdf" data-tool-id="organize-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline col-span-2">
             <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
               <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
                 <rect x="7" y="7" width="30" height="30" rx="9" fill="#8b5cf6" fill-opacity="0.25"/>
@@ -381,30 +334,18 @@
             </div>
             <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Organize PDF</span>
           </a>
-
-          <!-- Scan to PDF -->
-          <a href="../scan-to-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
-            <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
-                <rect x="7" y="7" width="30" height="30" rx="9" fill="#14b8a6" fill-opacity="0.2"/>
-                <rect x="12" y="13" width="20" height="18" rx="3" stroke="#14b8a6" stroke-width="2"/>
-                <path d="M10 21h24" stroke="#14b8a6" stroke-width="2.5" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Scan to PDF</span>
-          </a>
         </div>
       </div>
 
-      <!-- 2. OPTIMIZE PDF -->
+      <!-- 2. OPTIMIZE & CONVERT -->
       <div>
         <div class="flex items-center gap-2 mb-3 px-1">
-          <span class="text-[11px] font-black uppercase tracking-wider text-[#ff2a5f]">Optimize PDF</span>
+          <span class="text-[11px] font-black uppercase tracking-wider text-[#ff2a5f]">Optimize & Convert</span>
           <div class="h-px flex-1 bg-zinc-800/80"></div>
         </div>
         <div class="grid grid-cols-2 gap-2.5 sm:gap-3">
           <!-- Compress PDF -->
-          <a href="../compress-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
+          <a href="../compress-pdf" data-tool-id="compress-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
             <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
               <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
                 <rect x="7" y="7" width="30" height="30" rx="9" fill="#10b981" fill-opacity="0.25"/>
@@ -416,40 +357,8 @@
             <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Compress PDF</span>
           </a>
 
-          <!-- Repair PDF -->
-          <a href="../repair-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
-            <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
-                <rect x="7" y="7" width="30" height="30" rx="9" fill="#f97316" fill-opacity="0.2"/>
-                <path d="M28 14a6 6 0 00-7.5 1.5l-6 6a2.5 2.5 0 103.5 3.5l6-6A6 6 0 0028 14z" stroke="#f97316" stroke-width="2.2" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Repair PDF</span>
-          </a>
-
-          <!-- OCR PDF -->
-          <a href="../ocr-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline col-span-2 sm:col-span-1">
-            <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
-                <rect x="7" y="7" width="30" height="30" rx="9" fill="#3b82f6" fill-opacity="0.2"/>
-                <path d="M14 18v-4h4m8 0h4v4m0 8v4h-4m-8 0h-4v-4" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/>
-                <text x="22" y="26" font-size="11" font-weight="900" fill="#3b82f6" text-anchor="middle" font-family="sans-serif">OCR</text>
-              </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">OCR PDF</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- 3. CONVERT TO PDF -->
-      <div>
-        <div class="flex items-center gap-2 mb-3 px-1">
-          <span class="text-[11px] font-black uppercase tracking-wider text-[#ff2a5f]">Convert to PDF</span>
-          <div class="h-px flex-1 bg-zinc-800/80"></div>
-        </div>
-        <div class="grid grid-cols-2 gap-2.5 sm:gap-3">
-          <!-- Image to PDF (JPG to PDF) -->
-          <a href="../jpg-to-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
+          <!-- JPG to PDF -->
+          <a href="../jpg-to-pdf" data-tool-id="jpg-to-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
             <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
               <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
                 <rect x="5" y="5" width="20" height="20" rx="6" fill="#fbbf24" fill-opacity="0.95"/>
@@ -459,96 +368,11 @@
                 <path d="M26 26l6 6m0-4.5v4.5h-4.5" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Image to PDF</span>
-          </a>
-
-          <!-- Word to PDF -->
-          <a href="../word-to-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
-            <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
-                <rect x="5" y="5" width="20" height="20" rx="6" fill="#3b82f6"/>
-                <text x="15" y="20" font-size="14" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="system-ui, sans-serif">W</text>
-                <rect x="19" y="19" width="20" height="20" rx="6" fill="#60a5fa" fill-opacity="0.4"/>
-                <path d="M30 30l-5-5m0 3.5v-3.5h3.5" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Word to PDF</span>
-          </a>
-
-          <!-- PowerPoint to PDF -->
-          <a href="../powerpoint-to-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
-            <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
-                <rect x="5" y="5" width="20" height="20" rx="6" fill="#f97316"/>
-                <text x="15" y="20" font-size="14" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="system-ui, sans-serif">P</text>
-                <rect x="19" y="19" width="20" height="20" rx="6" fill="#fb923c" fill-opacity="0.4"/>
-                <path d="M30 30l-5-5m0 3.5v-3.5h3.5" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">PowerPoint to PDF</span>
-          </a>
-
-          <!-- Excel to PDF -->
-          <a href="../excel-to-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
-            <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
-                <rect x="5" y="5" width="20" height="20" rx="6" fill="#16a34a"/>
-                <text x="15" y="20" font-size="14" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="system-ui, sans-serif">X</text>
-                <rect x="19" y="19" width="20" height="20" rx="6" fill="#86efac" fill-opacity="0.4"/>
-                <path d="M30 30l-5-5m0 3.5v-3.5h3.5" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Excel to PDF</span>
-          </a>
-
-          <!-- HTML to PDF -->
-          <a href="../html-to-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline col-span-2">
-            <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
-                <rect x="7" y="7" width="30" height="30" rx="9" fill="#f97316" fill-opacity="0.2"/>
-                <path d="M16 20l-4 3 4 3m12-6l4 3-4 3m-5-8l-2 10" stroke="#f97316" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">HTML to PDF</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- 4. CONVERT FROM PDF -->
-      <div>
-        <div class="flex items-center gap-2 mb-3 px-1">
-          <span class="text-[11px] font-black uppercase tracking-wider text-[#ff2a5f]">Convert from PDF</span>
-          <div class="h-px flex-1 bg-zinc-800/80"></div>
-        </div>
-        <div class="grid grid-cols-2 gap-2.5 sm:gap-3">
-          <!-- PDF to Word -->
-          <a href="../pdf-to-word" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
-            <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
-                <rect x="5" y="5" width="20" height="20" rx="6" fill="#60a5fa" fill-opacity="0.4"/>
-                <path d="M9 9l5 5m0-3.5v3.5h-3.5" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <rect x="19" y="19" width="20" height="20" rx="6" fill="#3b82f6"/>
-                <text x="29" y="34" font-size="14" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="system-ui, sans-serif">W</text>
-              </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">PDF to Word</span>
-          </a>
-
-          <!-- PDF to PowerPoint -->
-          <a href="../pdf-to-powerpoint" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
-            <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
-                <rect x="5" y="5" width="20" height="20" rx="6" fill="#fb923c" fill-opacity="0.4"/>
-                <path d="M9 9l5 5m0-3.5v3.5h-3.5" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <rect x="19" y="19" width="20" height="20" rx="6" fill="#f97316"/>
-                <text x="29" y="34" font-size="14" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="system-ui, sans-serif">P</text>
-              </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">PDF to PowerPoint</span>
+            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">JPG to PDF</span>
           </a>
 
           <!-- PDF to JPG -->
-          <a href="../pdf-to-jpg" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
+          <a href="../pdf-to-jpg" data-tool-id="pdf-to-jpg" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline col-span-2">
             <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
               <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
                 <rect x="5" y="5" width="20" height="20" rx="6" fill="#ef4444" fill-opacity="0.8"/>
@@ -560,56 +384,18 @@
             </div>
             <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">PDF to JPG</span>
           </a>
-
-          <!-- PDF to Excel -->
-          <a href="../pdf-to-excel" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
-            <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
-                <rect x="5" y="5" width="20" height="20" rx="6" fill="#86efac" fill-opacity="0.4"/>
-                <path d="M9 9l5 5m0-3.5v3.5h-3.5" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <rect x="19" y="19" width="20" height="20" rx="6" fill="#16a34a"/>
-                <text x="29" y="34" font-size="14" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="system-ui, sans-serif">X</text>
-              </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">PDF to Excel</span>
-          </a>
-
-          <!-- PDF to PDF/A -->
-          <a href="../pdf-to-pdfa" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline col-span-2">
-            <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
-                <rect x="7" y="7" width="30" height="30" rx="9" fill="#f43f5e" fill-opacity="0.2"/>
-                <rect x="12" y="10" width="20" height="24" rx="3.5" stroke="#f43f5e" stroke-width="2"/>
-                <path d="M17 22l3 3 7-7" stroke="#f43f5e" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">PDF to PDF/A</span>
-          </a>
         </div>
       </div>
 
-      <!-- 5. EDIT & SECURITY -->
+      <!-- 3. EDIT & ENHANCE -->
       <div>
         <div class="flex items-center gap-2 mb-3 px-1">
-          <span class="text-[11px] font-black uppercase tracking-wider text-[#ff2a5f]">Edit & Security</span>
+          <span class="text-[11px] font-black uppercase tracking-wider text-[#ff2a5f]">Edit & Enhance</span>
           <div class="h-px flex-1 bg-zinc-800/80"></div>
         </div>
         <div class="grid grid-cols-2 gap-2.5 sm:gap-3">
-          <!-- Edit PDF -->
-          <a href="../edit-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
-            <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
-                <rect x="7" y="7" width="30" height="30" rx="9" fill="#f472b6" fill-opacity="0.3"/>
-                <rect x="9" y="9" width="26" height="26" rx="8" fill="#ec4899" fill-opacity="0.2"/>
-                <path d="M16 28l1.5-5.5L25 15l4 4-7.5 7.5L16 28z" fill="#ec4899"/>
-                <path d="M23.5 16.5l4 4" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Edit PDF</span>
-          </a>
-
           <!-- Rotate PDF -->
-          <a href="../rotate-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
+          <a href="../rotate-pdf" data-tool-id="rotate-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
             <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
               <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
                 <rect x="7" y="7" width="30" height="30" rx="9" fill="#06b6d4" fill-opacity="0.2"/>
@@ -621,7 +407,7 @@
           </a>
 
           <!-- Page Numbers -->
-          <a href="../page-numbers" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
+          <a href="../page-numbers" data-tool-id="page-numbers" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
             <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
               <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
                 <rect x="7" y="7" width="30" height="30" rx="9" fill="#0ea5e9" fill-opacity="0.2"/>
@@ -634,7 +420,7 @@
           </a>
 
           <!-- Watermark -->
-          <a href="../watermark-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
+          <a href="../watermark-pdf" data-tool-id="watermark-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
             <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
               <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
                 <rect x="7" y="7" width="30" height="30" rx="9" fill="#c084fc" fill-opacity="0.25"/>
@@ -646,36 +432,41 @@
             <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Watermark</span>
           </a>
 
-          <!-- Sign PDF -->
-          <a href="../sign-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
+          <!-- Crop PDF -->
+          <a href="../crop-pdf" data-tool-id="crop-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
             <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
               <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
-                <rect x="7" y="7" width="30" height="30" rx="9" fill="#38bdf8" fill-opacity="0.25"/>
-                <rect x="9" y="9" width="26" height="26" rx="8" fill="#0284c7" fill-opacity="0.15"/>
-                <path d="M22 13l-4 9 4 9 4-9-4-9z" fill="#0284c7"/>
-                <circle cx="22" cy="22" r="1.5" fill="#ffffff"/>
-                <path d="M22 23.5v7" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
+                <rect x="7" y="7" width="30" height="30" rx="9" fill="#14b8a6" fill-opacity="0.2"/>
+                <path d="M14 10v20h20M10 14h20v20" stroke="#14b8a6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Sign PDF</span>
+            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Crop PDF</span>
           </a>
 
-          <!-- Protect PDF -->
-          <a href="../protect-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
+          <!-- Edit PDF -->
+          <a href="../edit-pdf" data-tool-id="edit-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline col-span-2">
             <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
               <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
-                <rect x="7" y="7" width="30" height="30" rx="9" fill="#eab308" fill-opacity="0.2"/>
-                <rect x="13" y="19" width="18" height="14" rx="3.5" fill="#eab308"/>
-                <path d="M16 19v-4a6 6 0 1112 0v4" stroke="#eab308" stroke-width="2.4" stroke-linecap="round"/>
-                <circle cx="22" cy="25" r="1.5" fill="#18181d"/>
-                <path d="M22 26.5v2.5" stroke="#18181d" stroke-width="1.8" stroke-linecap="round"/>
+                <rect x="7" y="7" width="30" height="30" rx="9" fill="#f472b6" fill-opacity="0.3"/>
+                <rect x="9" y="9" width="26" height="26" rx="8" fill="#ec4899" fill-opacity="0.2"/>
+                <path d="M16 28l1.5-5.5L25 15l4 4-7.5 7.5L16 28z" fill="#ec4899"/>
+                <path d="M23.5 16.5l4 4" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
               </svg>
             </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Protect PDF</span>
+            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Edit PDF</span>
           </a>
+        </div>
+      </div>
 
+      <!-- 4. PDF SECURITY -->
+      <div>
+        <div class="flex items-center gap-2 mb-3 px-1">
+          <span class="text-[11px] font-black uppercase tracking-wider text-[#ff2a5f]">PDF Security</span>
+          <div class="h-px flex-1 bg-zinc-800/80"></div>
+        </div>
+        <div class="grid grid-cols-2 gap-2.5 sm:gap-3">
           <!-- Unlock PDF -->
-          <a href="../unlock-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
+          <a href="../unlock-pdf" data-tool-id="unlock-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
             <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
               <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
                 <rect x="7" y="7" width="30" height="30" rx="9" fill="#10b981" fill-opacity="0.2"/>
@@ -688,17 +479,32 @@
             <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Unlock PDF</span>
           </a>
 
-          <!-- Compare PDF -->
-          <a href="../compare-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
+          <!-- Protect PDF -->
+          <a href="../protect-pdf" data-tool-id="protect-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline">
             <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
               <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
-                <rect x="7" y="7" width="30" height="30" rx="9" fill="#3b82f6" fill-opacity="0.2"/>
-                <rect x="10" y="12" width="11" height="18" rx="2.5" stroke="#3b82f6" stroke-width="1.8"/>
-                <rect x="23" y="12" width="11" height="18" rx="2.5" stroke="#3b82f6" stroke-width="1.8"/>
-                <path d="M13 18h5m-5 4h3m10-4h5m-5 4h5" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/>
+                <rect x="7" y="7" width="30" height="30" rx="9" fill="#eab308" fill-opacity="0.2"/>
+                <rect x="13" y="19" width="18" height="14" rx="3.5" fill="#eab308"/>
+                <path d="M16 19v-4a6 6 0 1112 0v4" stroke="#eab308" stroke-width="2.4" stroke-linecap="round"/>
+                <circle cx="22" cy="25" r="1.5" fill="#18181d"/>
+                <path d="M22 26.5v2.5" stroke="#18181d" stroke-width="1.8" stroke-linecap="round"/>
               </svg>
             </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Compare PDF</span>
+            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Protect PDF</span>
+          </a>
+
+          <!-- Sign PDF -->
+          <a href="../sign-pdf" data-tool-id="sign-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2.5 min-h-[110px] group cursor-pointer no-underline col-span-2">
+            <div class="w-10 h-10 flex items-center justify-center group-hover:scale-105 transition-transform">
+              <svg viewBox="0 0 44 44" class="w-10 h-10" fill="none">
+                <rect x="7" y="7" width="30" height="30" rx="9" fill="#38bdf8" fill-opacity="0.25"/>
+                <rect x="9" y="9" width="26" height="26" rx="8" fill="#0284c7" fill-opacity="0.15"/>
+                <path d="M22 13l-4 9 4 9 4-9-4-9z" fill="#0284c7"/>
+                <circle cx="22" cy="22" r="1.5" fill="#ffffff"/>
+                <path d="M22 23.5v7" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Sign PDF</span>
           </a>
         </div>
       </div>
@@ -719,7 +525,7 @@
   </aside>
 
   <!-- Main Content Area (Snug & Cohesive Spacing to Header) -->
-  <main class="w-full max-w-6xl mx-auto px-5 pt-1 sm:pt-2.5 pb-8 flex-1">
+  <main class="w-full max-w-[1480px] mx-auto px-4 sm:px-8 lg:px-12 pt-1 sm:pt-2.5 pb-12 flex-1">
 
     <!-- ============================================================ -->
     <!-- VIEW 1: ALL TOOLS CATALOG (Full iLovePDF Suite) -->
@@ -1267,5 +1073,95 @@
   <script src="../vectors.js?v=20261117d"></script>
   <!-- Main Application Script -->
   <script src="../app.js?v=20261117d"></script>
+
+  <!-- ============================================================ -->
+  <!-- RICH DARK FOOTER (CutiPDF Brand, 100% Client-Side Privacy) -->
+  <!-- ============================================================ -->
+  <footer class="w-full bg-[#0d0d10] border-t border-zinc-800/90 text-zinc-400 mt-auto select-none">
+    <div class="max-w-[1480px] mx-auto px-5 sm:px-8 lg:px-12 py-12 sm:py-16">
+      
+      <!-- Top Grid: Brand & Tool Categories -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 pb-10 sm:pb-12 border-b border-zinc-800/70">
+        
+        <!-- Brand Column (2 Spans on Desktop) -->
+        <div class="lg:col-span-2 space-y-4">
+          <a href="../" data-tool-id="all-tools" class="inline-flex items-center gap-3 group no-underline">
+            <img src="../assets/logo.png" alt="CutiPDF Logo" class="w-9 h-9 object-contain group-hover:scale-105 transition-transform">
+            <span class="font-brush text-2xl font-black text-white tracking-tight">Cuti<span class="text-[#ff2a5f]">PDF</span></span>
+          </a>
+          <p class="text-xs font-brush text-[#ff2a5f] text-sm font-semibold tracking-wide">
+            (pdf tool box, but lovely)
+          </p>
+          <p class="text-xs text-zinc-400 max-w-sm leading-relaxed">
+            Every tool you need to work with PDFs in one place. 100% private in-browser processing powered by WebAssembly. No files leave your device.
+          </p>
+          
+          <!-- Privacy Badges -->
+          <div class="flex flex-wrap items-center gap-2 pt-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-800/80 border border-zinc-700/60 text-[11px] font-bold text-zinc-300">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> 100% Client-Side
+            </span>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-800/80 border border-zinc-700/60 text-[11px] font-bold text-zinc-300">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#ff2a5f]"></span> Zero Cloud Uploads
+            </span>
+          </div>
+        </div>
+
+        <!-- Column 1: ORGANIZE PDF -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-black uppercase tracking-wider text-[#ff2a5f]">Organize PDF</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="../merge-pdf" data-tool-id="merge-pdf" class="hover:text-white transition-colors">Merge PDF</a></li>
+            <li><a href="../split-pdf" data-tool-id="split-pdf" class="hover:text-white transition-colors">Split PDF</a></li>
+            <li><a href="../remove-pages" data-tool-id="remove-pages" class="hover:text-white transition-colors">Remove Pages</a></li>
+            <li><a href="../extract-pages" data-tool-id="extract-pages" class="hover:text-white transition-colors">Extract Pages</a></li>
+            <li><a href="../organize-pdf" data-tool-id="organize-pdf" class="hover:text-white transition-colors">Organize PDF</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 2: OPTIMIZE & CONVERT -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-black uppercase tracking-wider text-[#ff2a5f]">Optimize & Convert</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="../compress-pdf" data-tool-id="compress-pdf" class="hover:text-white transition-colors">Compress PDF</a></li>
+            <li><a href="../jpg-to-pdf" data-tool-id="jpg-to-pdf" class="hover:text-white transition-colors">JPG to PDF</a></li>
+            <li><a href="../pdf-to-jpg" data-tool-id="pdf-to-jpg" class="hover:text-white transition-colors">PDF to JPG</a></li>
+          </ul>
+        </div>
+
+        <!-- Column 3: EDIT & SECURITY -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-black uppercase tracking-wider text-[#ff2a5f]">Edit & Security</h4>
+          <ul class="space-y-2 text-xs">
+            <li><a href="../rotate-pdf" data-tool-id="rotate-pdf" class="hover:text-white transition-colors">Rotate PDF</a></li>
+            <li><a href="../page-numbers" data-tool-id="page-numbers" class="hover:text-white transition-colors">Page Numbers</a></li>
+            <li><a href="../watermark-pdf" data-tool-id="watermark-pdf" class="hover:text-white transition-colors">Watermark PDF</a></li>
+            <li><a href="../crop-pdf" data-tool-id="crop-pdf" class="hover:text-white transition-colors">Crop PDF</a></li>
+            <li><a href="../edit-pdf" data-tool-id="edit-pdf" class="hover:text-white transition-colors">Edit PDF</a></li>
+            <li><a href="../unlock-pdf" data-tool-id="unlock-pdf" class="hover:text-white transition-colors">Unlock PDF</a></li>
+            <li><a href="../protect-pdf" data-tool-id="protect-pdf" class="hover:text-white transition-colors">Protect PDF</a></li>
+            <li><a href="../sign-pdf" data-tool-id="sign-pdf" class="hover:text-white transition-colors">Sign PDF</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Bottom Bar: Copyright & Info Modal -->
+      <div class="pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
+        <div class="flex items-center gap-2">
+          <span>&copy; 2026 CutiPDF. All rights reserved.</span>
+          <span>•</span>
+          <span class="text-zinc-400">Crafted with care & privacy.</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <button type="button" onclick="openInfoModal()" class="hover:text-[#ff2a5f] transition-colors cursor-pointer">About CutiPDF</button>
+          <span>•</span>
+          <a href="https://github.com/weir-doabby/cutipdf" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">GitHub</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
 </body>
 </html>

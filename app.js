@@ -8,7 +8,7 @@ const TOOLS_CATALOG = {
     {
       id: 'merge-pdf',
       title: 'Merge PDF',
-      desc: 'Combine PDFs in the order you want with the easiest PDF merger available.',
+      desc: 'Combine multiple PDF files into one single document in any order you want.',
       accept: 'application/pdf',
       btnText: 'Select PDF files',
       actionText: 'Merge PDF'
@@ -16,7 +16,7 @@ const TOOLS_CATALOG = {
     {
       id: 'split-pdf',
       title: 'Split PDF',
-      desc: 'Separate one page or a whole set for easy conversion into independent PDF files.',
+      desc: 'Separate pages or extract ranges into independent PDF files instantly.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Split PDF'
@@ -24,7 +24,7 @@ const TOOLS_CATALOG = {
     {
       id: 'remove-pages',
       title: 'Remove Pages',
-      desc: 'Select and remove the PDF pages you don’t need. Get a new file without your deleted pages.',
+      desc: 'Select and remove unwanted pages from your PDF file with interactive preview.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Remove Pages'
@@ -32,7 +32,7 @@ const TOOLS_CATALOG = {
     {
       id: 'extract-pages',
       title: 'Extract Pages',
-      desc: 'Get a new document containing only the desired pages from your PDF.',
+      desc: 'Create a new PDF containing only your selected pages.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Extract Pages'
@@ -40,139 +40,37 @@ const TOOLS_CATALOG = {
     {
       id: 'organize-pdf',
       title: 'Organize PDF',
-      desc: 'Sort pages of your PDF file however you like. Reorder or delete PDF pages.',
+      desc: 'Drag and drop to sort, reorder, rotate, or delete pages in your PDF.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Save Order'
-    },
-    {
-      id: 'scan-to-pdf',
-      title: 'Scan to PDF',
-      desc: 'Capture document scans directly from your camera and convert them into clean PDF.',
-      accept: 'image/*',
-      btnText: 'Select Scans',
-      actionText: 'Save as PDF'
     }
   ],
 
-  'OPTIMIZE PDF': [
+  'OPTIMIZE & CONVERT': [
     {
       id: 'compress-pdf',
       title: 'Compress PDF',
-      desc: 'Reduce file size while optimizing for maximal PDF quality.',
+      desc: 'Reduce file size while preserving high visual quality in your browser.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Compress PDF'
     },
     {
-      id: 'repair-pdf',
-      title: 'Repair PDF',
-      desc: 'Repair damaged or corrupted PDF files and recover data from them.',
-      accept: 'application/pdf',
-      btnText: 'Select PDF file',
-      actionText: 'Repair PDF'
-    },
-    {
-      id: 'ocr-pdf',
-      title: 'OCR PDF',
-      desc: 'Convert scanned PDF documents into searchable and selectable text files.',
-      accept: 'application/pdf',
-      btnText: 'Select PDF file',
-      actionText: 'Perform OCR'
-    }
-  ],
-
-  'CONVERT TO PDF': [
-    {
       id: 'jpg-to-pdf',
       title: 'JPG to PDF',
-      desc: 'Convert JPG, PNG, and WebP images to PDF in seconds with layout control.',
+      desc: 'Convert JPG, PNG, and WebP images into a clean PDF document.',
       accept: 'image/jpeg,image/png,image/webp,image/jpg',
-      btnText: 'Select JPG images',
+      btnText: 'Select Images',
       actionText: 'Convert to PDF'
     },
-    {
-      id: 'word-to-pdf',
-      title: 'Word to PDF',
-      desc: 'Convert DOC and DOCX files into accurate PDF documents.',
-      accept: '.doc,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      btnText: 'Select Word files',
-      actionText: 'Convert to PDF'
-    },
-    {
-      id: 'powerpoint-to-pdf',
-      title: 'PowerPoint to PDF',
-      desc: 'Convert PPT and PPTX presentations into clean PDF slides.',
-      accept: '.ppt,.pptx',
-      btnText: 'Select PowerPoint files',
-      actionText: 'Convert to PDF'
-    },
-    {
-      id: 'excel-to-pdf',
-      title: 'Excel to PDF',
-      desc: 'Convert Excel tables and spreadsheets into PDF reports.',
-      accept: '.xls,.xlsx,.csv',
-      btnText: 'Select Excel spreadsheets',
-      actionText: 'Convert to PDF'
-    },
-    {
-      id: 'html-to-pdf',
-      title: 'HTML to PDF',
-      desc: 'Convert webpages, HTML files, or raw code into a PDF document.',
-      accept: '.html,.htm,text/html',
-      btnText: 'Select HTML file',
-      actionText: 'Convert to PDF'
-    },
-    {
-      id: 'text-to-pdf',
-      title: 'Text to PDF',
-      desc: 'Convert plain text, notes, and markdown into formatted PDF.',
-      accept: '.txt,.md,text/plain',
-      btnText: 'Select Text file',
-      actionText: 'Convert to PDF'
-    }
-  ],
-
-  'CONVERT FROM PDF': [
     {
       id: 'pdf-to-jpg',
       title: 'PDF to JPG',
-      desc: 'Extract all images contained in a PDF or convert each page into a high-res JPG.',
+      desc: 'Convert every PDF page into high-resolution JPG images packaged in a ZIP.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Convert to JPG'
-    },
-    {
-      id: 'pdf-to-word',
-      title: 'PDF to Word',
-      desc: 'Easily convert your PDF files into editable Word documents.',
-      accept: 'application/pdf',
-      btnText: 'Select PDF file',
-      actionText: 'Convert to Word'
-    },
-    {
-      id: 'pdf-to-powerpoint',
-      title: 'PDF to PowerPoint',
-      desc: 'Convert your PDF documents into editable presentation slides.',
-      accept: 'application/pdf',
-      btnText: 'Select PDF file',
-      actionText: 'Convert to Slides'
-    },
-    {
-      id: 'pdf-to-excel',
-      title: 'PDF to Excel',
-      desc: 'Extract tabular data straight from PDF into Excel spreadsheets.',
-      accept: 'application/pdf',
-      btnText: 'Select PDF file',
-      actionText: 'Convert to Excel'
-    },
-    {
-      id: 'pdf-to-pdfa',
-      title: 'PDF to PDF/A',
-      desc: 'Convert your PDF to PDF/A for ISO-standardized long-term archiving.',
-      accept: 'application/pdf',
-      btnText: 'Select PDF file',
-      actionText: 'Convert to PDF/A'
     }
   ],
 
@@ -180,7 +78,7 @@ const TOOLS_CATALOG = {
     {
       id: 'rotate-pdf',
       title: 'Rotate PDF',
-      desc: 'Rotate your PDF pages permanently portrait or landscape.',
+      desc: 'Rotate individual pages or all pages permanently 90°, 180°, or 270°.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Rotate PDF'
@@ -188,34 +86,34 @@ const TOOLS_CATALOG = {
     {
       id: 'page-numbers',
       title: 'Page Numbers',
-      desc: 'Add page numbers into PDFs easily with custom placement and format.',
+      desc: 'Add clean page numbers with custom position and numbering format.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Add Page Numbers'
     },
     {
       id: 'watermark-pdf',
-      title: 'Watermark',
-      desc: 'Stamp custom text or confidential marks over your PDF with custom opacity.',
+      title: 'Watermark PDF',
+      desc: 'Stamp custom text or confidential marks over your PDF pages.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Add Watermark'
     },
     {
-      id: 'edit-pdf',
-      title: 'Edit PDF',
-      desc: 'Add text, titles, notes, and annotations directly into your PDF.',
-      accept: 'application/pdf',
-      btnText: 'Select PDF file',
-      actionText: 'Save Edits'
-    },
-    {
       id: 'crop-pdf',
       title: 'Crop PDF',
-      desc: 'Trim the visible page margins of your PDF documents.',
+      desc: 'Trim visible page margins and white borders of your PDF documents.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Crop PDF'
+    },
+    {
+      id: 'edit-pdf',
+      title: 'Edit PDF',
+      desc: 'Add text notes, highlights, and annotations directly onto your PDF.',
+      accept: 'application/pdf',
+      btnText: 'Select PDF file',
+      actionText: 'Save Edits'
     }
   ],
 
@@ -223,7 +121,7 @@ const TOOLS_CATALOG = {
     {
       id: 'unlock-pdf',
       title: 'Unlock PDF',
-      desc: 'Remove PDF password security and permissions to use your document freely.',
+      desc: 'Remove password security and encryption from your protected PDF.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Unlock PDF'
@@ -239,26 +137,10 @@ const TOOLS_CATALOG = {
     {
       id: 'sign-pdf',
       title: 'Sign PDF',
-      desc: 'Draw your signature or type your name to stamp onto your PDF documents.',
+      desc: 'Draw or type your signature to stamp onto any page of your PDF.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
       actionText: 'Sign Document'
-    },
-    {
-      id: 'redact-pdf',
-      title: 'Redact PDF',
-      desc: 'Permanently remove or black-out confidential text from your PDF.',
-      accept: 'application/pdf',
-      btnText: 'Select PDF file',
-      actionText: 'Redact PDF'
-    },
-    {
-      id: 'compare-pdf',
-      title: 'Compare PDF',
-      desc: 'Show a side-by-side comparison of two PDF files to spot visual changes.',
-      accept: 'application/pdf',
-      btnText: 'Select 2 PDF files',
-      actionText: 'Compare Documents'
     }
   ]
 };
@@ -436,7 +318,7 @@ function renderAllToolsCatalog() {
       <div class="flex items-center gap-2 border-b border-pink-100 dark:border-zinc-800 pb-2">
         <h2 class="category-title">${category}</h2>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-5">
         ${tools.map(tool => {
           const vectorSvg = VECTORS[tool.id] || '<div class="text-sm font-bold text-zinc-400">PDF</div>';
           return `
@@ -591,26 +473,18 @@ function initRouting() {
     handleRoute();
   });
 
-  // Logo click returns to home catalog
-  if (DOM.brandLogoLink) {
-    DOM.brandLogoLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      navigateTo(null);
-    });
-  }
-
-  // Delegated click handler for tool cards in catalog (instant SPA transition + new tab support)
-  if (DOM.toolsGridContainer) {
-    DOM.toolsGridContainer.addEventListener('click', (e) => {
-      const card = e.target.closest('a[data-tool-id]');
-      if (card) {
-        if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
-        e.preventDefault();
-        const toolId = card.getAttribute('data-tool-id');
-        navigateTo(toolId);
-      }
-    });
-  }
+  // Universal delegated click handler for ALL links with data-tool-id
+  // Intercepts Header, Mega Menu, Mobile Drawer, Catalog, and Footer clicks seamlessly
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[data-tool-id]');
+    if (!link) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+    e.preventDefault();
+    const toolId = link.getAttribute('data-tool-id');
+    if (typeof closeMobileNav === 'function') closeMobileNav();
+    if (typeof closeQuickTools === 'function') closeQuickTools();
+    navigateTo(toolId === 'all-tools' ? null : toolId);
+  });
 
   // Handle initial route on page load
   handleRoute();
@@ -2624,11 +2498,11 @@ function renderInteractiveWorkspace() {
     }
   }
 
-  // Floating Action Bar for remove-pages
+  // Floating Action Bar (Standardized across all client-side tools)
   const actionBar = document.getElementById('workspaceActionBar');
+  if (actionBar) actionBar.classList.add('floating-mode');
 
   if (toolId === 'remove-pages') {
-    if (actionBar) actionBar.classList.add('floating-mode');
 
     const removedCount = state.workspaceItems.filter(i => i.removed).length;
     if (state.removePagesProcessed) {
@@ -2656,14 +2530,14 @@ function renderInteractiveWorkspace() {
       }
     }
   } else {
-    if (actionBar) actionBar.classList.remove('floating-mode');
     if (toolsBtn) toolsBtn.classList.remove('elevated', 'elevated-mobile');
+    const subButtons = document.getElementById('workspaceActionSubButtons');
+    if (subButtons) subButtons.classList.add('hidden');
     DOM.btnExecuteAction.disabled = false;
     DOM.btnExecuteAction.classList.remove('opacity-50', 'cursor-not-allowed');
     const actionText = state.activeTool ? state.activeTool.actionText : 'Process';
     DOM.btnExecuteAction.innerHTML = `
       <span id="actionButtonText">${actionText}</span>
-      <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
     `;
   }
 
@@ -3997,7 +3871,11 @@ async function engineEditPdf(files) {
 // ----------------------------------------------------
 // Utility Functions
 // ----------------------------------------------------
-function downloadBlob(blob, filename) {
+function downloadBlob(blob, filename, customTitle) {
+  state.lastProcessedPdfBlob = blob;
+  state.lastProcessedPdfFilename = filename;
+  state.lastProcessedPdfFile = new File([blob], filename, { type: blob.type || 'application/pdf' });
+
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
@@ -4015,7 +3893,30 @@ function downloadBlob(blob, filename) {
     });
   }
 
-  showToast('File processed & downloaded successfully!');
+  // Show standardized Post-Process Done Screen
+  const title = customTitle || (state.activeTool ? `${state.activeTool.title} Completed!` : 'Document Ready!');
+  showGenericDoneScreen(title);
+}
+
+function showGenericDoneScreen(title) {
+  if (DOM.toolDropzone) DOM.toolDropzone.classList.add('hidden');
+  if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.add('hidden');
+  const actionBar = document.getElementById('workspaceActionBar');
+  if (actionBar) actionBar.classList.remove('floating-mode');
+  const toolHeader = document.getElementById('toolHeaderContainer');
+  if (toolHeader) toolHeader.classList.add('hidden');
+
+  const doneScreen = document.getElementById('workspaceDoneScreen');
+  if (doneScreen) {
+    doneScreen.classList.remove('hidden');
+    const doneTitle = document.getElementById('doneScreenTitle');
+    if (doneTitle) {
+      doneTitle.textContent = title;
+    }
+  }
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  showToast(`${title} Download started.`);
 }
 
 let toastTimer;

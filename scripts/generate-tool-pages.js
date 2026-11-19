@@ -12,10 +12,11 @@ const rootDir = path.resolve(__dirname, '..');
 const appJsPath = path.join(rootDir, 'app.js');
 const masterHtmlPath = path.join(rootDir, 'index.html');
 
-// 1. Extract TOOLS_CATALOG from app.js
+// 1. Extract TOOLS_CATALOG dynamically from app.js
 const appJsContent = fs.readFileSync(appJsPath, 'utf8');
-const lines = appJsContent.split('\n');
-const catalogCode = lines.slice(5, 264).join('\n').replace('const TOOLS_CATALOG', 'globalThis.TOOLS_CATALOG');
+const start = appJsContent.indexOf('const TOOLS_CATALOG =');
+const end = appJsContent.indexOf('\n// Application State', start);
+const catalogCode = appJsContent.slice(start, end).replace('const TOOLS_CATALOG', 'globalThis.TOOLS_CATALOG');
 const sandbox = {};
 vm.runInNewContext(catalogCode, sandbox);
 
@@ -131,7 +132,7 @@ for (const tool of tools) {
 
 sitemap += `</urlset>\n`;
 fs.writeFileSync(path.join(rootDir, 'sitemap.xml'), sitemap, 'utf8');
-console.log('Generated sitemap.xml with all 30 tools.');
+console.log(`Generated sitemap.xml with all ${tools.length} tools.`);
 
 // 5. Generate robots.txt
 const robots = `# CutiPDF Robots.txt
