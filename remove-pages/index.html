@@ -132,7 +132,7 @@
     <!-- Left Group: Brand Wordmark + Navigation Links closely together like iLovePDF -->
     <div class="flex items-center gap-6 lg:gap-8">
       <!-- Brand: Pure Text Wordmark (No image icon, favicon reserved for browser tab) -->
-      <a id="brandLogoLink" href="../" class="flex items-center cursor-pointer no-underline text-inherit group flex-shrink-0" title="CutiPDF Home">
+      <a id="brandLogoLink" href="../" data-tool-id="all-tools" class="flex items-center cursor-pointer no-underline text-inherit group flex-shrink-0" title="CutiPDF Home">
         <span class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:opacity-90 transition-opacity font-brush">
           Cuti<span class="text-[#ff2a5f] drop-shadow-xs">PDF</span>
         </span>
@@ -252,10 +252,10 @@
   <aside id="mobileMenuDrawer" class="fixed top-0 right-0 bottom-0 z-[85] w-full max-w-[360px] sm:max-w-[400px] bg-[#101013] border-l border-zinc-800/90 shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out md:hidden" style="height: 100dvh;">
     <!-- Drawer Header: Brand on left, ✕ Close Button on right -->
     <div class="px-5 py-3.5 border-b border-zinc-800/80 bg-[#141418] flex items-center justify-between flex-shrink-0">
-      <div class="flex items-center gap-2.5">
-        <img src="../assets/logo.png" alt="CutiPDF" class="w-6 h-6 object-contain">
+      <a href="../" data-tool-id="all-tools" onclick="closeMobileNav()" class="flex items-center gap-2.5 cursor-pointer no-underline text-inherit group" title="CutiPDF Home">
+        <img src="../assets/logo.png" alt="CutiPDF" class="w-6 h-6 object-contain group-hover:scale-105 transition-transform">
         <span class="font-brush text-xl font-extrabold text-zinc-100 tracking-tight">Cuti<span class="text-[#ff2a5f]">PDF</span></span>
-      </div>
+      </a>
       <button type="button" onclick="closeMobileNav()" class="w-8 h-8 rounded-full bg-zinc-800/90 hover:bg-zinc-700 text-zinc-300 hover:text-white flex items-center justify-center transition cursor-pointer" aria-label="Close menu">
         <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
@@ -530,7 +530,7 @@
     <!-- ============================================================ -->
     <!-- VIEW 1: ALL TOOLS CATALOG (Full iLovePDF Suite) -->
     <!-- ============================================================ -->
-    <div id="view-all-tools" class="view-container active space-y-10">
+    <div id="view-all-tools" class="view-container space-y-10">
       
       <!-- Clean Welcome Header with Logo and (pdf tool box, but lovely) -->
       <div class="text-center max-w-3xl mx-auto space-y-1.5 py-4">
@@ -553,7 +553,7 @@
     <!-- ============================================================ -->
     <!-- VIEW 2: DEDICATED TOOL PAGE FOR EACH TOOL -->
     <!-- ============================================================ -->
-    <div id="view-tool-active" class="view-container max-w-4xl mx-auto space-y-3 sm:space-y-4">
+    <div id="view-tool-active" class="view-container active max-w-4xl mx-auto space-y-3 sm:space-y-4">
 
       <!-- Tool Header with Gorgeous Vector (Centered, Clean Spacing to Header & Title) -->
       <div id="toolHeaderContainer" class="text-center flex flex-col items-center space-y-0.5 sm:space-y-1">
@@ -1077,7 +1077,7 @@
   <!-- ============================================================ -->
   <!-- RICH DARK FOOTER (CutiPDF Brand, 100% Client-Side Privacy) -->
   <!-- ============================================================ -->
-  <footer class="w-full bg-[#0d0d10] border-t border-zinc-800/90 text-zinc-400 mt-auto select-none">
+  <footer id="mainSiteFooter" class="w-full hidden bg-[#0d0d10] border-t border-zinc-800/90 text-zinc-400 mt-auto select-none">
     <div class="max-w-[1480px] mx-auto px-5 sm:px-8 lg:px-12 py-12 sm:py-16">
       
       <!-- Top Grid: Brand & Tool Categories -->

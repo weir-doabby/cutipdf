@@ -99,7 +99,11 @@ for (const tool of tools) {
     .replace(/src="app\.js\?/g, 'src="../app.js?')
     .replace(/href="assets\//g, 'href="../assets/')
     .replace(/src="assets\//g, 'src="../assets/')
-    .replace(/href="\.\//g, 'href="../');
+    .replace(/href="\.\//g, 'href="../')
+    // For dedicated tool pages: activate tool view, deactivate all-tools view, hide footer
+    .replace('id="view-all-tools" class="view-container active', 'id="view-all-tools" class="view-container')
+    .replace('id="view-tool-active" class="view-container', 'id="view-tool-active" class="view-container active')
+    .replace('id="mainSiteFooter" class="w-full', 'id="mainSiteFooter" class="w-full hidden');
 
   const toolHtmlPath = path.join(toolDir, 'index.html');
   fs.writeFileSync(toolHtmlPath, html, 'utf8');

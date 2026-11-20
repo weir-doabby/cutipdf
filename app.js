@@ -287,7 +287,7 @@ function applyTheme(theme) {
 // ==========================================
 function getBasePath() {
   const path = window.location.pathname;
-  if (path.startsWith('/cutipdf/')) {
+  if (path === '/cutipdf' || path.startsWith('/cutipdf/')) {
     return '/cutipdf/';
   }
   return '/';
@@ -347,7 +347,7 @@ function parseToolFromCurrentLocation() {
   const pParam = urlParams.get('p');
   if (pParam) {
     const cleanP = pParam.replace(/^\/+/, '').replace(/\/+$/, '').toLowerCase().replace(/_/g, '-');
-    if (cleanP && cleanP !== 'all-tools' && cleanP !== 'tools') {
+    if (cleanP && cleanP !== 'all-tools' && cleanP !== 'tools' && cleanP !== 'cutipdf') {
       return cleanP;
     }
   }
@@ -357,14 +357,16 @@ function parseToolFromCurrentLocation() {
   const basePath = getBasePath();
   if (path.startsWith(basePath)) {
     const subPath = path.slice(basePath.length).replace(/\/+$/, '').toLowerCase().replace(/_/g, '-');
-    if (subPath && subPath !== 'index.html' && subPath !== 'all-tools' && subPath !== 'tools') {
+    if (subPath && subPath !== 'index.html' && subPath !== 'all-tools' && subPath !== 'tools' && subPath !== 'cutipdf') {
       return subPath;
     }
+  } else if (path === '/cutipdf') {
+    return null;
   }
 
   // 3. Check hash (backward compatibility fallback: #merge-pdf or #/merge-pdf)
   const hash = window.location.hash.replace(/^#\/?/, '').trim().toLowerCase().replace(/_/g, '-');
-  if (hash && hash !== 'all-tools' && hash !== 'tools') {
+  if (hash && hash !== 'all-tools' && hash !== 'tools' && hash !== 'cutipdf') {
     return hash;
   }
 
@@ -431,6 +433,8 @@ function showAllToolsCatalogView() {
 
   DOM.viewToolActive.classList.remove('active');
   DOM.viewAllTools.classList.add('active');
+  const footer = document.getElementById('mainSiteFooter');
+  if (footer) footer.classList.remove('hidden');
   const actionBar = document.getElementById('workspaceActionBar');
   if (actionBar) actionBar.classList.remove('floating-mode');
   const toolbar = document.querySelector('.workspace-toolbar');
@@ -473,6 +477,14 @@ function initRouting() {
     handleRoute();
   });
 
+  // Explicit brand logo click returns to home catalog
+  if (DOM.brandLogoLink) {
+    DOM.brandLogoLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      navigateTo(null);
+    });
+  }
+
   // Universal delegated click handler for ALL links with data-tool-id
   // Intercepts Header, Mega Menu, Mobile Drawer, Catalog, and Footer clicks seamlessly
   document.addEventListener('click', (e) => {
@@ -483,7 +495,7 @@ function initRouting() {
     const toolId = link.getAttribute('data-tool-id');
     if (typeof closeMobileNav === 'function') closeMobileNav();
     if (typeof closeQuickTools === 'function') closeQuickTools();
-    navigateTo(toolId === 'all-tools' ? null : toolId);
+    navigateTo(!toolId || toolId === 'all-tools' ? null : toolId);
   });
 
   // Handle initial route on page load
@@ -749,6 +761,8 @@ function openToolDedicatedPage(tool) {
 
   DOM.viewAllTools.classList.remove('active');
   DOM.viewToolActive.classList.add('active');
+  const footer = document.getElementById('mainSiteFooter');
+  if (footer) footer.classList.add('hidden');
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -1029,7 +1043,7 @@ function initDropzoneEvents() {
     if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       const files = Array.from(e.dataTransfer.files);
       if (!state.activeTool) {
-        navigateToTool('remove-pages');
+        navigateTo('remove-pages');
       }
       handleFilesSelected(files);
     }
@@ -3429,6 +3443,10 @@ function showRemovePagesDoneScreen(removedCount, remainingCount) {
   // Keep tool header hidden on done screen as requested
   const toolHeader = document.getElementById('toolHeaderContainer');
   if (toolHeader) toolHeader.classList.add('hidden');
+  const footer = document.getElementById('mainSiteFooter');
+  if (footer) footer.classList.add('hidden');
+  const footer = document.getElementById('mainSiteFooter');
+  if (footer) footer.classList.add('hidden');
 
   // Show Done Screen
   const doneScreen = document.getElementById('workspaceDoneScreen');
@@ -3905,6 +3923,8 @@ function showGenericDoneScreen(title) {
   if (actionBar) actionBar.classList.remove('floating-mode');
   const toolHeader = document.getElementById('toolHeaderContainer');
   if (toolHeader) toolHeader.classList.add('hidden');
+  const footer = document.getElementById('mainSiteFooter');
+  if (footer) footer.classList.add('hidden');
 
   const doneScreen = document.getElementById('workspaceDoneScreen');
   if (doneScreen) {

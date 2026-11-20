@@ -453,34 +453,25 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
-/* Upload Dropzone (Responsive: Clean No-Box on Mobile Phones, Compact Dropzone on Desktop) */
+/* Upload Dropzone (Pure iLovePDF Style: No bordered box on any device; global drag & drop anywhere) */
 .tool-dropzone {
-  border: 1.5px dashed var(--border-color);
-  background: var(--dropzone-bg);
-  border-radius: 20px;
-  padding: 0.75rem 1rem;
-  transition: all 0.2s ease;
-}
-
-@media (max-width: 639px) {
-  .tool-dropzone {
-    border: none !important;
-    background: transparent !important;
-    padding: 0.25rem 0 !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-  }
+  border: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  padding: 1rem 0 !important;
+  box-shadow: none !important;
+  transition: opacity 0.2s ease;
 }
 
 .tool-dropzone:hover {
-  border-color: var(--color-pink-primary);
-  background: var(--dropzone-bg);
+  border: none !important;
+  background: transparent !important;
 }
 
 .tool-dropzone.drag-active {
-  border-color: var(--color-pink-deep);
-  background: rgba(255, 82, 119, 0.08);
-  transform: scale(1.01);
+  border: none !important;
+  background: transparent !important;
+  transform: none !important;
 }
 
 /* Thumbnail Preview Cards (iLovePDF Style) */
@@ -686,4 +677,9 @@ html.dark .segmented-control {
 
 html.dark ::-webkit-scrollbar-thumb {
   background: #2e262a;
+}
+
+/* Footer only visible on Home page (hidden whenever inside any active tool or workspace) */
+body:has(#view-tool-active.active) #mainSiteFooter {
+  display: none !important;
 }
