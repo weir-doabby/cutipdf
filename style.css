@@ -48,14 +48,30 @@ html.dark {
   -webkit-tap-highlight-color: transparent;
 }
 
+html {
+  height: 100%;
+}
+
 body {
   font-family: var(--font-sans);
   background-color: var(--bg-main);
   color: var(--text-main);
   min-height: 100vh;
+  min-height: 100dvh;
   direction: ltr;
   transition: background-color 0.25s ease, color 0.25s ease;
-  padding-bottom: 110px;
+  padding-bottom: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+main {
+  flex: 1 0 auto !important;
+}
+
+#mainSiteFooter {
+  margin-top: auto !important;
+  width: 100% !important;
 }
 
 /* Subtle watercolor paper texture effect */

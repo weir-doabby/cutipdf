@@ -226,10 +226,39 @@ const DOM = {
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   renderAllToolsCatalog();
+  syncAllToolIcons();
   initRouting();
   initQuickToolsModal();
   initDropzoneEvents();
 });
+
+// Sync duotone vector icons across mobile drawer & continue cards
+function syncAllToolIcons() {
+  document.querySelectorAll('#mobileMenuDrawer a[data-tool-id]').forEach(link => {
+    const toolId = link.getAttribute('data-tool-id');
+    if (!toolId || toolId === 'all-tools') return;
+    const iconContainer = link.querySelector('.tool-icon-wrap');
+    if (iconContainer) {
+      iconContainer.innerHTML = getToolVector(toolId, 'text-xs');
+    }
+  });
+
+  const continueButtons = [
+    { selector: 'button[onclick*="remove-pages"]', toolId: 'remove-pages' },
+    { selector: 'button[onclick*="compress-pdf"]', toolId: 'compress-pdf' },
+    { selector: 'button[onclick*="merge-pdf"]', toolId: 'merge-pdf' },
+    { selector: 'button[onclick*="page-numbers"]', toolId: 'page-numbers' }
+  ];
+  continueButtons.forEach(({ selector, toolId }) => {
+    const btn = document.querySelector(selector);
+    if (btn) {
+      const iconWrap = btn.querySelector('.continue-icon-wrap') || btn.querySelector('.w-9, .w-10');
+      if (iconWrap) {
+        iconWrap.innerHTML = getToolVector(toolId, 'text-xs');
+      }
+    }
+  });
+}
 
 // ==========================================
 // Theme Management
