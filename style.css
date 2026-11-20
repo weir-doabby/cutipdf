@@ -337,7 +337,7 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
 @media (min-width: 640px) {
   .desktop-balancer {
     display: block;
-    width: 38px;
+    width: 46px;
     flex-shrink: 0;
     visibility: hidden;
     pointer-events: none;
@@ -345,24 +345,24 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
   }
 }
 
-/* Big Watercolor Action Button (iLovePDF Style - Prominent & Responsive) */
+/* Big Hero Action Button (iLovePDF Style - Large, Prominent & Confident) */
 .btn-primary-action {
-  background: linear-gradient(135deg, #ff2a5f 0%, #ff3366 50%, #e91e63 100%);
+  background: #ff2a5f;
   color: #ffffff;
-  font-weight: 700;
-  border-radius: 18px;
-  min-height: 56px;
-  height: 56px;
+  font-weight: 800;
+  border-radius: 20px;
+  min-height: 64px;
+  height: 64px;
   width: 100%;
-  max-width: 320px;
-  padding: 14px 22px;
-  font-size: 17px;
+  max-width: 360px;
+  padding: 16px 32px;
+  font-size: 19px;
   letter-spacing: -0.2px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  gap: 12px;
+  box-shadow: 0 4px 16px rgba(255, 42, 95, 0.2);
   transition: all 0.15s ease;
   border: none;
   cursor: pointer;
@@ -371,34 +371,36 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
 
 @media (min-width: 640px) {
   .btn-primary-action {
-    min-height: 58px;
-    height: 58px;
+    min-height: 72px;
+    height: 72px;
     width: auto;
+    min-width: 320px;
     max-width: none;
-    padding: 14px 40px;
-    font-size: 18px;
+    padding: 18px 52px;
+    font-size: 22px;
+    border-radius: 22px;
   }
 }
 
 .btn-primary-action:hover {
-  background: linear-gradient(135deg, #ff3366 0%, #e91e63 100%);
-  transform: none; /* Stay in place, no shadow lifting or popping out */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  background: #e01a4f;
+  transform: none;
+  box-shadow: 0 6px 20px rgba(255, 42, 95, 0.28);
 }
 
 .btn-primary-action:active {
   transform: scale(0.98);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 8px rgba(255, 42, 95, 0.15);
 }
 
-/* Cloud Source Buttons Wrap (Mobile: horizontal row underneath, ALIGNED RIGHT CORNER; Desktop: vertical stack beside) */
+/* Cloud Source Buttons Wrap (Mobile: horizontal row underneath; Desktop: vertical stack beside) */
 .cloud-buttons-wrap {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-end; /* Flush with right edge under Select button on Mobile like iLovePDF */
+  justify-content: flex-end;
   width: 100%;
-  max-width: 320px;
+  max-width: 360px;
   gap: 8px;
 }
 
@@ -406,9 +408,9 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
   .cloud-buttons-wrap {
     flex-direction: column;
     justify-content: space-between;
-    height: 58px;
-    width: 38px;
-    max-width: 38px;
+    height: 72px;
+    width: 46px;
+    max-width: 46px;
     gap: 6px;
     flex-shrink: 0;
   }
@@ -416,11 +418,11 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
 
 /* Cloud Source Button (Google Drive & Dropbox) */
 .btn-cloud-source {
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ff2a5f 0%, #ff3366 50%, #e91e63 100%);
+  background: #ff2a5f;
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -435,22 +437,20 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
 
 @media (min-width: 640px) {
   .btn-cloud-source {
-    width: 38px;
-    min-width: 38px;
-    height: calc(50% - 3px);
-    border-radius: 10px;
+    width: 46px;
+    min-width: 46px;
+    height: 33px;
+    border-radius: 12px;
   }
 }
 
 .btn-cloud-source:hover {
-  background: linear-gradient(135deg, #ff3366 0%, #e91e63 100%);
+  background: #e01a4f;
   transform: none;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
 }
 
 .btn-cloud-source:active {
   transform: scale(0.95);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 /* Upload Dropzone (Pure iLovePDF Style: No bordered box on any device; global drag & drop anywhere) */

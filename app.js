@@ -303,10 +303,18 @@ function findToolById(id) {
   return null;
 }
 
+// Safe Vector Lookup
+function getToolVector(toolId, fallbackClass = 'text-sm') {
+  if (typeof VECTORS !== 'undefined' && VECTORS[toolId]) return VECTORS[toolId];
+  if (typeof window !== 'undefined' && window.VECTORS && window.VECTORS[toolId]) return window.VECTORS[toolId];
+  return `<div class="${fallbackClass} font-bold text-zinc-400">PDF</div>`;
+}
+
 // ==========================================
 // Render All Tools Catalog with Brush Headers
 // ==========================================
 function renderAllToolsCatalog() {
+  if (!DOM.toolsGridContainer) return;
   DOM.toolsGridContainer.innerHTML = '';
   const basePath = getBasePath();
 
@@ -320,7 +328,7 @@ function renderAllToolsCatalog() {
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-5">
         ${tools.map(tool => {
-          const vectorSvg = VECTORS[tool.id] || '<div class="text-sm font-bold text-zinc-400">PDF</div>';
+          const vectorSvg = getToolVector(tool.id, 'text-sm');
           return `
             <a href="${basePath}${tool.id}" data-tool-id="${tool.id}" class="tool-card group no-underline text-inherit block">
               <div class="w-12 h-12 flex-shrink-0 group-hover:scale-105 transition-transform duration-200 mb-3">
@@ -643,7 +651,7 @@ function renderQuickToolsModalGrid(query = '') {
           ${filtered.map(tool => `
             <a href="${basePath}${tool.id}" onclick="selectToolFromModal(event, '${tool.id}')" class="p-2.5 rounded-xl border border-pink-100 dark:border-zinc-800 hover:border-[#ff2a5f] bg-white dark:bg-zinc-800/80 hover:shadow-sm cursor-pointer transition-all flex items-center gap-2.5 group no-underline text-inherit">
               <div class="w-8 h-8 flex-shrink-0 group-hover:scale-105 transition-transform flex items-center justify-center">
-                ${VECTORS[tool.id] || '<div class="text-xs font-bold text-zinc-400">PDF</div>'}
+                ${getToolVector(tool.id, 'text-xs')}
               </div>
               <div class="overflow-hidden min-w-0 flex-1">
                 <h5 class="font-bold text-xs text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff2a5f] transition-colors truncate">${tool.title}</h5>
@@ -727,7 +735,9 @@ function openToolDedicatedPage(tool) {
   recordToolVisit(tool.id);
   updateToolVoteDisplay(tool.id);
 
-  DOM.toolVectorContainer.innerHTML = VECTORS[tool.id] || '<div class="text-2xl font-bold text-zinc-400">PDF</div>';
+  if (DOM.toolVectorContainer) {
+    DOM.toolVectorContainer.innerHTML = getToolVector(tool.id, 'text-2xl');
+  }
   DOM.toolTitle.textContent = tool.title;
   DOM.toolDesc.textContent = tool.desc;
 
@@ -3443,8 +3453,6 @@ function showRemovePagesDoneScreen(removedCount, remainingCount) {
   // Keep tool header hidden on done screen as requested
   const toolHeader = document.getElementById('toolHeaderContainer');
   if (toolHeader) toolHeader.classList.add('hidden');
-  const footer = document.getElementById('mainSiteFooter');
-  if (footer) footer.classList.add('hidden');
   const footer = document.getElementById('mainSiteFooter');
   if (footer) footer.classList.add('hidden');
 

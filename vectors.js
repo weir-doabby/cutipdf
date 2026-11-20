@@ -334,3 +334,7 @@ const VECTORS = {
     </svg>
   `
 };
+
+if (typeof window !== 'undefined') {
+  window.VECTORS = VECTORS;
+}
