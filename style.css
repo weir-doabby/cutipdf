@@ -304,8 +304,9 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
   display: none !important;
 }
 
-/* Full-Canvas View for Remove Pages: extra bottom padding so cards aren't obscured by floating controls */
-.remove-pages-workspace #selectedFilesList {
+/* Full-Canvas View for Remove Pages & Merge PDF: extra bottom padding so cards aren't obscured by floating controls */
+.remove-pages-workspace #selectedFilesList,
+.merge-pdf-workspace #selectedFilesList {
   max-height: none !important;
   overflow-y: visible !important;
   margin-top: 0 !important;

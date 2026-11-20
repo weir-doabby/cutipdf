@@ -466,7 +466,7 @@ function showAllToolsCatalogView() {
   if (toolHeader) toolHeader.classList.remove('hidden');
   const doneScreen = document.getElementById('workspaceDoneScreen');
   if (doneScreen) doneScreen.classList.add('hidden');
-  if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.remove('remove-pages-workspace');
+  if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.remove('remove-pages-workspace', 'merge-pdf-workspace');
 
   DOM.viewToolActive.classList.remove('active');
   DOM.viewAllTools.classList.add('active');
@@ -788,7 +788,7 @@ function openToolDedicatedPage(tool) {
   if (toolHeader) toolHeader.classList.remove('hidden');
   const doneScreen = document.getElementById('workspaceDoneScreen');
   if (doneScreen) doneScreen.classList.add('hidden');
-  if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.remove('remove-pages-workspace');
+  if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.remove('remove-pages-workspace', 'merge-pdf-workspace');
 
   DOM.filesSelectedArea.classList.add('hidden');
   DOM.toolDropzone.classList.remove('hidden');
@@ -1582,7 +1582,7 @@ function resetWorkspaceToDropzone() {
   if (toolHeader) toolHeader.classList.remove('hidden');
   const doneScreen = document.getElementById('workspaceDoneScreen');
   if (doneScreen) doneScreen.classList.add('hidden');
-  if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.remove('remove-pages-workspace');
+  if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.remove('remove-pages-workspace', 'merge-pdf-workspace');
 
   if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.add('hidden');
   if (DOM.toolDropzone) DOM.toolDropzone.classList.remove('hidden');
@@ -1921,6 +1921,75 @@ window.applyEnteredPagesToRemove = function() {
 };
 
 // ==========================================
+// Merge PDF Options Modal & Handlers
+// ==========================================
+window.openMergeOptionsModal = function() {
+  const modal = document.getElementById('mergeOptionsModal');
+  if (!modal) return;
+  const chkDuplex = document.getElementById('chkMergeInsertBlankPage');
+  if (chkDuplex) {
+    chkDuplex.checked = !!(state.toolOptions && state.toolOptions.mergeInsertBlankPage);
+  }
+  modal.classList.remove('opacity-0', 'pointer-events-none');
+  modal.classList.add('opacity-100');
+  const inner = modal.querySelector('div');
+  if (inner) {
+    inner.classList.remove('scale-95');
+    inner.classList.add('scale-100');
+  }
+};
+
+window.closeMergeOptionsModal = function() {
+  const modal = document.getElementById('mergeOptionsModal');
+  if (!modal) return;
+  modal.classList.add('opacity-0', 'pointer-events-none');
+  modal.classList.remove('opacity-100');
+  const inner = modal.querySelector('div');
+  if (inner) {
+    inner.classList.add('scale-95');
+    inner.classList.remove('scale-100');
+  }
+};
+
+window.sortMergeFiles = function(mode) {
+  if (!state.workspaceItems || state.workspaceItems.length === 0) return;
+  if (mode === 'asc') {
+    state.workspaceItems.sort((a, b) => (a.name || '').localeCompare(b.name || '', undefined, { numeric: true, sensitivity: 'base' }));
+  } else if (mode === 'desc') {
+    state.workspaceItems.sort((a, b) => (b.name || '').localeCompare(a.name || '', undefined, { numeric: true, sensitivity: 'base' }));
+  } else if (mode === 'reverse') {
+    state.workspaceItems.reverse();
+  }
+  // Sync state.uploadedPdfs sequence if applicable
+  if (state.uploadedPdfs && state.uploadedPdfs.length > 0) {
+    const idOrder = new Map(state.workspaceItems.map((item, idx) => [item.id, idx]));
+    state.uploadedPdfs.sort((a, b) => (idOrder.get(a.id) ?? 0) - (idOrder.get(b.id) ?? 0));
+  }
+  renderInteractiveWorkspace();
+  showToast('Files sorted');
+};
+
+window.toggleMergeInsertBlankPage = function(checked) {
+  if (!state.toolOptions) state.toolOptions = {};
+  state.toolOptions.mergeInsertBlankPage = !!checked;
+};
+
+window.clearWorkspaceFiles = function() {
+  state.workspaceItems = [];
+  state.selectedFiles = [];
+  state.uploadedPdfs = [];
+  state.toolOptions = {};
+  if (DOM.filesSelectedArea) {
+    DOM.filesSelectedArea.classList.add('hidden');
+    DOM.filesSelectedArea.classList.remove('remove-pages-workspace', 'merge-pdf-workspace');
+  }
+  if (DOM.toolDropzone) DOM.toolDropzone.classList.remove('hidden');
+  const actionBar = document.getElementById('workspaceActionBar');
+  if (actionBar) actionBar.classList.remove('floating-mode');
+  renderInteractiveWorkspace();
+};
+
+// ==========================================
 // About CutiPDF Info Modal
 // ==========================================
 window.openInfoModal = function() {
@@ -1963,6 +2032,11 @@ document.addEventListener('keydown', (e) => {
     const enterModal = document.getElementById('enterPagesModal');
     if (enterModal && !enterModal.classList.contains('pointer-events-none')) {
       closeEnterPagesModal();
+      return;
+    }
+    const mergeModal = document.getElementById('mergeOptionsModal');
+    if (mergeModal && !mergeModal.classList.contains('pointer-events-none')) {
+      closeMergeOptionsModal();
       return;
     }
   }
@@ -2518,6 +2592,18 @@ function renderInteractiveWorkspace() {
     // Sub-actions (Restore/Select All + Remove by Number) are cleanly hosted in the bottom action bar.
     if (toolbar) toolbar.classList.add('hidden');
 
+    const subButtons = document.getElementById('workspaceActionSubButtons');
+    if (subButtons) subButtons.classList.remove('hidden');
+
+    const btnRestoreAll = document.getElementById('btnToolbarRestoreAll');
+    const btnSelectAll = document.getElementById('btnToolbarSelectAll');
+    const btnEnterPages = document.getElementById('btnToolbarEnterPages');
+    const btnMergeAdd = document.getElementById('btnMergeAddFiles');
+    const btnMergeOther = document.getElementById('btnMergeOtherOptions');
+
+    if (btnMergeAdd) btnMergeAdd.classList.add('hidden');
+    if (btnMergeOther) btnMergeOther.classList.add('hidden');
+
     const removedCount = state.workspaceItems.filter(i => i.removed).length;
     if (removedCount > 0) {
       if (btnRestoreAll) btnRestoreAll.classList.remove('hidden');
@@ -2528,9 +2614,48 @@ function renderInteractiveWorkspace() {
     }
 
     if (btnEnterPages) btnEnterPages.classList.remove('hidden');
+  } else if (toolId === 'merge-pdf') {
+    // Hide tool header (logo, title, description) on PDF open for merge pages as requested
+    if (toolHeader) toolHeader.classList.add('hidden');
+    if (DOM.filesSelectedArea) {
+      DOM.filesSelectedArea.classList.remove('remove-pages-workspace');
+      DOM.filesSelectedArea.classList.add('merge-pdf-workspace');
+    }
+
+    // Top toolbar is hidden completely, maximizing full-canvas view!
+    if (toolbar) toolbar.classList.add('hidden');
+
+    const subButtons = document.getElementById('workspaceActionSubButtons');
+    if (subButtons) subButtons.classList.remove('hidden');
+
+    const btnRestoreAll = document.getElementById('btnToolbarRestoreAll');
+    const btnSelectAll = document.getElementById('btnToolbarSelectAll');
+    const btnEnterPages = document.getElementById('btnToolbarEnterPages');
+    const btnMergeAdd = document.getElementById('btnMergeAddFiles');
+    const btnMergeOther = document.getElementById('btnMergeOtherOptions');
+
+    if (btnRestoreAll) btnRestoreAll.classList.add('hidden');
+    if (btnSelectAll) btnSelectAll.classList.add('hidden');
+    if (btnEnterPages) btnEnterPages.classList.add('hidden');
+    if (btnMergeAdd) btnMergeAdd.classList.remove('hidden');
+    if (btnMergeOther) btnMergeOther.classList.remove('hidden');
+
+    const totalFiles = state.workspaceItems.length;
+    DOM.btnExecuteAction.disabled = (totalFiles < 2);
+    if (totalFiles < 2) {
+      DOM.btnExecuteAction.classList.add('opacity-50', 'cursor-not-allowed');
+      DOM.btnExecuteAction.innerHTML = `
+        <span id="actionButtonText">Merge PDF (Add at least 2 files)</span>
+      `;
+    } else {
+      DOM.btnExecuteAction.classList.remove('opacity-50', 'cursor-not-allowed');
+      DOM.btnExecuteAction.innerHTML = `
+        <span id="actionButtonText">Merge ${totalFiles} PDFs</span>
+      `;
+    }
   } else {
     if (toolHeader) toolHeader.classList.remove('hidden');
-    if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.remove('remove-pages-workspace');
+    if (DOM.filesSelectedArea) DOM.filesSelectedArea.classList.remove('remove-pages-workspace', 'merge-pdf-workspace');
     if (statsBadge) statsBadge.classList.remove('hidden');
     if (toolbar) toolbar.classList.remove('hidden', 'clean-actions-only');
 
@@ -2542,20 +2667,26 @@ function renderInteractiveWorkspace() {
     if (btnSort) btnSort.classList.remove('hidden');
     if (btnRotate) btnRotate.classList.remove('hidden');
     if (btnClear) btnClear.classList.remove('hidden');
-    if (modeSwitcher) {
-      if (toolId === 'merge-pdf' && state.uploadedPdfs.length > 0) {
-        modeSwitcher.classList.remove('hidden');
-      } else {
-        modeSwitcher.classList.add('hidden');
-      }
-    }
+    if (modeSwitcher) modeSwitcher.classList.add('hidden');
+
+    const subButtons = document.getElementById('workspaceActionSubButtons');
+    if (subButtons) subButtons.classList.add('hidden');
+    DOM.btnExecuteAction.disabled = false;
+    DOM.btnExecuteAction.classList.remove('opacity-50', 'cursor-not-allowed');
+    const actionText = state.activeTool ? state.activeTool.actionText : 'Process';
+    DOM.btnExecuteAction.innerHTML = `
+      <span id="actionButtonText">${actionText}</span>
+    `;
   }
 
   // Floating Action Bar (Standardized across all client-side tools)
   const actionBar = document.getElementById('workspaceActionBar');
   if (actionBar) actionBar.classList.add('floating-mode');
 
+  const toolsBtn = document.getElementById('floatingToolsBtn');
+
   if (toolId === 'remove-pages') {
+    if (toolsBtn) toolsBtn.classList.add('elevated', 'elevated-mobile');
 
     const removedCount = state.workspaceItems.filter(i => i.removed).length;
     if (state.removePagesProcessed) {
@@ -2582,6 +2713,9 @@ function renderInteractiveWorkspace() {
         `;
       }
     }
+  } else if (toolId === 'merge-pdf') {
+    if (toolsBtn) toolsBtn.classList.add('elevated', 'elevated-mobile');
+    // Button state already handled in toolId === 'merge-pdf' block above
   } else {
     if (toolsBtn) toolsBtn.classList.remove('elevated', 'elevated-mobile');
     const subButtons = document.getElementById('workspaceActionSubButtons');
@@ -2616,6 +2750,7 @@ function renderInteractiveWorkspace() {
   // Container Layout: Grid vs Continuous
   const isContinuous = (toolId === 'remove-pages' && state.pageLayoutMode === 'continuous');
   const isRemoveTool = (toolId === 'remove-pages');
+  const isMergeTool = (toolId === 'merge-pdf');
   const grid = document.createElement('div');
   if (isContinuous) {
     grid.className = 'flex flex-col items-center gap-6 max-w-xl mx-auto pt-3 sm:pt-4 pb-6 w-full';
@@ -2633,8 +2768,10 @@ function renderInteractiveWorkspace() {
 
     if (isContinuous) {
       card.className = `preview-card ${item.removed ? 'removed' : ''} w-full max-w-md sm:max-w-lg shadow-sm hover:shadow-md transition-all cursor-pointer`;
+    } else if (isMergeTool) {
+      card.className = `preview-card flex flex-col justify-between min-h-[220px] sm:min-h-[250px] shadow-sm hover:shadow-md transition-all cursor-grab active:cursor-grabbing select-none`;
     } else {
-      card.className = `preview-card ${item.removed ? 'removed' : ''} ${(!isRemoveTool && item.selected) ? 'selected' : ''} ${isRemoveTool ? 'min-h-[220px] sm:min-h-[250px]' : ''}`;
+      card.className = `preview-card ${item.removed ? 'removed' : ''} ${(!isRemoveTool && !isMergeTool && item.selected) ? 'selected' : ''} ${isRemoveTool ? 'min-h-[220px] sm:min-h-[250px]' : ''}`;
     }
 
     // Drag and Drop Events (only for re-ordering tools, NOT remove-pages)
@@ -2648,7 +2785,7 @@ function renderInteractiveWorkspace() {
     }
 
     // Top badges: For remove-pages, Page Number on Left and Zoom Preview on Right
-    // Both identically sized (28px on mobile, 32px on desktop) with matching squircle rounded-xl
+    // For merge-pdf, Order Number on Left and Page Count on Right (matching squircle rounded-xl)
     let orderBadge = '';
     let infoBadge = '';
     let zoomPreviewBtn = '';
@@ -2663,6 +2800,17 @@ function renderInteractiveWorkspace() {
         <button type="button" onclick="openPagePreviewModal(${index}); event.stopPropagation();" class="absolute top-2 right-2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/95 dark:bg-zinc-800/95 text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50 dark:hover:bg-zinc-700 shadow-sm border border-zinc-200/80 dark:border-zinc-700 flex items-center justify-center transition-all hover:scale-110 active:scale-95 cursor-pointer" title="Zoom & Preview Page">
           <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
         </button>
+      `;
+    } else if (toolId === 'merge-pdf') {
+      orderBadge = `
+        <div class="absolute top-2 left-2 z-20 min-w-[28px] h-7 sm:min-w-[32px] sm:h-8 px-1.5 rounded-xl bg-white/95 dark:bg-zinc-800/95 text-zinc-700 dark:text-zinc-200 text-xs sm:text-sm font-bold shadow-sm border border-zinc-200/80 dark:border-zinc-700 flex items-center justify-center pointer-events-none select-none">
+          ${index + 1}
+        </div>
+      `;
+      infoBadge = `
+        <div class="absolute top-2 right-2 z-20 min-w-[28px] h-7 sm:min-w-[32px] sm:h-8 px-2 rounded-xl bg-white/95 dark:bg-zinc-800/95 text-zinc-700 dark:text-zinc-200 text-[11px] sm:text-xs font-bold shadow-sm border border-zinc-200/80 dark:border-zinc-700 flex items-center justify-center pointer-events-none select-none">
+          ${item.pageCount || 1} pgs
+        </div>
       `;
     } else {
       orderBadge = `<div class="absolute top-2 left-2 z-10 bg-zinc-900/80 dark:bg-black/80 backdrop-blur-md text-white text-[11px] font-bold px-2 py-0.5 rounded-lg border border-white/10 shadow-xs">${index + 1}</div>`;
@@ -2686,7 +2834,7 @@ function renderInteractiveWorkspace() {
           </div>
         </div>
       `;
-    } else {
+    } else if (!isMergeTool) {
       removedOverlayHtml = `
         <div class="card-removed-overlay ${overlayHiddenClass} absolute inset-0 flex items-center justify-center pointer-events-none z-15 bg-black/15 dark:bg-black/35">
           <svg viewBox="0 0 100 100" class="${isContinuous ? 'w-28 h-28 sm:w-36 sm:h-36' : 'w-20 h-20 sm:w-24 sm:h-24'} pointer-events-none drop-shadow-md text-red-500" fill="none" stroke="currentColor">
@@ -2711,12 +2859,10 @@ function renderInteractiveWorkspace() {
       `;
     }
 
-    // Thumbnail Area: For remove-pages, NO extra inner frame (bg-transparent p-0), page sits directly inside the 18px rounded card
-    const thumbHeight = isContinuous
-      ? 'h-80 sm:h-96'
-      : (isRemoveTool ? 'h-full min-h-[220px] sm:min-h-[250px]' : 'h-44');
+    // Thumbnail Area: For remove-pages & merge-pdf, full clean white canvas
     let thumbHtml = '';
     if (isRemoveTool) {
+      const thumbHeight = isContinuous ? 'h-80 sm:h-96' : 'h-full min-h-[220px] sm:min-h-[250px]';
       if (item.previewUrl) {
         thumbHtml = `
           <div class="${thumbHeight} bg-white dark:bg-zinc-900 flex items-center justify-center overflow-hidden p-0 relative group/thumb">
@@ -2742,7 +2888,32 @@ function renderInteractiveWorkspace() {
           </div>
         `;
       }
+    } else if (isMergeTool) {
+      if (item.previewUrl) {
+        thumbHtml = `
+          <div class="flex-1 w-full bg-white dark:bg-zinc-900 flex items-center justify-center overflow-hidden p-2 sm:p-3 relative group/thumb min-h-[160px] sm:min-h-[190px]">
+            ${orderBadge}
+            ${infoBadge}
+            <img src="${item.previewUrl}" alt="${item.name}" style="transform: rotate(${item.rotation || 0}deg);" class="page-thumb-img max-h-full max-w-full object-contain pointer-events-none select-none transition-transform duration-200">
+            ${hoverActionsHtml}
+          </div>
+        `;
+      } else {
+        thumbHtml = `
+          <div class="flex-1 w-full bg-white dark:bg-zinc-900 flex items-center justify-center overflow-hidden p-2 sm:p-3 relative group/thumb min-h-[160px] sm:min-h-[190px]">
+            ${orderBadge}
+            ${infoBadge}
+            <div class="page-thumb-skeleton absolute inset-0 flex flex-col items-center justify-center p-3 text-center pointer-events-none bg-zinc-50 dark:bg-zinc-800/40">
+              <div class="w-9 h-9 rounded-xl bg-pink-100 dark:bg-zinc-700 text-[#ff2a5f] flex items-center justify-center font-bold text-xs mb-1">PDF</div>
+              <p class="text-[10px] text-zinc-400">Loading cover...</p>
+            </div>
+            <img src="" alt="${item.name}" class="page-thumb-img opacity-0 max-h-full max-w-full object-contain pointer-events-none select-none transition-opacity duration-150">
+            ${hoverActionsHtml}
+          </div>
+        `;
+      }
     } else {
+      const thumbHeight = 'h-44';
       if (item.previewUrl) {
         thumbHtml = `
           <div class="${thumbHeight} bg-zinc-100 dark:bg-zinc-800/60 flex items-center justify-center overflow-hidden p-2 relative group/thumb">
@@ -2772,9 +2943,26 @@ function renderInteractiveWorkspace() {
       }
     }
 
-    // Card Footer with Name and Touch Arrows (omitted for remove-pages for clean look)
+    // Card Footer with Name and Actions (omitted for remove-pages for clean look)
     let actionsHtml = '';
-    if (toolId !== 'remove-pages') {
+    if (toolId === 'merge-pdf') {
+      actionsHtml = `
+        <div class="p-2 sm:p-2.5 bg-white dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-1 text-xs select-none">
+          <div class="truncate flex-1 min-w-0 pr-1 text-left">
+            <p class="text-[11px] font-bold text-zinc-800 dark:text-zinc-200 truncate" title="${item.name}">${item.name}</p>
+            ${item.size ? `<span class="text-[10px] text-zinc-400 block">${item.size}</span>` : ''}
+          </div>
+          <div class="flex items-center gap-1 flex-shrink-0">
+            <button type="button" onclick="rotateWorkspaceItem(${index}); event.stopPropagation();" class="w-7 h-7 rounded-lg hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff2a5f] flex items-center justify-center transition cursor-pointer" title="Rotate 90°">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </button>
+            <button type="button" onclick="removeWorkspaceItem(${index}); event.stopPropagation();" class="w-7 h-7 rounded-lg hover:bg-red-50 dark:hover:bg-zinc-800 text-zinc-400 hover:text-red-500 flex items-center justify-center transition cursor-pointer" title="Delete file">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+          </div>
+        </div>
+      `;
+    } else if (toolId !== 'remove-pages') {
       actionsHtml = `
         <div class="p-2 bg-white dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-1 text-xs">
           <div class="truncate flex-1 min-w-0 pr-1">
@@ -2807,22 +2995,22 @@ function renderInteractiveWorkspace() {
 
   // "+ Add More Files" Card at end of grid (Smallpdf Style - Matching Card Proportions)
   const addMoreCard = document.createElement('div');
-  addMoreCard.className = 'preview-card min-h-[220px] sm:min-h-[250px] border-2 border-dashed border-pink-200/90 dark:border-zinc-700 hover:border-[#ff2a5f] bg-pink-50/20 hover:bg-pink-50/50 dark:hover:bg-zinc-800/40 flex flex-col items-center justify-center p-5 text-center cursor-pointer transition-all group';
+  addMoreCard.className = 'preview-card min-h-[220px] sm:min-h-[250px] border-2 border-dashed border-pink-200/90 dark:border-zinc-700 hover:border-[#ff2a5f] bg-pink-50/20 hover:bg-pink-50/50 dark:hover:bg-zinc-800/40 flex flex-col items-center justify-center p-5 text-center cursor-pointer transition-all group select-none';
   addMoreCard.onclick = () => DOM.fileInput.click();
   addMoreCard.innerHTML = `
-    <div class="w-11 h-11 rounded-full bg-pink-100 dark:bg-zinc-800 text-[#ff2a5f] flex items-center justify-center text-xl font-bold mb-2 group-hover:scale-110 transition-transform shadow-2xs">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+    <div class="w-12 h-12 rounded-2xl bg-pink-100 dark:bg-zinc-800 text-[#ff2a5f] flex items-center justify-center text-xl font-bold mb-2 group-hover:scale-110 transition-transform shadow-2xs">
+      <svg class="w-6 h-6 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
     </div>
-    <span class="text-xs font-bold text-zinc-800 dark:text-zinc-200">Add More</span>
-    <span class="text-[10px] text-zinc-400 mt-0.5">Click or drop files</span>
+    <span class="text-xs sm:text-sm font-bold text-zinc-800 dark:text-zinc-200">Add More</span>
+    <span class="text-[11px] text-zinc-400 mt-0.5">Click or drop files</span>
   `;
   grid.appendChild(addMoreCard);
 
   container.appendChild(grid);
   initWorkspaceDelegatedEvents();
 
-  // Update Action Button Text (only for tools other than remove-pages, which is handled above)
-  if (toolId !== 'remove-pages') {
+  // Update Action Button Text (only for tools other than remove-pages and merge-pdf, which are handled above)
+  if (toolId !== 'remove-pages' && toolId !== 'merge-pdf') {
     const activeCount = state.workspaceItems.filter(i => !i.removed).length;
     const txtSpan = DOM.btnExecuteAction.querySelector('#actionButtonText');
     if (txtSpan && state.activeTool) {
@@ -3251,10 +3439,19 @@ function renderRotatedBlob(item) {
   });
 }
 
-// 2. Merge PDF (Supports both File View sequence and customized Page View sequence)
+// 2. Merge PDF (Supports both File View sequence and customized Page View sequence, plus Duplex blank page option)
 async function engineMergePdf() {
   const { PDFDocument, degrees } = PDFLib;
   const mergedDoc = await PDFDocument.create();
+
+  if (state.workspaceItems.length < 2) {
+    showToast('Please add at least 2 PDF files to merge.');
+    return;
+  }
+
+  showToast('Merging PDF files...');
+
+  const totalDocs = state.workspaceItems.length;
 
   if (state.workspaceViewMode === 'page') {
     // Merge page by page according to customized user sequence
@@ -3276,7 +3473,8 @@ async function engineMergePdf() {
     }
   } else {
     // Merge file by file according to customized user sequence
-    for (const item of state.workspaceItems) {
+    for (let i = 0; i < totalDocs; i++) {
+      const item = state.workspaceItems[i];
       if (item.file) {
         const bytes = await item.file.arrayBuffer();
         const doc = await PDFDocument.load(bytes);
@@ -3289,6 +3487,13 @@ async function engineMergePdf() {
           }
           mergedDoc.addPage(p);
         });
+
+        // PDF24 Duplex Feature: If double-sided blank page option is active, document has odd pages, and not the last doc
+        if (state.toolOptions && state.toolOptions.mergeInsertBlankPage && (doc.getPageCount() % 2 !== 0) && (i < totalDocs - 1)) {
+          const lastPage = doc.getPage(doc.getPageCount() - 1);
+          const { width, height } = lastPage.getSize();
+          mergedDoc.addPage([width, height]);
+        }
       }
     }
   }
@@ -3298,8 +3503,26 @@ async function engineMergePdf() {
     return;
   }
 
-  const mergedBytes = await mergedDoc.save();
-  downloadBlob(new Blob([mergedBytes], { type: 'application/pdf' }), `Merged_CutiPDF_${Date.now()}.pdf`);
+  const mergedBytes = await mergedDoc.save({ updateFieldAppearances: false });
+  const filename = `Merged_CutiPDF_${Date.now()}.pdf`;
+  const mergedBlob = new Blob([mergedBytes], { type: 'application/pdf' });
+
+  state.lastProcessedPdfBlob = mergedBlob;
+  state.lastProcessedPdfFilename = filename;
+  state.lastProcessedPdfFile = new File([mergedBytes], filename, { type: 'application/pdf' });
+
+  // Confetti celebration!
+  if (typeof confetti === 'function') {
+    confetti({
+      particleCount: 80,
+      spread: 70,
+      origin: { y: 0.7 },
+      colors: ['#ff2a5f', '#ff7597', '#ffd1df', '#ff3366']
+    });
+  }
+
+  // Show standardized Post-Process Done Screen
+  showGenericDoneScreen(`${state.workspaceItems.length} PDFs Merged`);
 }
 
 // 3. Rotate PDF (Rotates individual or all pages)
@@ -3513,8 +3736,8 @@ window.reopenRemovePagesWorkspace = function() {
   if (doneScreen) doneScreen.classList.add('hidden');
   if (DOM.toolDropzone) DOM.toolDropzone.classList.add('hidden');
 
+  const toolId = state.activeTool ? state.activeTool.id : '';
   const toolbar = document.querySelector('.workspace-toolbar');
-  if (toolbar) toolbar.classList.remove('hidden');
 
   const actionBar = document.getElementById('workspaceActionBar');
   if (actionBar) {
@@ -3524,7 +3747,13 @@ window.reopenRemovePagesWorkspace = function() {
 
   if (DOM.filesSelectedArea) {
     DOM.filesSelectedArea.classList.remove('hidden');
-    DOM.filesSelectedArea.classList.add('remove-pages-workspace');
+    if (toolId === 'merge-pdf') {
+      DOM.filesSelectedArea.classList.remove('remove-pages-workspace');
+      DOM.filesSelectedArea.classList.add('merge-pdf-workspace');
+    } else {
+      DOM.filesSelectedArea.classList.remove('merge-pdf-workspace');
+      DOM.filesSelectedArea.classList.add('remove-pages-workspace');
+    }
   }
 
   renderInteractiveWorkspace();
