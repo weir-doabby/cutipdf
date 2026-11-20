@@ -994,34 +994,18 @@
   </div>
 
   <!-- ============================================================ -->
-  <!-- REMOVE PAGES BY NUMBER / RANGE MODAL (Apple iOS Alert Style) -->
+  <!-- REMOVE PAGES BY NUMBER / RANGE MODAL (Ultra-Clean Minimal Alert) -->
   <!-- ============================================================ -->
   <div id="enterPagesModal" onclick="if(event.target === this) closeEnterPagesModal()" class="fixed inset-0 z-[115] bg-zinc-950/40 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 opacity-0 pointer-events-none transition-all duration-300">
-    <div class="relative w-full max-w-md bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200/80 dark:border-zinc-800 shadow-2xl p-5 sm:p-6 flex flex-col gap-3.5 transform scale-95 transition-all duration-300">
+    <div class="relative w-full max-w-sm sm:max-w-md bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200/80 dark:border-zinc-800 shadow-2xl p-5 sm:p-6 flex flex-col gap-3 transform scale-95 transition-all duration-300">
       
-      <!-- Modal Header (Clean iOS Style - No Colorful Logo Box) -->
-      <div class="flex items-center justify-between pb-1">
-        <div class="flex flex-col">
-          <h3 class="text-base sm:text-lg font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">Remove by Number</h3>
-          <span id="enterPagesTotalHint" class="text-xs text-zinc-400 font-normal">Total pages: 0</span>
-        </div>
-        <button type="button" onclick="closeEnterPagesModal()" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500 dark:text-zinc-400 flex items-center justify-center transition cursor-pointer" title="Close (Esc)">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
-      </div>
+      <!-- Hidden helper for script compatibility -->
+      <span id="enterPagesTotalHint" class="hidden"></span>
 
       <!-- Input Field Area -->
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-1.5">
         <div class="relative">
-          <textarea id="enterPagesInput" rows="3" oninput="updateEnterPagesLiveFeedback()" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); applyEnteredPagesToRemove();}" placeholder="e.g. 1 to 15, 1, 2, 3 or 1 n 2 n 9" class="w-full px-3.5 py-2.5 text-sm sm:text-base font-mono rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#ff2a5f] focus:border-transparent transition resize-none"></textarea>
-        </div>
-
-        <!-- Format Badges & Tips (Only 3 clean formats: 1 to 15, 1, 2, 3, and 1 n 2 n 9) -->
-        <div class="flex flex-wrap items-center gap-1.5 text-xs text-zinc-500 dark:text-zinc-400">
-          <span class="font-medium text-zinc-500 dark:text-zinc-400">Formats:</span>
-          <span class="px-2 py-0.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-[11px] font-mono text-zinc-700 dark:text-zinc-300">1 to 15</span>
-          <span class="px-2 py-0.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-[11px] font-mono text-zinc-700 dark:text-zinc-300">1, 2, 3</span>
-          <span class="px-2 py-0.5 rounded-lg bg-zinc-100 dark:bg-zinc-800 text-[11px] font-mono text-zinc-700 dark:text-zinc-300">1 n 2 n 9</span>
+          <textarea id="enterPagesInput" rows="3" oninput="updateEnterPagesLiveFeedback()" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); applyEnteredPagesToRemove();}" placeholder="e.g. 1 to 15, 1, 2, 3 or 1 n 2 n 9" class="w-full px-4 py-3 text-sm sm:text-base font-mono rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#ff2a5f] focus:border-transparent transition resize-none"></textarea>
         </div>
 
         <!-- Live Feedback Message Area -->
