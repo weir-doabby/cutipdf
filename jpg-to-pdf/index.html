@@ -1077,15 +1077,18 @@
   </div>
 
   <!-- ============================================================ -->
-  <!-- MERGE OPTIONS MODAL (Clean Apple iOS Style) -->
+  <!-- MERGE OPTIONS MODAL (Clean Apple iOS Sheet Style) -->
   <!-- ============================================================ -->
   <div id="mergeOptionsModal" onclick="if(event.target === this) closeMergeOptionsModal()" class="fixed inset-0 z-[115] bg-zinc-950/40 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 opacity-0 pointer-events-none transition-all duration-300">
-    <div class="relative w-full max-w-sm sm:max-w-md bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200/80 dark:border-zinc-800 shadow-2xl p-5 sm:p-6 flex flex-col gap-4 transform scale-95 transition-all duration-300">
+    <div class="relative w-full max-w-sm sm:max-w-md bg-white/95 dark:bg-zinc-900/95 backdrop-blur-2xl rounded-3xl border border-zinc-200/80 dark:border-zinc-800 shadow-2xl p-5 sm:p-6 flex flex-col gap-4 transform scale-95 transition-all duration-300">
       
+      <!-- Apple Sheet Top Grabber Handle -->
+      <div class="w-10 h-1.5 rounded-full bg-zinc-300/80 dark:bg-zinc-700 mx-auto -mt-1"></div>
+
       <!-- Modal Header -->
       <div class="flex items-center justify-between pb-2 border-b border-zinc-100 dark:border-zinc-800">
         <h3 class="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
-          Other Options
+          Merge Options
         </h3>
         <button type="button" onclick="closeMergeOptionsModal()" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500 dark:text-zinc-400 flex items-center justify-center transition cursor-pointer" title="Close">
           <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -1093,54 +1096,82 @@
       </div>
 
       <!-- Options List -->
-      <div class="space-y-3.5 text-xs">
+      <div class="space-y-4 text-xs">
         
-        <!-- Option 1: Sort Files (Inspired by PDF24: A-Z, Z-A, Reverse) -->
+        <!-- Option 1: Organization Mode (Segmented Control: Files vs Pages) -->
         <div>
-          <label class="font-bold text-zinc-700 dark:text-zinc-300 block mb-1.5">Sort Files:</label>
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="font-bold text-zinc-800 dark:text-zinc-200 text-xs">Organization Mode:</label>
+            <span id="mergeModeCurrentHint" class="text-[11px] font-semibold text-zinc-400">Files Mode</span>
+          </div>
+          <div class="grid grid-cols-2 p-1 rounded-2xl bg-zinc-100/90 dark:bg-zinc-800/80 border border-zinc-200/60 dark:border-zinc-700/60">
+            <button type="button" id="btnMergeModalModeFile" onclick="setWorkspaceViewMode('file'); updateMergeModalViewButtons();" class="py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white shadow-xs">
+              <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+              <span>Files Mode</span>
+            </button>
+            <button type="button" id="btnMergeModalModePage" onclick="setWorkspaceViewMode('page'); updateMergeModalViewButtons();" class="py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
+              <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+              <span>Pages Mode</span>
+            </button>
+          </div>
+          <p class="text-[11px] text-zinc-400 mt-1.5 leading-snug">
+            Pages mode lets you delete or rearrange individual pages across documents before merging.
+          </p>
+        </div>
+
+        <!-- Option 2: Sort Sequence (A-Z, Z-A, Reverse) -->
+        <div>
+          <label class="font-bold text-zinc-800 dark:text-zinc-200 text-xs block mb-1.5">Sort Sequence:</label>
           <div class="grid grid-cols-3 gap-2">
-            <button type="button" onclick="sortMergeFiles('asc')" class="py-2.5 px-2 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:border-[#ff2a5f] bg-zinc-50 dark:bg-zinc-800/70 text-zinc-800 dark:text-zinc-200 font-bold transition flex items-center justify-center gap-1 cursor-pointer">
+            <button type="button" onclick="sortMergeFiles('asc')" class="py-2.5 px-2 rounded-xl border border-zinc-200/90 dark:border-zinc-700 hover:border-[#ff2a5f] bg-zinc-50 dark:bg-zinc-800/70 text-zinc-800 dark:text-zinc-200 font-bold transition flex items-center justify-center gap-1 cursor-pointer active:scale-95">
               <span>A → Z</span>
             </button>
-            <button type="button" onclick="sortMergeFiles('desc')" class="py-2.5 px-2 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:border-[#ff2a5f] bg-zinc-50 dark:bg-zinc-800/70 text-zinc-800 dark:text-zinc-200 font-bold transition flex items-center justify-center gap-1 cursor-pointer">
+            <button type="button" onclick="sortMergeFiles('desc')" class="py-2.5 px-2 rounded-xl border border-zinc-200/90 dark:border-zinc-700 hover:border-[#ff2a5f] bg-zinc-50 dark:bg-zinc-800/70 text-zinc-800 dark:text-zinc-200 font-bold transition flex items-center justify-center gap-1 cursor-pointer active:scale-95">
               <span>Z → A</span>
             </button>
-            <button type="button" onclick="sortMergeFiles('reverse')" class="py-2.5 px-2 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:border-[#ff2a5f] bg-zinc-50 dark:bg-zinc-800/70 text-zinc-800 dark:text-zinc-200 font-bold transition flex items-center justify-center gap-1 cursor-pointer">
+            <button type="button" onclick="sortMergeFiles('reverse')" class="py-2.5 px-2 rounded-xl border border-zinc-200/90 dark:border-zinc-700 hover:border-[#ff2a5f] bg-zinc-50 dark:bg-zinc-800/70 text-zinc-800 dark:text-zinc-200 font-bold transition flex items-center justify-center gap-1 cursor-pointer active:scale-95">
               <span>Reverse</span>
             </button>
           </div>
         </div>
 
-        <!-- Option 2: Duplex / 2-Sided Printing Blank Page (PDF24 Duplex Feature) -->
+        <!-- Option 3: Duplex / 2-Sided Printing Blank Page (PDF24 Duplex Feature) -->
         <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/80 dark:border-zinc-700/60">
           <label class="flex items-start gap-2.5 cursor-pointer select-none">
             <input type="checkbox" id="chkMergeInsertBlankPage" onchange="toggleMergeInsertBlankPage(this.checked)" class="mt-0.5 rounded text-[#ff2a5f] focus:ring-[#ff2a5f] w-4 h-4 cursor-pointer accent-[#ff2a5f]">
             <div class="flex-1">
               <span class="font-bold text-zinc-900 dark:text-zinc-100 block text-xs">Double-Sided Printing (Duplex)</span>
               <span class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-tight block mt-0.5">
-                Insert a blank page if a document has an odd number of pages so each document starts on a new sheet.
+                Insert a blank page after odd-paged documents so every document starts on a front page.
               </span>
             </div>
           </label>
         </div>
 
-        <!-- Option 3: Actions (Rotate All & Clear) -->
-        <div class="flex items-center gap-2 pt-1">
-          <button type="button" onclick="rotateAllWorkspace(90)" class="flex-1 py-2.5 px-3 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-            <span>Rotate All 90°</span>
-          </button>
-          <button type="button" onclick="clearWorkspaceFiles(); closeMergeOptionsModal();" class="py-2.5 px-3 rounded-xl border border-zinc-200 dark:border-zinc-700 hover:bg-red-50 dark:hover:bg-red-950/30 text-red-500 font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-            <span>Clear All</span>
-          </button>
+        <!-- Option 4: Batch Actions (Rotate Left ⟲, Rotate Right ⟳, Clear 🗑) -->
+        <div>
+          <label class="font-bold text-zinc-800 dark:text-zinc-200 text-xs block mb-1.5">Batch Actions:</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" onclick="rotateAllWorkspace(-90)" class="py-2 px-1.5 rounded-xl border border-zinc-200/90 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-bold transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="Rotate all items 90° Left">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 4v5h-.582m-15.356 2A8.001 8.001 0 0119.418 9m0 0H15m-11 11v-5h.581m0 0a8.003 8.003 0 0015.357-2m-15.357 2H9"/></svg>
+              <span>Left 90°</span>
+            </button>
+            <button type="button" onclick="rotateAllWorkspace(90)" class="py-2 px-1.5 rounded-xl border border-zinc-200/90 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-bold transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="Rotate all items 90° Right">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              <span>Right 90°</span>
+            </button>
+            <button type="button" onclick="clearWorkspaceFiles(); closeMergeOptionsModal();" class="py-2 px-1.5 rounded-xl border border-red-200/80 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/30 text-red-500 font-bold transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="Clear all files">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              <span>Clear</span>
+            </button>
+          </div>
         </div>
 
       </div>
 
       <!-- Done Button -->
       <div class="pt-1">
-        <button type="button" onclick="closeMergeOptionsModal()" class="w-full py-3 rounded-2xl bg-[#ff2a5f] hover:bg-[#e01a4f] text-white font-extrabold text-sm transition cursor-pointer">
+        <button type="button" onclick="closeMergeOptionsModal()" class="w-full py-3 rounded-2xl bg-[#ff2a5f] hover:bg-[#e01a4f] text-white font-extrabold text-sm transition active:scale-97 cursor-pointer">
           Done
         </button>
       </div>

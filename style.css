@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Kaushan+Script&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Plus Jakarta Sans", system-ui, sans-serif;
   --font-brush: 'Kaushan Script', 'Caveat', cursive;
   
   /* CutiPDF Signature Watercolor Palette */
@@ -63,6 +63,21 @@ body {
   padding-bottom: 0 !important;
   display: flex !important;
   flex-direction: column !important;
+}
+
+/* Apple Design Foundation: Optical Typography & Response */
+h1, h2, h3, .tool-title {
+  letter-spacing: -0.025em;
+}
+
+button, .btn, .btn-primary-action, .segmented-btn, [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+button:active, .btn:active, .btn-primary-action:active {
+  transform: scale(0.965);
+  transition: transform 80ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 main {
@@ -183,8 +198,8 @@ html.dark .brand-logo {
   }
 }
 
-/* Floating Action Bar (Remove Pages & Unified Control Center)
-   Stacked Aligned Controls: Top row = 2 White Buttons (split 50/50), Bottom row = 1 Royal Pink Button (100% width) */
+/* Floating Action Bar (Remove Pages, Merge PDF & Unified Control Center)
+   Apple Design Materials: Translucent frosted glass, specular highlight edge, and spring active press */
 .workspace-action-bar.floating-mode {
   position: fixed !important;
   bottom: calc(18px + env(safe-area-inset-bottom, 0px)) !important;
@@ -204,7 +219,7 @@ html.dark .brand-logo {
   width: min(calc(100% - 32px), 520px) !important;
   max-width: 520px !important;
   pointer-events: none;
-  animation: floatInUpCenter 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: floatInUpCenter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .workspace-action-bar.floating-mode > * {
@@ -218,7 +233,7 @@ html.dark .brand-logo {
   gap: 10px !important;
 }
 
-/* Row 1: The two white buttons, split 50/50 with clean gap */
+/* Row 1: The two frosted sub-buttons, split 50/50 with specular top highlight */
 .workspace-action-bar.floating-mode #workspaceActionSubButtons {
   display: flex !important;
   width: 100% !important;
@@ -231,44 +246,51 @@ html.dark .brand-logo {
   height: 52px !important;
   min-height: 52px !important;
   border-radius: 18px !important;
-  font-size: 13px !important;
+  font-size: 13.5px !important;
   font-weight: 700 !important;
-  border: 1px solid rgba(228, 228, 231, 0.9) !important;
-  background-color: #ffffff !important;
+  letter-spacing: -0.01em !important;
+  border: 1px solid rgba(228, 228, 231, 0.85) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.6) !important;
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
   color: #18181b !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06) !important;
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04) !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   cursor: pointer !important;
   white-space: nowrap !important;
-  transition: transform 0.12s ease, background-color 0.15s ease, box-shadow 0.15s ease !important;
+  transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
 html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button {
-  background-color: #27272a !important;
+  background: rgba(39, 39, 42, 0.88) !important;
   color: #f4f4f5 !important;
-  border-color: rgba(63, 63, 70, 0.9) !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28) !important;
+  border-color: rgba(63, 63, 70, 0.8) !important;
+  border-top-color: rgba(255, 255, 255, 0.15) !important;
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.35) !important;
 }
 
 .workspace-action-bar.floating-mode #workspaceActionSubButtons button:hover {
-  background-color: #f4f4f5 !important;
+  background: rgba(244, 244, 245, 0.96) !important;
+  transform: translateY(-1px) !important;
 }
 
 html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:hover {
-  background-color: #3f3f46 !important;
+  background: rgba(63, 63, 70, 0.96) !important;
 }
 
 .workspace-action-bar.floating-mode #workspaceActionSubButtons button:active {
-  transform: scale(0.98) !important;
+  transform: scale(0.97) !important;
+  transition: transform 80ms cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .workspace-action-bar.floating-mode #workspaceActionSubButtons button.hidden {
   display: none !important;
 }
 
-/* Row 2: Punchy Royal Pink Primary Action Button (Exact same total width as Row 1, aligned, NO SHADOW) */
+/* Row 2: Punchy Royal Pink Primary Action Button (Apple Spring Active Scale) */
 .workspace-action-bar.floating-mode #btnExecuteAction {
   width: 100% !important;
   border-radius: 18px !important;
@@ -277,9 +299,10 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
   height: 52px !important;
   font-size: 15px !important;
   font-weight: 800 !important;
+  letter-spacing: -0.015em !important;
   background-color: #ff2a5f !important;
   color: #ffffff !important;
-  box-shadow: none !important;
+  box-shadow: 0 4px 18px rgba(255, 42, 95, 0.3) !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -287,16 +310,18 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
   white-space: nowrap !important;
   border: none !important;
   cursor: pointer !important;
-  transition: transform 0.12s ease, background-color 0.15s ease !important;
+  transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, box-shadow 0.15s ease !important;
 }
 
 .workspace-action-bar.floating-mode #btnExecuteAction:hover {
   background-color: #e01a4f !important;
-  box-shadow: none !important;
+  box-shadow: 0 6px 22px rgba(255, 42, 95, 0.38) !important;
+  transform: translateY(-1px) !important;
 }
 
 .workspace-action-bar.floating-mode #btnExecuteAction:active {
-  transform: scale(0.99) !important;
+  transform: scale(0.97) !important;
+  transition: transform 80ms cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 .workspace-action-bar.floating-mode #workspaceActionSummary,
@@ -491,16 +516,16 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
   transform: none !important;
 }
 
-/* Thumbnail Preview Cards (iLovePDF Style) */
+/* Thumbnail Preview Cards (Apple Squircle & Direct Manipulation Physics) */
 .preview-card {
   background: var(--bg-card);
-  border: 2px solid rgba(228, 228, 231, 0.85); /* Fixed 2px border prevents layout shifts on selection */
-  border-radius: 18px;
+  border: 1.5px solid rgba(228, 228, 231, 0.9);
+  border-radius: 20px;
   overflow: hidden;
   box-sizing: border-box;
   contain: content; /* Isolates paint & layout: 700 cards scroll at 60/120fps with zero offscreen paint! */
-  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.15s ease, background-color 0.15s ease, opacity 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -524,26 +549,26 @@ html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:
 }
 
 html.dark .preview-card {
-  border-color: rgba(63, 63, 70, 0.5);
+  border-color: rgba(63, 63, 70, 0.7);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
 .preview-card:active {
+  transform: scale(0.98);
+  transition: transform 80ms cubic-bezier(0.16, 1, 0.3, 1);
   cursor: grabbing;
 }
 
 /* Hover effects restricted to mouse/pointer devices so touch scrolling never shifts or jumps */
 @media (hover: hover) and (pointer: fine) {
-  .preview-card {
-    transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.15s ease, background-color 0.15s ease, opacity 0.15s ease;
-  }
   .preview-card:hover {
     border-color: rgba(203, 213, 225, 0.95);
-    box-shadow: 0 8px 22px -4px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.03);
     transform: translateY(-2px);
   }
   html.dark .preview-card:hover {
-    border-color: rgba(82, 82, 91, 0.8);
-    box-shadow: 0 8px 22px -4px rgba(0, 0, 0, 0.3);
+    border-color: rgba(82, 82, 91, 0.85);
+    box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.35);
   }
   .preview-card.removed:hover {
     border-color: rgba(255, 82, 119, 0.7) !important;
@@ -552,16 +577,18 @@ html.dark .preview-card {
 }
 
 .preview-card.dragging {
-  opacity: 0.45;
-  transform: scale(0.96);
-  border-style: dashed;
+  opacity: 0.85;
+  transform: scale(1.02);
   border-color: var(--color-pink-primary);
+  box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.22);
+  cursor: grabbing;
+  z-index: 30;
 }
 
 .preview-card.drag-over {
   border-color: var(--color-pink-primary);
-  box-shadow: 0 0 0 2px var(--color-pink-primary);
-  transform: translateY(-4px);
+  box-shadow: 0 0 0 2.5px var(--color-pink-primary), 0 12px 28px -4px rgba(255, 42, 95, 0.25);
+  transform: translateY(-3px);
 }
 
 /* Selected / Marked for Removal Card: Faint subtle pink outline, NO bright pink background wash, NO heavy glow */

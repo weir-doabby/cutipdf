@@ -1608,7 +1608,13 @@ window.openPagePreviewModal = async function(index) {
   const img = document.getElementById('previewModalImage');
   const spinner = document.getElementById('previewModalSpinner');
 
-  if (title) title.textContent = `Page ${item.pageNum || (index + 1)}`;
+  if (title) {
+    if (item.type === 'pdf-file') {
+      title.textContent = `${item.name || `File ${index + 1}`} (${item.pageCount || 1} pgs)`;
+    } else {
+      title.textContent = `Page ${item.pageNum || (index + 1)}`;
+    }
+  }
 
   if (modal) {
     modal.classList.remove('opacity-0', 'pointer-events-none');
@@ -1923,6 +1929,27 @@ window.applyEnteredPagesToRemove = function() {
 // ==========================================
 // Merge PDF Options Modal & Handlers
 // ==========================================
+window.updateMergeModalViewButtons = function() {
+  const btnFile = document.getElementById('btnMergeModalModeFile');
+  const btnPage = document.getElementById('btnMergeModalModePage');
+  const hint = document.getElementById('mergeModeCurrentHint');
+  const isPage = state.workspaceViewMode === 'page';
+
+  if (hint) {
+    hint.textContent = isPage ? 'Pages Mode' : 'Files Mode';
+  }
+
+  if (btnFile && btnPage) {
+    if (isPage) {
+      btnPage.className = 'py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white shadow-xs';
+      btnFile.className = 'py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer text-zinc-500 hover:text-zinc-900 dark:hover:text-white';
+    } else {
+      btnFile.className = 'py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white shadow-xs';
+      btnPage.className = 'py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer text-zinc-500 hover:text-zinc-900 dark:hover:text-white';
+    }
+  }
+};
+
 window.openMergeOptionsModal = function() {
   const modal = document.getElementById('mergeOptionsModal');
   if (!modal) return;
@@ -1930,6 +1957,7 @@ window.openMergeOptionsModal = function() {
   if (chkDuplex) {
     chkDuplex.checked = !!(state.toolOptions && state.toolOptions.mergeInsertBlankPage);
   }
+  updateMergeModalViewButtons();
   modal.classList.remove('opacity-0', 'pointer-events-none');
   modal.classList.add('opacity-100');
   const inner = modal.querySelector('div');
@@ -2642,15 +2670,16 @@ function renderInteractiveWorkspace() {
 
     const totalFiles = state.workspaceItems.length;
     DOM.btnExecuteAction.disabled = (totalFiles < 2);
+    const unitLabel = state.workspaceViewMode === 'page' ? 'Pages' : 'PDFs';
     if (totalFiles < 2) {
       DOM.btnExecuteAction.classList.add('opacity-50', 'cursor-not-allowed');
       DOM.btnExecuteAction.innerHTML = `
-        <span id="actionButtonText">Merge PDF (Add at least 2 files)</span>
+        <span id="actionButtonText">Merge PDF (Add at least 2 ${state.workspaceViewMode === 'page' ? 'pages' : 'files'})</span>
       `;
     } else {
       DOM.btnExecuteAction.classList.remove('opacity-50', 'cursor-not-allowed');
       DOM.btnExecuteAction.innerHTML = `
-        <span id="actionButtonText">Merge ${totalFiles} PDFs</span>
+        <span id="actionButtonText">Merge ${totalFiles} ${unitLabel}</span>
       `;
     }
   } else {
@@ -2808,8 +2837,13 @@ function renderInteractiveWorkspace() {
         </div>
       `;
       infoBadge = `
-        <div class="absolute top-2 right-2 z-20 min-w-[28px] h-7 sm:min-w-[32px] sm:h-8 px-2 rounded-xl bg-white/95 dark:bg-zinc-800/95 text-zinc-700 dark:text-zinc-200 text-[11px] sm:text-xs font-bold shadow-sm border border-zinc-200/80 dark:border-zinc-700 flex items-center justify-center pointer-events-none select-none">
-          ${item.pageCount || 1} pgs
+        <div class="absolute top-2 right-2 z-20 flex items-center gap-1.5 select-none">
+          <button type="button" onclick="openPagePreviewModal(${index}); event.stopPropagation();" class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/95 dark:bg-zinc-800/95 text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50 dark:hover:bg-zinc-700 shadow-sm border border-zinc-200/80 dark:border-zinc-700 flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer" title="Zoom & Preview Document">
+            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
+          </button>
+          <div class="min-w-[28px] h-7 sm:min-w-[32px] sm:h-8 px-2 rounded-xl bg-white/95 dark:bg-zinc-800/95 text-zinc-700 dark:text-zinc-200 text-[11px] sm:text-xs font-bold shadow-sm border border-zinc-200/80 dark:border-zinc-700 flex items-center justify-center pointer-events-none">
+            ${item.type === 'pdf-page' ? `P. ${item.pageNum}` : `${item.pageCount || 1} pgs`}
+          </div>
         </div>
       `;
     } else {
@@ -2846,17 +2880,36 @@ function renderInteractiveWorkspace() {
 
     // Hover Action Buttons (shown only when NOT removed and NOT remove-pages)
     let hoverActionsHtml = '';
-    if (!item.removed && toolId !== 'remove-pages') {
-      hoverActionsHtml = `
-        <div class="card-hover-actions absolute inset-0 bg-black/35 backdrop-blur-[1px] flex items-center justify-center gap-2 z-20">
-          <button type="button" onclick="rotateWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Rotate 90 degrees">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-          </button>
-          <button type="button" onclick="removeWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-400 hover:text-red-500 hover:bg-red-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Delete">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-          </button>
-        </div>
-      `;
+    if (!item.removed) {
+      if (toolId === 'merge-pdf') {
+        hoverActionsHtml = `
+          <div class="card-hover-actions absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center gap-2 z-20">
+            <button type="button" onclick="rotateWorkspaceItem(${index}, -1); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Rotate 90° Left">
+              <svg class="w-4 h-4 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 4v5h-.582m-15.356 2A8.001 8.001 0 0119.418 9m0 0H15m-11 11v-5h.581m0 0a8.003 8.003 0 0015.357-2m-15.357 2H9"/></svg>
+            </button>
+            <button type="button" onclick="rotateWorkspaceItem(${index}, 1); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Rotate 90° Right">
+              <svg class="w-4 h-4 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </button>
+            <button type="button" onclick="openPagePreviewModal(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Zoom Preview">
+              <svg class="w-4 h-4 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
+            </button>
+            <button type="button" onclick="removeWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-400 hover:text-red-500 hover:bg-red-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Delete">
+              <svg class="w-4 h-4 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+          </div>
+        `;
+      } else if (toolId !== 'remove-pages') {
+        hoverActionsHtml = `
+          <div class="card-hover-actions absolute inset-0 bg-black/35 backdrop-blur-[1px] flex items-center justify-center gap-2 z-20">
+            <button type="button" onclick="rotateWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Rotate 90 degrees">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </button>
+            <button type="button" onclick="removeWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-400 hover:text-red-500 hover:bg-red-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Delete">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            </button>
+          </div>
+        `;
+      }
     }
 
     // Thumbnail Area: For remove-pages & merge-pdf, full clean white canvas
@@ -2891,7 +2944,7 @@ function renderInteractiveWorkspace() {
     } else if (isMergeTool) {
       if (item.previewUrl) {
         thumbHtml = `
-          <div class="flex-1 w-full bg-white dark:bg-zinc-900 flex items-center justify-center overflow-hidden p-2 sm:p-3 relative group/thumb min-h-[160px] sm:min-h-[190px]">
+          <div onclick="openPagePreviewModal(${index});" class="flex-1 w-full bg-white dark:bg-zinc-900 flex items-center justify-center overflow-hidden p-2 sm:p-3 relative group/thumb min-h-[160px] sm:min-h-[190px] cursor-pointer">
             ${orderBadge}
             ${infoBadge}
             <img src="${item.previewUrl}" alt="${item.name}" style="transform: rotate(${item.rotation || 0}deg);" class="page-thumb-img max-h-full max-w-full object-contain pointer-events-none select-none transition-transform duration-200">
@@ -2900,7 +2953,7 @@ function renderInteractiveWorkspace() {
         `;
       } else {
         thumbHtml = `
-          <div class="flex-1 w-full bg-white dark:bg-zinc-900 flex items-center justify-center overflow-hidden p-2 sm:p-3 relative group/thumb min-h-[160px] sm:min-h-[190px]">
+          <div onclick="openPagePreviewModal(${index});" class="flex-1 w-full bg-white dark:bg-zinc-900 flex items-center justify-center overflow-hidden p-2 sm:p-3 relative group/thumb min-h-[160px] sm:min-h-[190px] cursor-pointer">
             ${orderBadge}
             ${infoBadge}
             <div class="page-thumb-skeleton absolute inset-0 flex flex-col items-center justify-center p-3 text-center pointer-events-none bg-zinc-50 dark:bg-zinc-800/40">
@@ -2952,12 +3005,18 @@ function renderInteractiveWorkspace() {
             <p class="text-[11px] font-bold text-zinc-800 dark:text-zinc-200 truncate" title="${item.name}">${item.name}</p>
             ${item.size ? `<span class="text-[10px] text-zinc-400 block">${item.size}</span>` : ''}
           </div>
-          <div class="flex items-center gap-1 flex-shrink-0">
-            <button type="button" onclick="rotateWorkspaceItem(${index}); event.stopPropagation();" class="w-7 h-7 rounded-lg hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff2a5f] flex items-center justify-center transition cursor-pointer" title="Rotate 90°">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          <div class="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
+            <button type="button" onclick="rotateWorkspaceItem(${index}, -1); event.stopPropagation();" class="w-7 h-7 rounded-lg hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff2a5f] flex items-center justify-center transition active:scale-95 cursor-pointer" title="Rotate 90° Left">
+              <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 4v5h-.582m-15.356 2A8.001 8.001 0 0119.418 9m0 0H15m-11 11v-5h.581m0 0a8.003 8.003 0 0015.357-2m-15.357 2H9"/></svg>
             </button>
-            <button type="button" onclick="removeWorkspaceItem(${index}); event.stopPropagation();" class="w-7 h-7 rounded-lg hover:bg-red-50 dark:hover:bg-zinc-800 text-zinc-400 hover:text-red-500 flex items-center justify-center transition cursor-pointer" title="Delete file">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            <button type="button" onclick="rotateWorkspaceItem(${index}, 1); event.stopPropagation();" class="w-7 h-7 rounded-lg hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff2a5f] flex items-center justify-center transition active:scale-95 cursor-pointer" title="Rotate 90° Right">
+              <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </button>
+            <button type="button" onclick="openPagePreviewModal(${index}); event.stopPropagation();" class="w-7 h-7 rounded-lg hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff2a5f] flex items-center justify-center transition active:scale-95 cursor-pointer sm:hidden" title="Zoom Preview">
+              <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
+            </button>
+            <button type="button" onclick="removeWorkspaceItem(${index}); event.stopPropagation();" class="w-7 h-7 rounded-lg hover:bg-red-50 dark:hover:bg-zinc-800 text-zinc-400 hover:text-red-500 flex items-center justify-center transition active:scale-95 cursor-pointer" title="Delete">
+              <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
             </button>
           </div>
         </div>
@@ -3018,6 +3077,10 @@ function renderInteractiveWorkspace() {
     }
   }
 
+  if (toolId === 'merge-pdf' && typeof window.updateMergeModalViewButtons === 'function') {
+    window.updateMergeModalViewButtons();
+  }
+
   // Ensure floating tools button right edge matches bottom action button
   requestAnimationFrame(alignFloatingToolsButton);
   setTimeout(alignFloatingToolsButton, 100);
@@ -3072,9 +3135,10 @@ function handleCardDragEnd(e) {
 }
 
 // Interactive Workspace Actions
-window.rotateWorkspaceItem = function(index) {
+window.rotateWorkspaceItem = function(index, direction = 1) {
   if (!state.workspaceItems[index]) return;
-  state.workspaceItems[index].rotation = ((state.workspaceItems[index].rotation || 0) + 90) % 360;
+  const delta = (direction === -1) ? -90 : 90;
+  state.workspaceItems[index].rotation = (((state.workspaceItems[index].rotation || 0) + delta) % 360 + 360) % 360;
   if (state.workspaceItems[index].fileRecord) {
     state.workspaceItems[index].fileRecord.rotation = state.workspaceItems[index].rotation;
   }
@@ -3103,7 +3167,7 @@ window.removeWorkspaceItem = function(index) {
 
 window.rotateAllWorkspace = function(angle) {
   state.workspaceItems.forEach(i => {
-    i.rotation = ((i.rotation || 0) + angle) % 360;
+    i.rotation = (((i.rotation || 0) + angle) % 360 + 360) % 360;
     if (i.fileRecord) {
       i.fileRecord.rotation = i.rotation;
     }
