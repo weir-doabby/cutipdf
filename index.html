@@ -1,44 +1,22 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" class="dark">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>CutiPDF • Clean, Fast & Complete PDF Studio</title>
+  <title>CutiPDF — Hand-Drawn Minimal PDF Toolbox</title>
   
-  <meta name="description" content="CutiPDF — All 30 PDF tools working 100% in your browser. Fast, free, and private PDF processing without uploading to any server.">
-  <meta name="7c5f415417bfdf7647b7" content="ba9fd24064e70cfe0dd2">
-  <!-- Cute Strawberry Favicon (توت فرنگی) -->
+  <meta name="description" content="A quiet little sketchbook for your documents. Merge, split, compress, and edit PDFs 100% in your browser. Fast, free, and private.">
+  
+  <!-- Cute Strawberry Favicon -->
   <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16x16.png">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon-192.png">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="shortcut icon" href="assets/favicon.ico">
   <link rel="apple-touch-icon" sizes="180x180" href="assets/apple-touch-icon.png">
-
-  <!-- Immediate Theme Initializer: Strict Default to Dark Mode & Zero Flash -->
-  <style>
-    html, body {
-      background-color: #101013 !important;
-      color: #f9fafb !important;
-    }
-  </style>
-  <script>
-    (function() {
-      var savedTheme = localStorage.getItem('cutipdf_theme_v3');
-      if (!savedTheme || savedTheme !== 'light') {
-        savedTheme = 'dark';
-        localStorage.setItem('cutipdf_theme_v3', 'dark');
-      }
-      if (savedTheme === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    })();
-  </script>
 
   <!-- GitHub Pages SPA Path Restorer -->
   <script>
@@ -54,629 +32,481 @@
     })();
   </script>
 
-  <!-- Google Fonts: Kaushan Script (Brush), Caveat & Plus Jakarta Sans -->
+  <!-- Google Fonts: Boogaloo, Capriola, Sono & Material Symbols Outlined -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Kaushan+Script&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Capriola&family=Sono:wght@600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block" rel="stylesheet">
 
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
+  <!-- Tailwind CSS CDN & Theme Config -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script id="tailwind-config">
+    globalThis.tailwind = globalThis.tailwind || {};
+    globalThis.tailwind.config = {
       darkMode: 'class',
-    }
+      theme: {
+        extend: {
+          colors: {
+            'primary': '#AF2247',
+            'on-primary': '#FFFFFF',
+            'primary-container': '#FFD9DD',
+            'on-primary-container': '#400012',
+            'secondary': '#006B5B',
+            'on-secondary': '#FFFFFF',
+            'secondary-container': '#97F0DB',
+            'on-secondary-container': '#00201A',
+            'tertiary': '#835100',
+            'on-tertiary': '#FFFFFF',
+            'tertiary-container': '#FFEEDF',
+            'on-tertiary-container': '#2B1700',
+            'error': '#BA1A1A',
+            'on-error': '#FFFFFF',
+            'error-container': '#FFDAD6',
+            'on-error-container': '#410002',
+            'background': '#FFF9ED',
+            'on-background': '#1D1C14',
+            'surface': '#FFF9ED',
+            'surface-dim': '#DFD9CE',
+            'surface-bright': '#FFF9ED',
+            'surface-container-lowest': '#FFFFFF',
+            'surface-container-low': '#F9F3E7',
+            'surface-container': '#F3EDE1',
+            'surface-container-high': '#EDE8DC',
+            'surface-container-highest': '#E8E2D6',
+            'on-surface': '#1D1C14',
+            'surface-variant': '#FDDADD',
+            'on-surface-variant': '#584143',
+            'outline': '#1D1C14',
+            'outline-variant': '#CBC6BB',
+            'paper-pink': '#FFE2E7',
+            'on-paper-pink': '#1D1C14',
+            'paper-mint': '#D8F6EC',
+            'on-paper-mint': '#1D1C14',
+            'paper-butter': '#FFF0C2',
+            'on-paper-butter': '#1D1C14',
+            'paper-sky': '#DCEEFF',
+            'on-paper-sky': '#1D1C14',
+            'paper-lavender': '#EDE2FF',
+            'on-paper-lavender': '#1D1C14',
+          },
+          borderRadius: {
+            'sm': '8px',
+            'DEFAULT': '12px',
+            'md': '16px',
+            'lg': '20px',
+            'xl': '28px',
+            'full': '9999px',
+          },
+          fontFamily: {
+            'display': ['"Boogaloo"', 'sans-serif'],
+            'headline': ['"Boogaloo"', 'sans-serif'],
+            'title': ['"Capriola"', 'sans-serif'],
+            'body': ['"Capriola"', 'sans-serif'],
+            'label': ['"Capriola"', 'sans-serif'],
+            'mono': ['"Sono"', 'monospace'],
+          },
+          fontSize: {
+            'display-lg': ['56px', { lineHeight: '62px', letterSpacing: '0px', fontWeight: '400' }],
+            'display-lg-mobile': ['32px', { lineHeight: '38px', letterSpacing: '0px', fontWeight: '400' }],
+            'headline-lg': ['36px', { lineHeight: '42px', letterSpacing: '0px', fontWeight: '400' }],
+            'headline-lg-mobile': ['28px', { lineHeight: '34px', letterSpacing: '0px', fontWeight: '400' }],
+            'headline-md': ['28px', { lineHeight: '34px', letterSpacing: '0px', fontWeight: '400' }],
+            'title-lg': ['20px', { lineHeight: '28px', letterSpacing: '0px', fontWeight: '400' }],
+            'title-md': ['17px', { lineHeight: '24px', letterSpacing: '0px', fontWeight: '400' }],
+            'body-md': ['14px', { lineHeight: '22px', letterSpacing: '0px', fontWeight: '400' }],
+            'body-sm': ['13px', { lineHeight: '19px', letterSpacing: '0px', fontWeight: '400' }],
+            'label-lg': ['15px', { lineHeight: '20px', letterSpacing: '0px', fontWeight: '400' }],
+            'label-sm': ['12px', { lineHeight: '16px', letterSpacing: '0.4px', fontWeight: '600' }],
+          },
+          transitionDuration: {
+            'state-change': '120ms',
+            'sticker-pop': '200ms',
+            'surface-enter': '260ms',
+          },
+          transitionTimingFunction: {
+            'state-change': 'ease-out',
+            'sticker-pop': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+            'surface-enter': 'cubic-bezier(0.2, 0, 0, 1)',
+          },
+        },
+      },
+    };
   </script>
 
   <!-- Client-Side Engine Libraries -->
-  <!-- 1. PDF-Lib -->
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-  <!-- 2. PDF.js (Mozilla Engine) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
     if (window.pdfjsLib) {
       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
   </script>
-  <!-- 3. JSZip (ZIP Packaging) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-  <!-- 4. SheetJS (Excel Engine) -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <!-- 5. Mammoth (Word DOCX Engine) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-  <!-- 6. Confetti Celebration -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=20261117d">
+  <link rel="stylesheet" href="style.css?v=20261123">
 </head>
-<body class="watercolor-paper-bg selection:bg-pink-500/20 selection:text-[#ff2a5f]">
+<body class="bg-surface text-on-surface font-body antialiased selection:bg-pink-200 selection:text-primary min-h-screen flex flex-col">
 
-  <!-- Global Toast Notification (Minimal Sleek Black Frame, Single-Line, No Dots) -->
+  <!-- Shared SVG Ink-Wobble Filter for Authentic Irregular Hand-Drawn Lines -->
+  <svg width="0" height="0" class="absolute pointer-events-none" aria-hidden="true">
+    <defs>
+      <filter id="ink-wobble" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.042" numOctaves="2" seed="7" result="noise"></feTurbulence>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="2.4" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Global Toast Notification -->
   <div id="toast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 opacity-0 -translate-y-3 pointer-events-none max-w-[92vw]">
-    <div class="inline-flex items-center justify-center bg-zinc-950/95 dark:bg-zinc-900/95 text-white text-xs sm:text-sm font-medium px-4 py-2 sm:px-5 sm:py-2.5 rounded-full shadow-lg border border-white/10 backdrop-blur-md whitespace-nowrap text-center">
+    <div class="sketch-pill inline-flex items-center justify-center bg-on-surface text-surface text-xs sm:text-sm font-bold px-5 py-2.5 shadow-md border-2 border-outline whitespace-nowrap text-center">
       <span id="toastMessage">Success</span>
     </div>
   </div>
 
-  <!-- Clean Top Header (iLovePDF Style: Brand Text + Grouped Navigation Links on Left, Utility on Right) -->
-  <header class="w-full px-4 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between border-b border-zinc-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md sticky top-0 z-40">
-    <!-- Left Group: Brand Wordmark + Navigation Links closely together like iLovePDF -->
-    <div class="flex items-center gap-6 lg:gap-8">
-      <!-- Brand: Pure Text Wordmark (No image icon, favicon reserved for browser tab) -->
-      <a id="brandLogoLink" href="./" data-tool-id="all-tools" class="flex items-center cursor-pointer no-underline text-inherit group flex-shrink-0" title="CutiPDF Home">
-        <span class="text-2xl sm:text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:opacity-90 transition-opacity font-brush">
-          Cuti<span class="text-[#ff2a5f] drop-shadow-xs">PDF</span>
-        </span>
-      </a>
+  <!-- Quiet Hand-Drawn Header -->
+  <header class="max-w-5xl w-full mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
+    <a id="brandLogoLink" href="./" data-tool-id="all-tools" class="inline-flex items-center gap-2.5 min-h-12 px-2 no-underline text-inherit group cursor-pointer" title="CutiPDF Home">
+      <svg width="34" height="34" viewBox="0 0 36 36" fill="none" class="ink-sketch" aria-hidden="true">
+        <path d="M7 27C6 21 7.2 13.5 9.2 8.5L14.3 13.8C16.8 12.9 19.6 13.3 22.1 14.1L27.2 9.2C28.8 14.3 29.4 21.2 28.8 27.1C24.5 30.8 10.8 30.4 7 27Z" fill="#FFE2E7" stroke="#1D1C14" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"></path>
+        <circle cx="14" cy="20" r="1.5" fill="#1D1C14"></circle>
+        <circle cx="22" cy="19.5" r="1.5" fill="#1D1C14"></circle>
+        <path d="M16.2 23.2C17.4 24.3 18.7 24.3 19.8 23.2" stroke="#1D1C14" stroke-width="1.8" stroke-linecap="round"></path>
+        <path d="M5.5 19.5L10.5 20.2M25.5 20.2L30.5 19.5" stroke="#1D1C14" stroke-width="1.4" stroke-linecap="round"></path>
+      </svg>
+      <span class="font-headline text-2xl sm:text-3xl tracking-tight text-on-surface">CutiPDF</span>
+    </a>
 
-      <!-- Desktop Navigation Bar (iLovePDF Style Dropdown & Mega Menus) -->
-      <nav class="hidden md:flex items-center gap-1 lg:gap-1.5 relative">
-        <a href="./merge-pdf" data-tool-id="merge-pdf" class="px-3 py-1.5 rounded-xl text-sm font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800 transition-colors">Merge PDF</a>
-        <a href="./split-pdf" data-tool-id="split-pdf" class="px-3 py-1.5 rounded-xl text-sm font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800 transition-colors">Split PDF</a>
-        <a href="./compress-pdf" data-tool-id="compress-pdf" class="px-3 py-1.5 rounded-xl text-sm font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800 transition-colors">Compress PDF</a>
-        
-        <!-- Convert PDF Dropdown Menu (Pure Client-Side In-Browser) -->
-        <div class="relative group/convert">
-          <button type="button" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-sm font-bold text-zinc-700 dark:text-zinc-200 group-hover/convert:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800 transition-colors cursor-pointer">
-            <span>Convert PDF</span>
-            <svg class="w-3.5 h-3.5 opacity-60 group-hover/convert:rotate-180 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-          </button>
-          
-          <!-- Dropdown Panel (2 columns: Convert TO PDF & Convert FROM PDF) -->
-          <div class="absolute top-full left-0 pt-2 opacity-0 pointer-events-none translate-y-2 group-hover/convert:opacity-100 group-hover/convert:pointer-events-auto group-hover/convert:translate-y-0 transition-all duration-200 z-50">
-            <div class="w-[360px] bg-white dark:bg-[#18181d] border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl p-4 grid grid-cols-2 gap-4">
-              <!-- Convert TO PDF -->
-              <div class="space-y-1">
-                <div class="text-[10px] font-black uppercase tracking-wider text-zinc-400 dark:text-zinc-500 px-2 pb-1 border-b border-zinc-100 dark:border-zinc-800">Convert to PDF</div>
-                <a href="./jpg-to-pdf" data-tool-id="jpg-to-pdf" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800/80 transition">
-                  <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-                  <span>JPG to PDF</span>
-                </a>
-              </div>
-
-              <!-- Convert FROM PDF -->
-              <div class="space-y-1">
-                <div class="text-[10px] font-black uppercase tracking-wider text-zinc-400 dark:text-zinc-500 px-2 pb-1 border-b border-zinc-100 dark:border-zinc-800">Convert from PDF</div>
-                <a href="./pdf-to-jpg" data-tool-id="pdf-to-jpg" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800/80 transition">
-                  <span class="w-2 h-2 rounded-full bg-amber-400"></span>
-                  <span>PDF to JPG</span>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- All PDF Tools Dropdown (Mega Menu with 4 Client-Side Categories) -->
-        <div class="relative group/alltools">
-          <button type="button" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-sm font-bold text-zinc-700 dark:text-zinc-200 group-hover/alltools:text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-zinc-800 transition-colors cursor-pointer">
-            <span>All PDF Tools</span>
-            <svg class="w-3.5 h-3.5 opacity-60 group-hover/alltools:rotate-180 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
-          </button>
-
-          <!-- Mega Menu Panel (4 Columns matching Client-Side Suite) -->
-          <div class="absolute top-full -left-20 lg:-left-36 pt-2 opacity-0 pointer-events-none translate-y-2 group-hover/alltools:opacity-100 group-hover/alltools:pointer-events-auto group-hover/alltools:translate-y-0 transition-all duration-200 z-50">
-            <div class="w-[820px] max-w-[94vw] bg-white dark:bg-[#18181d] border border-zinc-200 dark:border-zinc-800 rounded-3xl shadow-2xl p-6 grid grid-cols-4 gap-4">
-              <!-- 1. Organize -->
-              <div class="space-y-1.5">
-                <div class="text-[10px] font-black uppercase tracking-wider text-[#ff2a5f] pb-1 border-b border-zinc-100 dark:border-zinc-800">Organize PDF</div>
-                <a href="./merge-pdf" data-tool-id="merge-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Merge PDF</a>
-                <a href="./split-pdf" data-tool-id="split-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Split PDF</a>
-                <a href="./remove-pages" data-tool-id="remove-pages" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Remove Pages</a>
-                <a href="./extract-pages" data-tool-id="extract-pages" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Extract Pages</a>
-                <a href="./organize-pdf" data-tool-id="organize-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Organize PDF</a>
-              </div>
-
-              <!-- 2. Optimize & Convert -->
-              <div class="space-y-1.5">
-                <div class="text-[10px] font-black uppercase tracking-wider text-[#ff2a5f] pb-1 border-b border-zinc-100 dark:border-zinc-800">Optimize & Convert</div>
-                <a href="./compress-pdf" data-tool-id="compress-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Compress PDF</a>
-                <a href="./jpg-to-pdf" data-tool-id="jpg-to-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">JPG to PDF</a>
-                <a href="./pdf-to-jpg" data-tool-id="pdf-to-jpg" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">PDF to JPG</a>
-              </div>
-
-              <!-- 3. Edit & Enhance -->
-              <div class="space-y-1.5">
-                <div class="text-[10px] font-black uppercase tracking-wider text-[#ff2a5f] pb-1 border-b border-zinc-100 dark:border-zinc-800">Edit & Enhance</div>
-                <a href="./rotate-pdf" data-tool-id="rotate-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Rotate PDF</a>
-                <a href="./page-numbers" data-tool-id="page-numbers" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Page Numbers</a>
-                <a href="./watermark-pdf" data-tool-id="watermark-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Watermark PDF</a>
-                <a href="./crop-pdf" data-tool-id="crop-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Crop PDF</a>
-                <a href="./edit-pdf" data-tool-id="edit-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Edit PDF</a>
-              </div>
-
-              <!-- 4. Security & Sign -->
-              <div class="space-y-1.5">
-                <div class="text-[10px] font-black uppercase tracking-wider text-[#ff2a5f] pb-1 border-b border-zinc-100 dark:border-zinc-800">PDF Security</div>
-                <a href="./unlock-pdf" data-tool-id="unlock-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Unlock PDF</a>
-                <a href="./protect-pdf" data-tool-id="protect-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Protect PDF</a>
-                <a href="./sign-pdf" data-tool-id="sign-pdf" class="block px-2 py-1 rounded-lg text-xs font-bold text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50/50 dark:hover:bg-zinc-800/60 transition truncate">Sign PDF</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </nav>
-    </div>
-
-    <!-- Right (Desktop): Info Button (About CutiPDF - 100% In-Browser Privacy) -->
-    <div class="hidden md:flex items-center gap-3">
-      <button id="btnHeaderInfo" onclick="openInfoModal()" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-zinc-200 dark:border-zinc-700/80 bg-white dark:bg-zinc-800/80 text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:border-[#ff2a5f] dark:hover:border-[#ff2a5f] flex items-center justify-center transition shadow-2xs cursor-pointer" title="About CutiPDF" aria-label="About CutiPDF">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="9" stroke-width="2"/>
-          <line x1="12" y1="16" x2="12" y2="12" stroke-width="2.2" stroke-linecap="round"/>
-          <circle cx="12" cy="8" r="1.1" fill="currentColor"/>
-        </svg>
-      </button>
-    </div>
-
-    <!-- Right (Mobile): 3-Line Hamburger Menu Button (Replaces Theme Toggle on Mobile) -->
-    <div class="md:hidden flex items-center">
-      <button type="button" id="mobileMenuBtn" onclick="toggleMobileNav()" class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 flex items-center justify-center active:scale-95 transition shadow-2xs cursor-pointer" aria-label="Toggle Mobile Menu" title="Menu">
-        <svg class="w-5 h-5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
-        </svg>
-      </button>
-    </div>
+    <nav class="flex items-center gap-3 sm:gap-4">
+      <a href="#tools" onclick="if(window.showCatalogView) showCatalogView();" class="inline-flex items-center min-h-11 px-2.5 font-label text-sm sm:text-base underline decoration-wavy decoration-primary underline-offset-4 text-on-surface hover:text-primary transition-colors cursor-pointer">tools</a>
+      <a href="#about" onclick="document.getElementById('about')?.scrollIntoView({behavior:'smooth'});" class="inline-flex items-center min-h-11 px-2.5 font-label text-sm sm:text-base text-on-surface hover:text-primary transition-colors cursor-pointer">about</a>
+      <span class="hidden sm:inline-flex items-center justify-center min-h-10 px-3.5 py-1 font-label text-xs sm:text-sm border-2 border-outline sketch-pill bg-surface-container text-on-surface font-bold select-none">
+        100% local
+      </span>
+    </nav>
   </header>
 
-  <!-- Mobile Navigation Drawer & Backdrop (Matching 2-Column Mockup by Categories) -->
-  <div id="mobileMenuBackdrop" onclick="closeMobileNav()" class="fixed inset-0 z-[80] bg-black/60 backdrop-blur-xs opacity-0 pointer-events-none transition-opacity duration-300 md:hidden"></div>
-  <aside id="mobileMenuDrawer" class="fixed top-0 right-0 bottom-0 z-[85] w-full max-w-[360px] sm:max-w-[400px] bg-[#101013] border-l border-zinc-800/90 shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out md:hidden" style="height: 100dvh;">
-    <!-- Drawer Header: ✕ Close Button on right (No brand logotype) -->
-    <div class="px-5 py-3.5 border-b border-zinc-800/80 bg-[#141418] flex items-center justify-end flex-shrink-0">
-      <button type="button" onclick="closeMobileNav()" class="w-8 h-8 rounded-full bg-zinc-800/90 hover:bg-zinc-700 text-zinc-300 hover:text-white flex items-center justify-center transition cursor-pointer" aria-label="Close menu">
-        <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-      </button>
-    </div>
-
-        <!-- Drawer Navigation Content: 2-Column Rounded Cards Grouped by Categories (Scrollable) -->
-    <div class="p-4 flex-1 overflow-y-auto space-y-6 overscroll-contain">
-      <!-- Organize PDF -->
-      <div>
-        <div class="flex items-center gap-2 mb-3 px-1">
-          <span class="text-[11px] font-black uppercase tracking-wider text-[#ff2a5f]">Organize PDF</span>
-          <div class="h-px flex-1 bg-zinc-800/80"></div>
-        </div>
-        <div class="grid grid-cols-2 gap-2.5 sm:gap-3">
-          <!-- Merge PDF -->
-          <a href="./merge-pdf" data-tool-id="merge-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2 min-h-[110px] group cursor-pointer no-underline">
-            <div class="tool-icon-wrap w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="10" y="16" width="22" height="32" rx="4" fill="#FEE2E2" stroke="#E63946" stroke-width="2"/>
-      <rect x="20" y="11" width="22" height="32" rx="4" fill="#FECDD3" stroke="#E11D48" stroke-width="2"/>
-      <rect x="30" y="18" width="24" height="34" rx="4" fill="#FFFFFF" stroke="#E63946" stroke-width="2.5"/>
-      <rect x="35" y="32" width="14" height="6" rx="2" fill="#E63946"/>
-      <text x="42" y="37" font-size="5.5" font-weight="800" fill="#FFFFFF" text-anchor="middle" font-family="sans-serif">PDF</text>
-      <circle cx="21" cy="45" r="7" fill="#E63946"/>
-      <path d="M21 41v8M17 45h8" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Merge PDF</span>
-          </a>
-          <!-- Split PDF -->
-          <a href="./split-pdf" data-tool-id="split-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2 min-h-[110px] group cursor-pointer no-underline">
-            <div class="tool-icon-wrap w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="14" y="10" width="36" height="44" rx="5" fill="#FEE2E2" stroke="#E63946" stroke-width="2.2"/>
-      <path d="M32 12v40" stroke="#E63946" stroke-width="2" stroke-dasharray="3 3"/>
-      <circle cx="24" cy="38" r="3" fill="none" stroke="#F59E0B" stroke-width="2"/>
-      <circle cx="24" cy="46" r="3" fill="none" stroke="#F59E0B" stroke-width="2"/>
-      <path d="M26 39l10-8M26 45l10 8" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
-      <rect x="19" y="18" width="10" height="5" rx="1.5" fill="#E63946"/>
-      <rect x="35" y="18" width="10" height="5" rx="1.5" fill="#E63946"/>
-    </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Split PDF</span>
-          </a>
-          <!-- Remove Pages -->
-          <a href="./remove-pages" data-tool-id="remove-pages" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2 min-h-[110px] group cursor-pointer no-underline">
-            <div class="tool-icon-wrap w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="14" y="10" width="28" height="38" rx="4" fill="#FEE2E2" stroke="#E63946" stroke-width="2"/>
-      <rect x="22" y="16" width="28" height="38" rx="4" fill="#FFFFFF" stroke="#DC2626" stroke-width="2.2"/>
-      <circle cx="36" cy="35" r="8" fill="#DC2626"/>
-      <path d="M32 31l8 8M40 31l-8 8" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Remove Pages</span>
-          </a>
-          <!-- Extract Pages -->
-          <a href="./extract-pages" data-tool-id="extract-pages" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2 min-h-[110px] group cursor-pointer no-underline">
-            <div class="tool-icon-wrap w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="10" y="14" width="28" height="38" rx="4" fill="#FEE2E2" stroke="#E63946" stroke-width="2"/>
-      <rect x="26" y="8" width="26" height="36" rx="4" fill="#FEF3C7" stroke="#D97706" stroke-width="2.2"/>
-      <path d="M39 21v10m-4-6l4-4 4 4" stroke="#D97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Extract Pages</span>
-          </a>
-          <!-- Organize PDF -->
-          <a href="./organize-pdf" data-tool-id="organize-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2 min-h-[110px] group cursor-pointer no-underline col-span-2">
-            <div class="tool-icon-wrap w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="10" y="10" width="18" height="20" rx="3" fill="#FEE2E2" stroke="#E63946" stroke-width="1.8"/>
-      <rect x="36" y="10" width="18" height="20" rx="3" fill="#FEE2E2" stroke="#E63946" stroke-width="1.8"/>
-      <rect x="10" y="34" width="18" height="20" rx="3" fill="#FEE2E2" stroke="#E63946" stroke-width="1.8"/>
-      <rect x="36" y="34" width="18" height="20" rx="3" fill="#FEE2E2" stroke="#E63946" stroke-width="1.8"/>
-      <path d="M24 20h8m-3-3l3 3-3 3" stroke="#E63946" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Organize PDF</span>
-          </a>
-        </div>
-      </div>
-      <!-- Optimize & Convert -->
-      <div>
-        <div class="flex items-center gap-2 mb-3 px-1">
-          <span class="text-[11px] font-black uppercase tracking-wider text-[#ff2a5f]">Optimize & Convert</span>
-          <div class="h-px flex-1 bg-zinc-800/80"></div>
-        </div>
-        <div class="grid grid-cols-2 gap-2.5 sm:gap-3">
-          <!-- Compress PDF -->
-          <a href="./compress-pdf" data-tool-id="compress-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2 min-h-[110px] group cursor-pointer no-underline">
-            <div class="tool-icon-wrap w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="16" y="10" width="32" height="44" rx="5" fill="#EDE9FE" stroke="#8B5CF6" stroke-width="2.2"/>
-      <path d="M8 32h8m-3-3l3 3-3 3" stroke="#8B5CF6" stroke-width="2.2" stroke-linecap="round"/>
-      <path d="M56 32h-8m3-3l-3 3 3 3" stroke="#8B5CF6" stroke-width="2.2" stroke-linecap="round"/>
-      <rect x="22" y="27" width="20" height="8" rx="2" fill="#8B5CF6"/>
-      <text x="32" y="33" font-size="6" font-weight="800" fill="#FFFFFF" text-anchor="middle" font-family="sans-serif">PDF</text>
-    </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Compress PDF</span>
-          </a>
-          <!-- JPG to PDF -->
-          <a href="./jpg-to-pdf" data-tool-id="jpg-to-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2 min-h-[110px] group cursor-pointer no-underline">
-            <div class="tool-icon-wrap w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="6" y="14" width="26" height="22" rx="4" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2"/>
-      <circle cx="13" cy="21" r="2.5" fill="#F59E0B"/>
-      <path d="M8 32l6-7 5 5 6-7 5 9H8z" fill="#FCD34D"/>
-      <path d="M26 25h7m-3-3l3 3-3 3" stroke="#E63946" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
-      <rect x="34" y="10" width="24" height="34" rx="4" fill="#FEE2E2" stroke="#E63946" stroke-width="2.2"/>
-      <path d="M46 10v9h12" fill="#FECACA" stroke="#E63946" stroke-width="2"/>
-      <rect x="39" y="27" width="14" height="6" rx="2" fill="#E63946"/>
-      <text x="46" y="32" font-size="5.5" font-weight="800" fill="#FFFFFF" text-anchor="middle" font-family="sans-serif">PDF</text>
-    </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">JPG to PDF</span>
-          </a>
-          <!-- PDF to JPG -->
-          <a href="./pdf-to-jpg" data-tool-id="pdf-to-jpg" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2 min-h-[110px] group cursor-pointer no-underline col-span-2">
-            <div class="tool-icon-wrap w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="6" y="10" width="24" height="34" rx="4" fill="#FEE2E2" stroke="#E63946" stroke-width="2.2"/>
-      <rect x="11" y="27" width="14" height="6" rx="2" fill="#E63946"/>
-      <text x="18" y="32" font-size="5.5" font-weight="800" fill="#FFFFFF" text-anchor="middle" font-family="sans-serif">PDF</text>
-      <path d="M25 25h7m-3-3l3 3-3 3" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round"/>
-      <rect x="34" y="14" width="26" height="22" rx="4" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2"/>
-      <circle cx="41" cy="21" r="2.5" fill="#F59E0B"/>
-      <path d="M36 32l6-7 5 5 6-7 5 9H36z" fill="#FCD34D"/>
-    </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">PDF to JPG</span>
-          </a>
-        </div>
-      </div>
-      <!-- Edit & Enhance -->
-      <div>
-        <div class="flex items-center gap-2 mb-3 px-1">
-          <span class="text-[11px] font-black uppercase tracking-wider text-[#ff2a5f]">Edit & Enhance</span>
-          <div class="h-px flex-1 bg-zinc-800/80"></div>
-        </div>
-        <div class="grid grid-cols-2 gap-2.5 sm:gap-3">
-          <!-- Rotate PDF -->
-          <a href="./rotate-pdf" data-tool-id="rotate-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2 min-h-[110px] group cursor-pointer no-underline">
-            <div class="tool-icon-wrap w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="18" y="14" width="28" height="36" rx="4" fill="#EFF6FF" stroke="#3B82F6" stroke-width="2"/>
-      <path d="M12 24a18 18 0 1 1-1 12m1-12h6m-6 0v6" stroke="#3B82F6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-      <rect x="25" y="29" width="14" height="6" rx="2" fill="#3B82F6"/>
-      <text x="32" y="34" font-size="5.5" font-weight="800" fill="#FFFFFF" text-anchor="middle" font-family="sans-serif">PDF</text>
-    </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Rotate PDF</span>
-          </a>
-          <!-- Page Numbers -->
-          <a href="./page-numbers" data-tool-id="page-numbers" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2 min-h-[110px] group cursor-pointer no-underline">
-            <div class="tool-icon-wrap w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="14" y="10" width="36" height="44" rx="5" fill="#F3F4F6" stroke="#4B5563" stroke-width="2"/>
-      <path d="M20 18h24M20 24h24M20 30h16" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round"/>
-      <rect x="26" y="38" width="12" height="10" rx="3" fill="#3B82F6"/>
-      <text x="32" y="46" font-size="7.5" font-weight="bold" fill="#FFFFFF" text-anchor="middle" font-family="sans-serif">#1</text>
-    </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Page Numbers</span>
-          </a>
-          <!-- Watermark PDF -->
-          <a href="./watermark-pdf" data-tool-id="watermark-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2 min-h-[110px] group cursor-pointer no-underline">
-            <div class="tool-icon-wrap w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="14" y="10" width="36" height="44" rx="5" fill="#FEE2E2" stroke="#E63946" stroke-width="2.2"/>
-      <path d="M18 42l28-20" stroke="#F43F5E" stroke-width="3" stroke-dasharray="4 2" stroke-linecap="round"/>
-      <text x="32" y="33" transform="rotate(-30 32 33)" font-size="6" font-weight="bold" fill="#F43F5E" text-anchor="middle" font-family="sans-serif">CONFIDENTIAL</text>
-    </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Watermark PDF</span>
-          </a>
-          <!-- Crop PDF -->
-          <a href="./crop-pdf" data-tool-id="crop-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2 min-h-[110px] group cursor-pointer no-underline">
-            <div class="tool-icon-wrap w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="14" y="10" width="36" height="44" rx="5" fill="#F3F4F6" stroke="#4B5563" stroke-width="2"/>
-      <path d="M18 24h20v20M24 18v20h20" stroke="#059669" stroke-width="2.2" stroke-linecap="round"/>
-    </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Crop PDF</span>
-          </a>
-          <!-- Edit PDF -->
-          <a href="./edit-pdf" data-tool-id="edit-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2 min-h-[110px] group cursor-pointer no-underline col-span-2">
-            <div class="tool-icon-wrap w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="12" y="10" width="34" height="44" rx="4" fill="#F3F4F6" stroke="#4B5563" stroke-width="2"/>
-      <path d="M18 18h16M18 24h22M18 30h14" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
-      <path d="M40 22l6 6-16 16h-6v-6l16-16z" fill="#F59E0B" stroke="#D97706" stroke-width="1.8"/>
-    </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Edit PDF</span>
-          </a>
-        </div>
-      </div>
-      <!-- PDF Security -->
-      <div>
-        <div class="flex items-center gap-2 mb-3 px-1">
-          <span class="text-[11px] font-black uppercase tracking-wider text-[#ff2a5f]">PDF Security</span>
-          <div class="h-px flex-1 bg-zinc-800/80"></div>
-        </div>
-        <div class="grid grid-cols-2 gap-2.5 sm:gap-3">
-          <!-- Unlock PDF -->
-          <a href="./unlock-pdf" data-tool-id="unlock-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2 min-h-[110px] group cursor-pointer no-underline">
-            <div class="tool-icon-wrap w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="14" y="10" width="36" height="44" rx="5" fill="#CCFBF1" stroke="#0D9488" stroke-width="2.2"/>
-      <rect x="24" y="30" width="16" height="14" rx="3" fill="#0D9488"/>
-      <path d="M28 30v-6a4 4 0 0 1 8 0" stroke="#0D9488" stroke-width="2.5" fill="none"/>
-      <circle cx="32" cy="37" r="1.5" fill="#FFFFFF"/>
-    </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Unlock PDF</span>
-          </a>
-          <!-- Protect PDF -->
-          <a href="./protect-pdf" data-tool-id="protect-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2 min-h-[110px] group cursor-pointer no-underline">
-            <div class="tool-icon-wrap w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="14" y="10" width="36" height="44" rx="5" fill="#FCE7F3" stroke="#DB2777" stroke-width="2.2"/>
-      <rect x="23" y="28" width="18" height="16" rx="3" fill="#DB2777"/>
-      <path d="M27 28v-5a5 5 0 0 1 10 0v5" stroke="#DB2777" stroke-width="2.5" fill="none"/>
-      <circle cx="32" cy="36" r="1.5" fill="#FFFFFF"/>
-    </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Protect PDF</span>
-          </a>
-          <!-- Sign PDF -->
-          <a href="./sign-pdf" data-tool-id="sign-pdf" onclick="closeMobileNav()" class="flex flex-col items-center justify-center p-3.5 sm:p-4 rounded-[22px] bg-[#18181d] border border-zinc-800/80 hover:border-[#ff2a5f] active:scale-95 transition-all text-center gap-2 min-h-[110px] group cursor-pointer no-underline col-span-2">
-            <div class="tool-icon-wrap w-11 h-11 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="14" y="10" width="36" height="44" rx="5" fill="#FEE2E2" stroke="#E63946" stroke-width="2.2"/>
-      <path d="M20 40h24" stroke="#9CA3AF" stroke-width="1.5" stroke-dasharray="2 2"/>
-      <path d="M22 36c4-6 6 8 10-2s6 4 10-3" stroke="#2563EB" stroke-width="2" stroke-linecap="round"/>
-      <path d="M42 22l6 6-4 4-6-6 4-4z" fill="#4B5563"/>
-    </svg>
-            </div>
-            <span class="text-xs sm:text-sm font-bold text-white tracking-tight leading-tight">Sign PDF</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- Main Content Area (Snug & Cohesive Spacing to Header) -->
-  <main class="w-full max-w-[1480px] mx-auto px-4 sm:px-8 lg:px-12 pt-1 sm:pt-2.5 pb-12 flex-1">
+  <!-- Main Content Area -->
+  <main class="max-w-5xl w-full mx-auto px-4 sm:px-6 py-4 flex-1 flex flex-col">
 
     <!-- ============================================================ -->
-    <!-- VIEW 1: ALL TOOLS CATALOG (Full iLovePDF Suite) -->
+    <!-- VIEW 1: ALL TOOLS CATALOG (Hand-Drawn Minimal Sketchbook) -->
     <!-- ============================================================ -->
-    <div id="view-all-tools" class="view-container active space-y-10">
+    <div id="view-all-tools" class="view-container active space-y-6 sm:space-y-8">
       
-      <!-- Clean Welcome Header with Logo and (pdf tool box, but lovely) -->
-      <div class="text-center max-w-3xl mx-auto space-y-1.5 py-4">
-        <img src="assets/logo.png" alt="CutiPDF Logo" class="w-16 h-16 sm:w-20 sm:h-20 object-contain drop-shadow-sm select-none mx-auto mb-2.5">
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight">
-          Every tool you need to work with PDFs
-        </h1>
-        <p class="text-base sm:text-lg font-brush text-[#ff2a5f] font-semibold tracking-wide">
-          (pdf tool box, but lovely)
-        </p>
+      <!-- Quiet Hero with Flipbook Animated Mochi the Cat -->
+      <section class="py-4 sm:py-6 grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 items-center">
+        <div class="md:col-span-7 flex flex-col items-start gap-3 sm:gap-4">
+          <span class="font-label text-xs sm:text-sm text-primary font-bold">(pdf tool box, but lovely)</span>
+
+          <h1 class="font-display text-3xl sm:text-4xl md:text-5xl text-on-surface text-balance leading-tight">
+            Every tool you need to work with PDFs
+          </h1>
+
+          <p class="font-body text-sm sm:text-base text-on-surface-variant max-w-prose leading-relaxed">
+            A quiet little sketchbook for your documents. Merge, split, compress, and sign right in your browser—nothing ever leaves your paws.
+          </p>
+
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <button id="minimal-drop-btn" type="button" onclick="DOM.fileInput.click()" class="sketch-pill sketch-btn min-h-12 inline-flex items-center gap-2 px-5 py-3 bg-primary text-on-primary border-2 border-outline transition-transform duration-state-change ease-state-change cursor-pointer font-bold">
+              <span class="material-symbols-outlined text-lg" aria-hidden="true">upload_file</span>
+              <span class="font-label text-sm sm:text-base">Drop a PDF here</span>
+            </button>
+
+            <a href="#tools" class="inline-flex items-center min-h-12 px-3 font-label text-sm sm:text-base text-on-surface underline decoration-wavy decoration-outline-variant underline-offset-4">
+              or pick a drawing below
+            </a>
+          </div>
+
+          <p id="minimal-drop-note" class="hidden font-body text-xs sm:text-sm text-secondary pt-1">
+            Purrfect—tap any drawing below to open your file locally.
+          </p>
+        </div>
+
+        <!-- Frameless Hand-Drawn Flipbook Cat Character with Irregular Ink Lines -->
+        <div class="md:col-span-5 flex flex-col items-center">
+          <div class="w-56 h-56 sm:w-64 sm:h-64 relative" role="img" aria-label="Hand-drawn flipbook animation of Mochi the cat waving a paw beside a paper sheet">
+            <svg viewBox="0 0 240 240" class="w-full h-full ink-sketch" fill="none">
+              <!-- Irregular watercolor pastel blotch -->
+              <path d="M46 142C38 98 68 52 119 48C171 44 202 88 194 139C186 188 139 206 94 195C65 188 53 171 46 142Z" fill="#FFE2E7" opacity="0.7"></path>
+
+              <!-- Frame 1 -->
+              <g class="flip-f1">
+                <path d="M84 176C77 147 83 116 94 101L89 73L111 90C119 86 129 88 137 90L157 73L152 103C165 119 169 149 161 177C139 185 105 184 84 176Z" fill="#FFF9ED" stroke="#1D1C14" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+                <circle cx="111" cy="116" r="3.1" fill="#1D1C14"></circle>
+                <circle cx="136" cy="115" r="3" fill="#1D1C14"></circle>
+                <path d="M120 123C122 127 126 126 128 122" stroke="#1D1C14" stroke-width="2.5" stroke-linecap="round"></path>
+                <path d="M77 119L95 122M75 129L96 127M150 122L169 119M151 127L171 129" stroke="#1D1C14" stroke-width="2.1" stroke-linecap="round"></path>
+                <path d="M161 164C183 161 193 145 186 131" stroke="#1D1C14" stroke-width="3" stroke-linecap="round"></path>
+                <path d="M45 151L81 144L87 188L51 195Z" fill="#FFF0C2" stroke="#1D1C14" stroke-width="2.6" stroke-linejoin="round"></path>
+                <path d="M55 162L73 158M57 172L72 169" stroke="#1D1C14" stroke-width="2.1" stroke-linecap="round"></path>
+              </g>
+
+              <!-- Frame 2 -->
+              <g class="flip-f2">
+                <path d="M83 175C78 148 81 117 95 102L87 70L110 90C118 87 128 86 136 91L160 75L152 102C164 118 168 148 162 176C141 184 105 183 83 175Z" fill="#FFF9ED" stroke="#1D1C14" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M106 116C110 111 115 112 118 116" stroke="#1D1C14" stroke-width="2.7" stroke-linecap="round"></path>
+                <path d="M130 116C134 111 139 112 142 116" stroke="#1D1C14" stroke-width="2.7" stroke-linecap="round"></path>
+                <path d="M119 123C122 127 126 126 129 123" stroke="#1D1C14" stroke-width="2.5" stroke-linecap="round"></path>
+                <path d="M77 118L96 122M75 127L96 127M150 122L169 118M150 127L171 128" stroke="#1D1C14" stroke-width="2.1" stroke-linecap="round"></path>
+                <path d="M162 162C185 151 195 133 182 119" stroke="#1D1C14" stroke-width="3" stroke-linecap="round"></path>
+                <path d="M46 148L82 143L87 187L51 193Z" fill="#FFF0C2" stroke="#1D1C14" stroke-width="2.6" stroke-linejoin="round"></path>
+                <path d="M55 160L73 157M57 170L72 168" stroke="#1D1C14" stroke-width="2.1" stroke-linecap="round"></path>
+                <path d="M174 88C174 83 179 82 182 86C185 82 190 84 190 88C190 94 182 99 182 99C182 99 174 93 174 88Z" fill="#AF2247"></path>
+              </g>
+
+              <!-- Frame 3 -->
+              <g class="flip-f3">
+                <path d="M84 176C78 148 82 118 94 102L92 73L110 90C118 87 128 87 136 90L155 71L152 102C164 118 168 148 162 176C140 184 106 184 84 176Z" fill="#FFF9ED" stroke="#1D1C14" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+                <circle cx="112" cy="115" r="3" fill="#1D1C14"></circle>
+                <circle cx="136" cy="115" r="3.1" fill="#1D1C14"></circle>
+                <path d="M119 123C122 128 126 127 129 123" stroke="#1D1C14" stroke-width="2.5" stroke-linecap="round"></path>
+                <path d="M77 121L96 122M75 129L96 127M150 122L169 120M150 127L171 129" stroke="#1D1C14" stroke-width="2.1" stroke-linecap="round"></path>
+                <path d="M86 144C73 134 71 121 80 117C87 114 95 124 94 137" fill="#FFF9ED" stroke="#1D1C14" stroke-width="2.9" stroke-linecap="round"></path>
+                <path d="M162 164C181 166 197 154 190 137" stroke="#1D1C14" stroke-width="3" stroke-linecap="round"></path>
+                <path d="M44 152L80 144L87 188L51 196Z" fill="#FFF0C2" stroke="#1D1C14" stroke-width="2.6" stroke-linejoin="round"></path>
+                <path d="M55 163L73 159M57 173L72 170" stroke="#1D1C14" stroke-width="2.1" stroke-linecap="round"></path>
+              </g>
+            </svg>
+          </div>
+          <span class="font-body text-xs sm:text-sm text-on-surface-variant">mochi guards your files locally</span>
+        </div>
+      </section>
+
+      <!-- Hand-drawn wavy divider -->
+      <div id="tools" class="py-3" aria-hidden="true">
+        <svg class="w-full h-4 text-outline-variant ink-sketch" viewBox="0 0 800 16" fill="none" preserveAspectRatio="none">
+          <path d="M0 9C38 3 79 13 122 7C165 2 201 14 244 8C287 3 324 13 366 7C408 2 442 14 486 8C528 3 563 13 604 7C646 2 683 14 725 8C764 3 782 11 800 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+        </svg>
       </div>
 
-      <!-- Categories & Tools Grid -->
-      <div id="toolsGridContainer" class="space-y-10">
-        <!-- Injected dynamically from TOOLS_CATALOG in app.js -->
+      <!-- Categories & Tools Grid (Injected from TOOLS_CATALOG in app.js) -->
+      <div id="toolsGridContainer" class="space-y-8 sm:space-y-10">
+        <!-- Injected dynamically -->
       </div>
+
+      <!-- Hand-drawn wavy divider -->
+      <div class="py-3" aria-hidden="true">
+        <svg class="w-full h-4 text-outline-variant ink-sketch" viewBox="0 0 800 16" fill="none" preserveAspectRatio="none">
+          <path d="M0 9C38 3 79 13 122 7C165 2 201 14 244 8C287 3 324 13 366 7C408 2 442 14 486 8C528 3 563 13 604 7C646 2 683 14 725 8C764 3 782 11 800 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+        </svg>
+      </div>
+
+      <!-- Quiet Human Note (About) -->
+      <section id="about" class="py-6 sm:py-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="flex flex-col gap-1.5 p-4 rounded-2xl bg-surface-container border border-outline-variant">
+          <span class="font-headline text-xl sm:text-2xl text-primary font-bold">100% Client-Side</span>
+          <p class="font-body text-xs sm:text-sm text-on-surface-variant leading-relaxed">Everything runs inside your browser via WebAssembly. Your files never touch a server.</p>
+        </div>
+        <div class="flex flex-col gap-1.5 p-4 rounded-2xl bg-surface-container border border-outline-variant">
+          <span class="font-headline text-xl sm:text-2xl text-secondary font-bold">Fast &amp; No Limits</span>
+          <p class="font-body text-xs sm:text-sm text-on-surface-variant leading-relaxed">No upload queues, no file size caps, no watermarks, and no sign-ups needed.</p>
+        </div>
+        <div class="flex flex-col gap-1.5 p-4 rounded-2xl bg-surface-container border border-outline-variant">
+          <span class="font-headline text-xl sm:text-2xl text-tertiary font-bold">Free Forever</span>
+          <p class="font-body text-xs sm:text-sm text-on-surface-variant leading-relaxed">All 16 PDF tools included openly for everyone—crafted with care &amp; privacy.</p>
+        </div>
+      </section>
 
     </div>
 
     <!-- ============================================================ -->
-    <!-- VIEW 2: DEDICATED TOOL PAGE FOR EACH TOOL -->
+    <!-- VIEW 2: DEDICATED TOOL WORKSPACE -->
     <!-- ============================================================ -->
-    <div id="view-tool-active" class="view-container max-w-4xl mx-auto space-y-3 sm:space-y-4">
+    <div id="view-tool-active" class="view-container max-w-4xl w-full mx-auto space-y-4 sm:space-y-5">
 
-      <!-- Tool Header with Gorgeous Vector (Centered, Clean Spacing to Header & Title) -->
-      <div id="toolHeaderContainer" class="text-center flex flex-col items-center space-y-0.5 sm:space-y-1">
-        <div id="toolVectorContainer" class="w-14 h-14 sm:w-16 sm:h-16 mx-auto flex items-center justify-center drop-shadow-xs mb-0.5">
-          <!-- Injected SVG Vector -->
+      <!-- Back Button & Tool Header -->
+      <div class="w-full flex items-center justify-start">
+        <button type="button" id="btnBackToTools" onclick="if(window.showCatalogView) showCatalogView();" class="sketch-btn inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border-2 border-outline bg-surface-container text-xs font-bold text-on-surface hover:bg-surface-variant transition-colors cursor-pointer select-none" title="Back to All Tools">
+          <svg class="w-4 h-4 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          <span>All Tools</span>
+        </button>
+      </div>
+
+      <!-- Tool Header with Bespoke Doodle Vector -->
+      <div id="toolHeaderContainer" class="text-center flex flex-col items-center space-y-1 sm:space-y-1.5">
+        <div id="toolVectorContainer" class="w-20 h-20 sm:w-24 sm:h-24 mx-auto flex items-center justify-center mb-1">
+          <!-- Injected SVG Vector Doodle -->
         </div>
 
         <div>
-          <h2 id="toolTitle" class="text-2xl sm:text-3xl font-extrabold text-zinc-900 dark:text-zinc-100 tracking-tight leading-tight">Tool Name</h2>
+          <h2 id="toolTitle" class="font-headline text-3xl sm:text-4xl text-on-surface tracking-wide leading-tight">Tool Name</h2>
         </div>
 
-        <p id="toolDesc" class="text-xs sm:text-sm text-zinc-500 dark:text-zinc-400 max-w-md mx-auto leading-snug mt-1">
+        <p id="toolDesc" class="font-body text-xs sm:text-sm text-on-surface-variant max-w-md mx-auto leading-relaxed">
           Description
         </p>
+
+        <!-- Tool Vote / Coming Soon Notice -->
+        <div id="toolNotAvailableNotice" class="hidden mt-3 p-4 rounded-2xl bg-surface-container border-2 border-outline max-w-md mx-auto text-center space-y-2">
+          <p class="font-body text-xs text-on-surface-variant font-medium">This tool is being hand-crafted right now.</p>
+          <div class="flex items-center justify-center gap-3">
+            <button type="button" id="btnVotePriority" class="sketch-pill sketch-btn px-4 py-2 bg-primary text-on-primary border-2 border-outline text-xs font-bold">
+              Vote for this tool (<span id="toolVoteCount">0</span>)
+            </button>
+          </div>
+        </div>
       </div>
 
-      <!-- Tool Options Drawer (Dynamic for tools like Watermark, Password, Page Numbers, Layout) -->
-      <div id="toolOptionsDrawer" class="hidden cuti-card p-4 sm:p-5 bg-white dark:bg-zinc-900 border border-pink-200 dark:border-zinc-800 rounded-2xl space-y-3">
+      <!-- Dynamic Options Drawer (Watermark, Password, Page Numbers, Layout) -->
+      <div id="toolOptionsDrawer" class="hidden p-4 sm:p-5 bg-surface-container border-2 border-outline rounded-2xl space-y-3 shadow-[2px_2px_0_var(--outline)]">
         <!-- Injected options -->
       </div>
 
-      <!-- Upload Section (Responsive: Large Touch Button on Mobile, Comfortable Dropzone on Desktop) -->
+      <!-- Upload Section (Responsive Hand-Drawn Sketch Dropzone) -->
       <div id="toolDropzone" class="tool-dropzone text-center cursor-pointer group">
         <input type="file" id="fileInput" class="hidden" multiple>
 
-        <div class="flex flex-col items-center justify-center space-y-2.5">
-          <!-- Main Action Buttons Wrap (Responsive: Stacked on Mobile like iLovePDF, Inline with Balancer on Desktop) -->
+        <div class="flex flex-col items-center justify-center space-y-3 py-4">
+          <!-- Primary Select Files Button -->
           <div class="action-buttons-wrap">
-            <!-- Invisible Balancer on Left: balances the 48px cloud buttons on desktop to center Select button with 'or drop files here' -->
             <div class="desktop-balancer" aria-hidden="true"></div>
 
-            <!-- Big Primary Select Files Button (iLovePDF Style: Large touch target, 70px height, 20px bold font) -->
             <button id="btnSelectFiles" type="button" class="btn-primary-action">
               Select PDF files
             </button>
 
-            <!-- Cloud Source Buttons (Underneath in row on Mobile; Vertically Stacked beside Select on Desktop) -->
+            <!-- Cloud Source Buttons -->
             <div class="cloud-buttons-wrap">
-              <!-- Google Drive Button -->
               <button id="btnGoogleDrive" type="button" class="btn-cloud-source group/cloud" title="Select files from Google Drive" aria-label="Google Drive">
-                <svg class="w-5 h-5 fill-white transition-transform group-hover/cloud:scale-115" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+                <svg class="w-5 h-5 fill-current transition-transform group-hover/cloud:scale-115" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
                   <path d="M339 314.9L175.4 32h161.2l163.6 282.9H339zm-137.5 23.6L120.9 480h310.5L512 338.5H201.5zM154.1 67.4L0 338.5 80.6 480 237 208.8 154.1 67.4z"/>
                 </svg>
               </button>
-
-              <!-- Dropbox Button -->
               <button id="btnDropbox" type="button" class="btn-cloud-source group/cloud" title="Select files from Dropbox" aria-label="Dropbox">
-                <svg class="w-5 h-5 fill-white transition-transform group-hover/cloud:scale-115" viewBox="0 0 528 512" xmlns="http://www.w3.org/2000/svg">
+                <svg class="w-5 h-5 fill-current transition-transform group-hover/cloud:scale-115" viewBox="0 0 528 512" xmlns="http://www.w3.org/2000/svg">
                   <path d="M264.4 116.3l-132 84.3 132 84.3-132 84.3L0 284.1l132.3-84.3L0 116.3 132.3 32l132.1 84.3zM131.6 395.7l132-84.3 132 84.3-132 84.3-132-84.3zm132.8-111.6l132-84.3-132-83.6L395.7 32 528 116.3l-132.3 84.3L528 284.8l-132.3 84.3-131.3-85z"/>
                 </svg>
               </button>
             </div>
           </div>
 
-          <!-- Drop text only on desktop -->
-          <p id="dropzoneText" class="hidden sm:block text-xs text-zinc-400 dark:text-zinc-500 font-medium">
+          <p id="dropzoneText" class="text-xs text-on-surface-variant font-body">
             or drop files here
           </p>
         </div>
       </div>
 
-      <!-- Selected Files Workspace & Action Button (Smallpdf-Inspired Organize & Merge Studio) -->
+      <!-- Selected Files Workspace & Action Button -->
       <div id="filesSelectedArea" class="hidden space-y-4">
         
-        <!-- Modern Workspace Top Toolbar -->
-        <div class="workspace-toolbar p-2.5 sm:p-4 rounded-2xl bg-white dark:bg-zinc-900 border border-pink-200/80 dark:border-zinc-800 shadow-sm flex flex-wrap items-center justify-between gap-2.5">
+        <!-- Workspace Top Toolbar -->
+        <div class="workspace-toolbar p-2.5 sm:p-3 rounded-2xl bg-surface-container border-2 border-outline shadow-[2px_2px_0_var(--outline)] flex flex-wrap items-center justify-between gap-2.5">
           
-          <!-- Left: Files & Pages Count Badge (Responsive & Clean on Mobile) -->
+          <!-- Left: Stats Badge -->
           <div class="flex items-center gap-2">
-            <div id="workspaceStatsBadge" class="flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3 sm:py-1.5 rounded-xl bg-pink-50 dark:bg-zinc-800 text-[11px] sm:text-xs font-bold text-zinc-800 dark:text-zinc-200 border border-pink-200/70 dark:border-zinc-700 shadow-2xs whitespace-nowrap">
-              <span class="w-2 h-2 rounded-full bg-[#ff2a5f] animate-pulse"></span>
+            <div id="workspaceStatsBadge" class="sketch-pill flex items-center gap-1.5 px-3 py-1 bg-surface-container-lowest text-xs font-bold text-on-surface border border-outline whitespace-nowrap">
+              <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
               <span id="workspaceStatsText">0 pages</span>
             </div>
           </div>
 
-          <!-- Center: View Mode Segmented Controls -->
+          <!-- Center: Mode Switchers -->
           <!-- 1. For Merge PDF: File Mode vs Page Mode -->
           <div id="workspaceModeSwitcher" class="hidden segmented-control text-xs font-semibold">
-            <button type="button" id="btnModeFile" onclick="setWorkspaceViewMode('file')" class="px-3 py-1.5 rounded-lg transition-all active-mode bg-white dark:bg-zinc-800 shadow-xs text-zinc-900 dark:text-white font-bold cursor-pointer">
+            <button type="button" id="btnModeFile" onclick="setWorkspaceViewMode('file')" class="px-3 py-1.5 rounded-xl transition-all active-mode bg-surface-container-lowest text-on-surface font-bold border border-outline cursor-pointer">
               File Mode
             </button>
-            <button type="button" id="btnModePage" onclick="setWorkspaceViewMode('page')" class="px-3 py-1.5 rounded-lg transition-all text-zinc-500 hover:text-zinc-900 dark:hover:text-white cursor-pointer">
+            <button type="button" id="btnModePage" onclick="setWorkspaceViewMode('page')" class="px-3 py-1.5 rounded-xl transition-all text-on-surface-variant hover:text-on-surface cursor-pointer">
               Page Mode
             </button>
           </div>
 
-          <!-- 2. For Remove Pages & Page Tools: Grid vs Continuous (انتخاب بین نمایش همه صفحات یا کنتینیوس) -->
+          <!-- 2. For Remove Pages: Grid vs Continuous -->
           <div id="pageLayoutSwitcher" class="hidden segmented-control text-xs font-semibold">
-            <button type="button" id="btnLayoutGrid" onclick="setPageLayoutMode('grid')" class="px-2.5 sm:px-3 py-1.5 rounded-lg transition-all active-mode bg-white dark:bg-zinc-800 shadow-xs text-zinc-900 dark:text-white font-bold inline-flex items-center gap-1.5 cursor-pointer" title="Grid View">
+            <button type="button" id="btnLayoutGrid" onclick="setPageLayoutMode('grid')" class="px-2.5 sm:px-3 py-1.5 rounded-xl transition-all active-mode bg-surface-container-lowest text-on-surface font-bold border border-outline inline-flex items-center gap-1.5 cursor-pointer" title="Grid View">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
               <span>Grid</span>
             </button>
-            <button type="button" id="btnLayoutContinuous" onclick="setPageLayoutMode('continuous')" class="px-2.5 sm:px-3 py-1.5 rounded-lg transition-all text-zinc-500 hover:text-zinc-900 dark:hover:text-white font-semibold inline-flex items-center gap-1.5 cursor-pointer" title="Continuous View">
+            <button type="button" id="btnLayoutContinuous" onclick="setPageLayoutMode('continuous')" class="px-2.5 sm:px-3 py-1.5 rounded-xl transition-all text-on-surface-variant hover:text-on-surface font-semibold inline-flex items-center gap-1.5 cursor-pointer" title="Continuous View">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
               <span>Continuous</span>
             </button>
           </div>
 
-          <!-- Right: Quick Actions (Left: Restore/Select All Pages, Right: Remove by Number) -->
+          <!-- Right: Toolbar Actions -->
           <div class="workspace-top-actions flex items-center justify-between gap-2.5 sm:gap-3 w-full">
-            <!-- Add More Button (Round design - Enriched & Centered) -->
-            <button type="button" id="btnToolbarAddMore" onclick="DOM.fileInput.click()" class="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full text-sm sm:text-base font-bold bg-pink-50 dark:bg-zinc-800 hover:bg-pink-100 dark:hover:bg-zinc-700 text-[#ff2a5f] border border-pink-200 dark:border-zinc-700 transition shadow-2xs hover:scale-105 active:scale-95 cursor-pointer">
-              <span class="w-6 h-6 rounded-full bg-pink-200/60 dark:bg-pink-900/50 flex items-center justify-center">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-              </span>
+            <!-- Add More Button -->
+            <button type="button" id="btnToolbarAddMore" onclick="DOM.fileInput.click()" class="sketch-pill sketch-btn inline-flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-bold bg-surface-container-lowest text-primary border-2 border-outline transition cursor-pointer">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
               <span>Add More</span>
             </button>
 
             <!-- Sort A-Z Button -->
-            <button type="button" id="btnToolbarSort" onclick="sortWorkspaceItems('name')" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 transition cursor-pointer" title="Sort by filename A-Z">
+            <button type="button" id="btnToolbarSort" onclick="sortWorkspaceItems('name')" class="sketch-btn inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold text-on-surface bg-surface-container-lowest border border-outline transition cursor-pointer" title="Sort by filename A-Z">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"/></svg>
               <span class="hidden sm:inline">Sort</span>
             </button>
 
             <!-- Rotate All Button -->
-            <button type="button" id="btnToolbarRotateAll" onclick="rotateAllWorkspace(90)" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 transition cursor-pointer" title="Rotate all 90 degrees">
+            <button type="button" id="btnToolbarRotateAll" onclick="rotateAllWorkspace(90)" class="sketch-btn inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold text-on-surface bg-surface-container-lowest border border-outline transition cursor-pointer" title="Rotate all 90 degrees">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
               <span class="hidden sm:inline">Rotate</span>
             </button>
 
             <!-- Clear All Button -->
-            <button type="button" id="btnClearFiles" class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium text-zinc-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition cursor-pointer" title="Clear all files">
+            <button type="button" id="btnClearFiles" class="sketch-btn inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold text-error bg-surface-container-lowest border border-outline hover:bg-error-container transition cursor-pointer" title="Clear all files">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
               <span class="hidden sm:inline">Clear</span>
             </button>
           </div>
         </div>
 
-        <!-- Files / Pages Thumbnail Grid (Drag & Drop Reorderable Canvas) -->
+        <!-- Files / Pages Thumbnail Canvas -->
         <div id="selectedFilesList" class="min-h-[220px] max-h-[65vh] overflow-y-auto px-1 pt-3 pb-24 sm:pt-4 sm:pb-28 select-none"></div>
 
-        <!-- Floating Action Controls: Aligned Stack (Top: 2 White Buttons, Bottom: 1 Royal Pink Button) -->
+        <!-- Floating Action Controls: Sketch Action Capsule -->
         <div id="workspaceActionBar" class="workspace-action-bar flex flex-col items-center">
           
-          <div id="workspaceActionControlsContainer" class="w-full max-w-[520px] flex flex-col gap-2.5 sm:gap-3">
+          <div id="workspaceActionControlsContainer" class="apple-floating-capsule">
             
-            <!-- Row 1: Split Top Buttons (White Background, Pure Neutrals, Same Total Width) -->
-            <div id="workspaceActionSubButtons" class="w-full flex items-center gap-2.5 sm:gap-3">
-              
-              <!-- Left: Restore All Pages (When >= 1 page marked) -->
-              <button type="button" id="btnToolbarRestoreAll" onclick="resetRemovedPages()" class="hidden flex-1 h-[52px] rounded-[18px] bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-700/80 active:bg-zinc-100 dark:active:bg-zinc-700 border border-zinc-200/90 dark:border-zinc-700/90 shadow-md font-bold text-xs sm:text-sm inline-flex items-center justify-center transition cursor-pointer select-none" title="Restore all removed pages">
-                <span>Restore All Pages</span>
+            <div id="workspaceActionSubButtons" class="inline-flex items-center gap-1.5">
+              <!-- Remove Pages: Restore All Pages -->
+              <button type="button" id="btnToolbarRestoreAll" onclick="resetRemovedPages()" class="capsule-btn hidden" title="Restore all removed pages">
+                <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M3 10h10a5 5 0 015 5v2m0 0l-3-3m3 3l3-3M3 10l3-3M3 10l3 3"/></svg>
+                <span>Restore All</span>
               </button>
               
-              <!-- Left: Select All Pages (When 0 pages marked) -->
-              <button type="button" id="btnToolbarSelectAll" onclick="selectAllPagesForRemoval()" class="hidden flex-1 h-[52px] rounded-[18px] bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-700/80 active:bg-zinc-100 dark:active:bg-zinc-700 border border-zinc-200/90 dark:border-zinc-700/90 shadow-md font-bold text-xs sm:text-sm inline-flex items-center justify-center transition cursor-pointer select-none" title="Select all pages for removal">
-                <span>Select All Pages</span>
+              <!-- Remove Pages: Select All Pages -->
+              <button type="button" id="btnToolbarSelectAll" onclick="selectAllPagesForRemoval()" class="capsule-btn hidden" title="Select all pages for removal">
+                <svg class="w-4 h-4 text-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                <span>Select All</span>
               </button>
 
-              <!-- Right: Remove by Number (White Background) -->
-              <button type="button" id="btnToolbarEnterPages" onclick="openEnterPagesModal()" class="flex-1 h-[52px] rounded-[18px] bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-700/80 active:bg-zinc-100 dark:active:bg-zinc-700 border border-zinc-200/90 dark:border-zinc-700/90 shadow-md font-bold text-xs sm:text-sm inline-flex items-center justify-center transition cursor-pointer select-none" title="Remove pages by entering numbers or ranges">
-                <span>Remove by Number</span>
+              <!-- Remove Pages: Remove by Number -->
+              <button type="button" id="btnToolbarEnterPages" onclick="openEnterPagesModal()" class="capsule-btn" title="Remove pages by entering numbers or ranges">
+                <svg class="w-4 h-4 text-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"/></svg>
+                <span>By Number</span>
               </button>
               
-              <!-- Merge PDF: Select New File (Left) -->
-              <button type="button" id="btnMergeAddFiles" onclick="DOM.fileInput.click()" class="hidden flex-1 h-[52px] rounded-[18px] bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-700/80 active:bg-zinc-100 dark:active:bg-zinc-700 border border-zinc-200/90 dark:border-zinc-700/90 shadow-md font-bold text-xs sm:text-sm inline-flex items-center justify-center gap-2 transition cursor-pointer select-none" title="Select new PDF files">
-                <svg class="w-4 h-4 text-[#ff2a5f]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-                <span>Select New File</span>
+              <!-- Merge PDF: Add Files -->
+              <button type="button" id="btnMergeAddFiles" onclick="DOM.fileInput.click()" class="capsule-btn hidden" title="Select new PDF files">
+                <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                <span>Add Files</span>
               </button>
 
-              <!-- Merge PDF: Other Options (Right) -->
-              <button type="button" id="btnMergeOtherOptions" onclick="openMergeOptionsModal()" class="hidden flex-1 h-[52px] rounded-[18px] bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 hover:bg-zinc-50 dark:hover:bg-zinc-700/80 active:bg-zinc-100 dark:active:bg-zinc-700 border border-zinc-200/90 dark:border-zinc-700/90 shadow-md font-bold text-xs sm:text-sm inline-flex items-center justify-center gap-2 transition cursor-pointer select-none" title="More merge options">
-                <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
-                <span>Other Options</span>
+              <!-- Merge PDF: Other Options -->
+              <button type="button" id="btnMergeOtherOptions" onclick="openMergeOptionsModal()" class="capsule-btn hidden" title="More merge options">
+                <svg class="w-4 h-4 text-on-surface-variant" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                <span>Options</span>
               </button>
-              
             </div>
 
-            <!-- Row 2: Bottom Primary Action Button in Punchy Royal Pink (Exact Same Width & Aligned, NO SHADOW) -->
-            <button id="btnExecuteAction" class="w-full h-[52px] sm:h-[54px] rounded-[18px] bg-[#ff2a5f] hover:bg-[#e01a4f] active:scale-[0.99] text-white font-extrabold text-sm sm:text-base flex items-center justify-center gap-2 transition cursor-pointer">
-              <span id="actionButtonText">Remove Pages</span>
+            <!-- Divider line between secondary tools and primary action -->
+            <div id="capsuleDivider" class="capsule-divider"></div>
+
+            <!-- Primary Action Button -->
+            <button id="btnExecuteAction" class="capsule-primary-btn">
+              <span id="actionButtonText">Merge PDF</span>
             </button>
 
           </div>
 
-          <div class="text-xs text-zinc-500 dark:text-zinc-400 text-center sm:text-left mt-2 hidden" id="workspaceActionSummaryWrapper">
+          <div class="text-[11px] text-on-surface-variant text-center mt-2 hidden" id="workspaceActionSummaryWrapper">
             <span id="workspaceActionSummary">All files ready for processing.</span>
           </div>
 
@@ -685,106 +515,45 @@
       </div>
 
       <!-- ============================================================ -->
-      <!-- POST-PROCESS SUCCESS / DONE SCREEN (Clean White iOS Card) -->
+      <!-- POST-PROCESS SUCCESS / DONE SCREEN -->
       <!-- ============================================================ -->
       <div id="workspaceDoneScreen" class="hidden w-full max-w-xl mx-auto py-4 sm:py-6">
-        <div class="w-full bg-white dark:bg-zinc-900 rounded-[28px] border border-zinc-200/80 dark:border-zinc-800 shadow-sm p-4 sm:p-8 flex flex-col items-center text-center space-y-5 sm:space-y-6">
+        <div class="w-full bg-surface-container rounded-3xl border-2 border-outline shadow-[4px_4px_0_var(--outline)] p-5 sm:p-8 flex flex-col items-center text-center space-y-5 sm:space-y-6">
           
-          <!-- Success Status Icon & Title (Royal Pink & Minimal) -->
+          <!-- Success Status Icon & Title -->
           <div class="flex flex-col items-center space-y-1.5">
-            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-pink-50 dark:bg-pink-950/40 text-[#ff2a5f] border border-pink-200 dark:border-pink-800/60 flex items-center justify-center shadow-2xs mb-0.5">
-              <svg class="w-6 h-6 sm:w-7 sm:h-7 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <div class="w-14 h-14 rounded-full bg-paper-pink text-primary border-2 border-outline flex items-center justify-center mb-1">
+              <svg class="w-7 h-7 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
             </div>
-            <h3 id="doneScreenTitle" class="text-xl sm:text-2xl font-black text-zinc-900 dark:text-zinc-100 tracking-tight">0 Pages Removed</h3>
+            <h3 id="doneScreenTitle" class="font-headline text-2xl sm:text-3xl text-on-surface tracking-wide">0 Pages Removed</h3>
           </div>
 
-          <!-- Primary Actions: Download PDF (No icon) stacked on top of Keep Editing (No icon) -->
+          <!-- Primary Actions -->
           <div class="flex flex-col items-center gap-3 w-full">
-            <button type="button" id="btnDoneDownload" onclick="downloadLastProcessedPdf()" class="w-full h-[52px] rounded-[18px] text-base font-extrabold text-white bg-[#ff2a5f] hover:bg-[#e01a4f] active:scale-98 shadow-md hover:shadow-lg transition-all flex items-center justify-center cursor-pointer">
+            <button type="button" id="btnDoneDownload" onclick="downloadLastProcessedPdf()" class="sketch-pill sketch-btn w-full h-[52px] text-base font-bold text-on-primary bg-primary border-2 border-outline shadow-md hover:bg-[#8e1937] transition-all flex items-center justify-center cursor-pointer">
               <span>Download PDF</span>
             </button>
-            <button type="button" id="btnDoneKeepEditing" onclick="reopenRemovePagesWorkspace()" class="w-full h-[48px] rounded-[18px] text-sm font-bold text-zinc-800 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-zinc-200/80 dark:border-zinc-700 active:scale-98 transition-all flex items-center justify-center cursor-pointer">
+            <button type="button" id="btnDoneKeepEditing" onclick="reopenRemovePagesWorkspace()" class="sketch-pill sketch-btn w-full h-[48px] text-sm font-bold text-on-surface bg-surface-container-lowest border-2 border-outline hover:bg-surface-variant transition-all flex items-center justify-center cursor-pointer">
               <span>Keep Editing on This File</span>
             </button>
           </div>
 
           <!-- Continue to Other Tools Section -->
-          <div class="w-full pt-4 border-t border-zinc-100 dark:border-zinc-800 flex flex-col items-center space-y-3.5">
-            <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+          <div class="w-full pt-4 border-t border-outline-variant flex flex-col items-center space-y-3.5">
+            <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant font-label">
               <span>Continue to:</span>
             </div>
 
-                        <!-- 4 Linear Tool Cards with 18px Radius (Full names, clean Royal Pink & Neutrals) -->
-            <div class="flex flex-col gap-2.5 sm:gap-3 w-full">
-              <!-- 1. Remove Pages (Royal Pink) -->
-              <button type="button" onclick="continueWithTool('remove-pages')" class="group w-full h-[52px] sm:h-[56px] px-3.5 sm:px-4 rounded-[18px] bg-zinc-50 dark:bg-zinc-800/60 hover:bg-pink-50/60 dark:hover:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700/80 hover:border-pink-300 dark:hover:border-pink-800/60 transition-all flex items-center justify-between cursor-pointer">
-                <div class="flex items-center gap-3 min-w-0">
-                  <div class="continue-icon-wrap w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-pink-50 dark:bg-pink-950/40 text-[#ff2a5f] border border-pink-200/70 dark:border-pink-800/50 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform p-1">
-                    <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="14" y="10" width="28" height="38" rx="4" fill="#FEE2E2" stroke="#E63946" stroke-width="2"/>
-      <rect x="22" y="16" width="28" height="38" rx="4" fill="#FFFFFF" stroke="#DC2626" stroke-width="2.2"/>
-      <circle cx="36" cy="35" r="8" fill="#DC2626"/>
-      <path d="M32 31l8 8M40 31l-8 8" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-                  </div>
-                  <span class="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff2a5f] transition-colors truncate">Remove Pages</span>
-                </div>
-                <svg class="w-4 h-4 text-zinc-400 dark:text-zinc-500 group-hover:text-[#ff2a5f] group-hover:translate-x-0.5 transition-all flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+              <button type="button" onclick="continueWithTool('merge-pdf')" class="sketch-btn p-3 rounded-2xl bg-surface-container-lowest border-2 border-outline hover:bg-surface-variant transition-all flex items-center gap-3 cursor-pointer text-left">
+                <span class="font-headline text-lg text-primary">Merge</span>
+                <span class="text-xs text-on-surface-variant font-body">Combine more PDFs</span>
               </button>
-
-              <!-- 2. Compress PDF (Royal Pink & Neutral) -->
-              <button type="button" onclick="continueWithTool('compress-pdf')" class="group w-full h-[52px] sm:h-[56px] px-3.5 sm:px-4 rounded-[18px] bg-zinc-50 dark:bg-zinc-800/60 hover:bg-pink-50/60 dark:hover:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700/80 hover:border-pink-300 dark:hover:border-pink-800/60 transition-all flex items-center justify-between cursor-pointer">
-                <div class="flex items-center gap-3 min-w-0">
-                  <div class="continue-icon-wrap w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200/70 dark:border-zinc-700/60 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform p-1">
-                    <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="16" y="10" width="32" height="44" rx="5" fill="#EDE9FE" stroke="#8B5CF6" stroke-width="2.2"/>
-      <path d="M8 32h8m-3-3l3 3-3 3" stroke="#8B5CF6" stroke-width="2.2" stroke-linecap="round"/>
-      <path d="M56 32h-8m3-3l-3 3 3 3" stroke="#8B5CF6" stroke-width="2.2" stroke-linecap="round"/>
-      <rect x="22" y="27" width="20" height="8" rx="2" fill="#8B5CF6"/>
-      <text x="32" y="33" font-size="6" font-weight="800" fill="#FFFFFF" text-anchor="middle" font-family="sans-serif">PDF</text>
-    </svg>
-                  </div>
-                  <span class="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff2a5f] transition-colors truncate">Compress PDF</span>
-                </div>
-                <svg class="w-4 h-4 text-zinc-400 dark:text-zinc-500 group-hover:text-[#ff2a5f] group-hover:translate-x-0.5 transition-all flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-              </button>
-
-              <!-- 3. Merge PDF (Royal Pink) -->
-              <button type="button" onclick="continueWithTool('merge-pdf')" class="group w-full h-[52px] sm:h-[56px] px-3.5 sm:px-4 rounded-[18px] bg-zinc-50 dark:bg-zinc-800/60 hover:bg-pink-50/60 dark:hover:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700/80 hover:border-pink-300 dark:hover:border-pink-800/60 transition-all flex items-center justify-between cursor-pointer">
-                <div class="flex items-center gap-3 min-w-0">
-                  <div class="continue-icon-wrap w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-pink-50 dark:bg-pink-950/40 text-[#ff2a5f] border border-pink-200/70 dark:border-pink-800/50 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform p-1">
-                    <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="10" y="16" width="22" height="32" rx="4" fill="#FEE2E2" stroke="#E63946" stroke-width="2"/>
-      <rect x="20" y="11" width="22" height="32" rx="4" fill="#FECDD3" stroke="#E11D48" stroke-width="2"/>
-      <rect x="30" y="18" width="24" height="34" rx="4" fill="#FFFFFF" stroke="#E63946" stroke-width="2.5"/>
-      <rect x="35" y="32" width="14" height="6" rx="2" fill="#E63946"/>
-      <text x="42" y="37" font-size="5.5" font-weight="800" fill="#FFFFFF" text-anchor="middle" font-family="sans-serif">PDF</text>
-      <circle cx="21" cy="45" r="7" fill="#E63946"/>
-      <path d="M21 41v8M17 45h8" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-                  </div>
-                  <span class="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff2a5f] transition-colors truncate">Merge PDF</span>
-                </div>
-                <svg class="w-4 h-4 text-zinc-400 dark:text-zinc-500 group-hover:text-[#ff2a5f] group-hover:translate-x-0.5 transition-all flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-              </button>
-
-              <!-- 4. Page Numbers (Neutral) -->
-              <button type="button" onclick="continueWithTool('page-numbers')" class="group w-full h-[52px] sm:h-[56px] px-3.5 sm:px-4 rounded-[18px] bg-zinc-50 dark:bg-zinc-800/60 hover:bg-pink-50/60 dark:hover:bg-zinc-800 border border-zinc-200/80 dark:border-zinc-700/80 hover:border-pink-300 dark:hover:border-pink-800/60 transition-all flex items-center justify-between cursor-pointer">
-                <div class="flex items-center gap-3 min-w-0">
-                  <div class="continue-icon-wrap w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 border border-zinc-200/70 dark:border-zinc-700/60 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform p-1">
-                    <svg viewBox="0 0 64 64" fill="none" class="w-full h-full">
-      <rect x="14" y="10" width="36" height="44" rx="5" fill="#F3F4F6" stroke="#4B5563" stroke-width="2"/>
-      <path d="M20 18h24M20 24h24M20 30h16" stroke="#D1D5DB" stroke-width="2" stroke-linecap="round"/>
-      <rect x="26" y="38" width="12" height="10" rx="3" fill="#3B82F6"/>
-      <text x="32" y="46" font-size="7.5" font-weight="bold" fill="#FFFFFF" text-anchor="middle" font-family="sans-serif">#1</text>
-    </svg>
-                  </div>
-                  <span class="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff2a5f] transition-colors truncate">Page Numbers</span>
-                </div>
-                <svg class="w-4 h-4 text-zinc-400 dark:text-zinc-500 group-hover:text-[#ff2a5f] group-hover:translate-x-0.5 transition-all flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+              <button type="button" onclick="continueWithTool('compress-pdf')" class="sketch-btn p-3 rounded-2xl bg-surface-container-lowest border-2 border-outline hover:bg-surface-variant transition-all flex items-center gap-3 cursor-pointer text-left">
+                <span class="font-headline text-lg text-secondary">Compress</span>
+                <span class="text-xs text-on-surface-variant font-body">Reduce file size</span>
               </button>
             </div>
-          </div>
           </div>
 
         </div>
@@ -794,454 +563,272 @@
 
   </main>
 
-
-
   <!-- ============================================================ -->
-  <!-- QUICK TOOLS SIDE PREVIEW DRAWER (Slide-out Side Pop Menu) -->
-  <!-- ============================================================ -->
-  <div id="quickToolsBackdrop" class="fixed inset-0 z-[60] bg-zinc-950/40 dark:bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300"></div>
-
-  <aside id="quickToolsDrawer" class="fixed top-0 right-0 bottom-0 z-[65] w-full sm:w-[460px] md:w-[480px] bg-white dark:bg-zinc-900 border-l border-pink-100 dark:border-zinc-800 shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 ease-in-out pointer-events-none" style="height: 100dvh; max-height: 100vh;">
-    <!-- Drawer Top Bar (Clean Full-Width Search Bar - No Clutter) -->
-    <div class="px-4 py-3.5 border-b border-zinc-200/80 dark:border-zinc-800 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md flex-shrink-0">
-      <div class="relative w-full">
-        <input type="text" id="quickToolSearch" placeholder="Search tools (e.g. merge, compress, word, jpg...)" class="w-full pl-9 pr-4 py-2.5 text-xs rounded-xl border border-pink-200/80 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 outline-none focus:border-[#ff2a5f] transition-all">
-        <svg class="w-4 h-4 absolute left-3 top-3 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-        </svg>
-      </div>
-    </div>
-
-    <!-- Drawer Tools Grid (Scrollable) -->
-    <div id="quickToolsModalGrid" class="p-5 overflow-y-auto space-y-5 flex-1 overscroll-contain" style="padding-bottom: 96px;">
-      <!-- Injected dynamically -->
-    </div>
-  </aside>
-
-  <!-- ============================================================ -->
-  <!-- FULLSCREEN DRAG & DROP OVERLAY (Drop Files Anywhere on Page) -->
-  <!-- ============================================================ -->
-  <div id="globalDropOverlay" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-6 opacity-0 pointer-events-none transition-all duration-200">
-    <div class="w-full max-w-md p-8 sm:p-10 rounded-[28px] border-3 border-dashed border-[#ff2a5f] bg-[#18181d]/95 flex flex-col items-center justify-center text-center space-y-4 shadow-2xl pointer-events-none">
-      <div class="w-16 h-16 rounded-2xl bg-pink-500/20 text-[#ff2a5f] flex items-center justify-center">
-        <svg class="w-9 h-9 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-        </svg>
-      </div>
-      <div class="space-y-1">
-        <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight">Drop your PDF anywhere</h3>
-        <p class="text-xs sm:text-sm text-zinc-400 font-medium">Release to open and process instantly</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- ABOUT CUTIPDF INFO MODAL (100% In-Browser Privacy & WebAssembly) -->
-  <!-- ============================================================ -->
-  <div id="infoModal" onclick="if(event.target === this) closeInfoModal()" class="fixed inset-0 z-[125] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-    <div class="relative w-full max-w-md rounded-3xl bg-[#18181d] border border-zinc-800 shadow-2xl p-6 sm:p-7 text-left transform scale-95 transition-all duration-300 flex flex-col gap-5">
-      
-      <!-- Top row: Icon + Title + Close Button -->
-      <div class="flex items-center justify-between pb-3 border-b border-zinc-800">
-        <div class="flex items-center gap-3">
-          <img src="assets/logo.png" alt="CutiPDF" class="w-9 h-9 object-contain">
-          <div>
-            <h3 class="text-lg font-extrabold text-white tracking-tight">About CutiPDF</h3>
-            <p class="text-xs text-zinc-400">Private, Fast & Client-Side PDF Studio</p>
-          </div>
-        </div>
-        <button type="button" onclick="closeInfoModal()" class="w-8 h-8 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white flex items-center justify-center transition cursor-pointer" title="Close">
-          <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
-      </div>
-
-      <!-- Feature Highlights -->
-      <div class="space-y-3.5 text-xs sm:text-sm text-zinc-300">
-        <div class="flex items-start gap-3">
-          <div class="w-8 h-8 rounded-xl bg-pink-950/50 text-[#ff2a5f] border border-pink-800/40 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-          </div>
-          <div>
-            <span class="font-bold text-white block">100% Client-Side Privacy</span>
-            <p class="text-xs text-zinc-400 leading-relaxed">Your files never leave your device. All rendering, merging, and page removal run entirely in your local browser sandbox via WebAssembly.</p>
-          </div>
-        </div>
-
-        <div class="flex items-start gap-3">
-          <div class="w-8 h-8 rounded-xl bg-pink-950/50 text-[#ff2a5f] border border-pink-800/40 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-          </div>
-          <div>
-            <span class="font-bold text-white block">Lightning Fast & No Limits</span>
-            <p class="text-xs text-zinc-400 leading-relaxed">No server upload queues, no file size limitations, no watermarks, and no registration required.</p>
-          </div>
-        </div>
-
-        <div class="flex items-start gap-3">
-          <div class="w-8 h-8 rounded-xl bg-pink-950/50 text-[#ff2a5f] border border-pink-800/40 flex items-center justify-center flex-shrink-0 mt-0.5">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-          </div>
-          <div>
-            <span class="font-bold text-white block">All 30 PDF Tools Included</span>
-            <p class="text-xs text-zinc-400 leading-relaxed">Organize, Optimize, Convert, Edit, and Secure your PDF documents completely free forever.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Bottom Close Button -->
-      <button type="button" onclick="closeInfoModal()" class="w-full h-11 rounded-2xl bg-[#ff2a5f] hover:bg-[#e01a4f] text-white font-bold text-sm transition cursor-pointer shadow-md">
-        Got it
-      </button>
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- Cute PDF Loading Modal with Percentage (Dark Background Guaranteed) -->
-  <div id="pdfLoadingModal" class="fixed inset-0 z-[120] bg-black/92 backdrop-blur-2xl flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-    <div class="relative w-full max-w-xs sm:max-w-sm rounded-3xl bg-[#18181d] border border-zinc-800 shadow-2xl p-6 sm:p-7 text-center transform scale-95 transition-all duration-300 flex flex-col items-center">
-      
-      <!-- Cute Animated PDF Sheet with Pulsing Ring -->
-      <div class="relative w-20 h-20 mb-4 flex items-center justify-center">
-        <div class="absolute inset-0 rounded-2xl bg-pink-500/20 animate-ping opacity-75"></div>
-        <div class="relative w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#ff2a5f] to-rose-400 text-white flex items-center justify-center shadow-lg shadow-pink-500/30">
-          <svg class="w-10 h-10 animate-bounce" style="animation-duration: 1.5s;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-          </svg>
-        </div>
-      </div>
-
-      <!-- Title & Dynamic Page Status -->
-      <h3 class="text-base sm:text-lg font-bold text-white mb-1">
-        Preparing Pages...
-      </h3>
-      <p id="pdfLoadingStatusText" class="text-xs text-zinc-400 mb-3 truncate max-w-[260px]">
-        Loading pages in browser...
-      </p>
-
-      <!-- Percentage Display (Big, Cute & Bold) -->
-      <div class="mb-3">
-        <span id="pdfLoadingPercent" class="text-3xl sm:text-4xl font-black tracking-tight bg-gradient-to-r from-[#ff2a5f] to-rose-500 bg-clip-text text-transparent">0%</span>
-      </div>
-
-      <!-- Cute Gradient Progress Bar Track -->
-      <div class="w-full bg-zinc-800 rounded-full h-3 p-0.5 overflow-hidden border border-zinc-700/80">
-        <div id="pdfLoadingProgressBar" class="h-full rounded-full bg-gradient-to-r from-pink-400 to-[#ff2a5f] transition-all duration-150 ease-out" style="width: 0%;"></div>
-      </div>
-
-      <!-- Private In-Browser Notice -->
-      <p class="text-[11px] text-zinc-400 mt-3.5 font-medium flex items-center justify-center gap-1">
-        <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-        <span>100% Private in your browser</span>
-      </p>
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- SECURE PDF PASSWORD PROMPT MODAL (ورود رمز عبور فایل رمزگذاری‌شده) -->
-  <!-- ============================================================ -->
-  <div id="pdfPasswordPromptModal" class="fixed inset-0 z-[130] bg-black/70 dark:bg-black/85 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
-    <div class="relative w-full max-w-sm rounded-3xl bg-white dark:bg-zinc-900 border border-pink-200/80 dark:border-zinc-800 shadow-2xl p-6 sm:p-7 text-center transform scale-95 transition-all duration-300 flex flex-col items-center">
-      
-      <!-- Lock Icon with Glow -->
-      <div class="w-14 h-14 rounded-2xl bg-pink-100 dark:bg-zinc-800 text-[#ff2a5f] flex items-center justify-center mb-4 shadow-sm border border-pink-200/50 dark:border-zinc-700">
-        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
-      </div>
-
-      <h3 class="text-base sm:text-lg font-bold text-zinc-800 dark:text-zinc-100 mb-1">
-        Password Protected PDF
-      </h3>
-      <p id="pdfPasswordPromptSubtitle" class="text-xs text-zinc-500 dark:text-zinc-400 mb-4 text-center leading-relaxed">
-        This document is encrypted. Please enter the password to view and edit pages.
-      </p>
-
-      <form id="pdfPasswordPromptForm" onsubmit="handlePdfPasswordSubmit(event)" class="w-full space-y-3">
-        <div class="relative">
-          <input type="password" id="pdfPromptPasswordInput" placeholder="Enter PDF password" autocomplete="current-password" class="w-full px-4 py-2.5 rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 text-sm outline-none focus:border-[#ff2a5f] focus:ring-2 focus:ring-pink-500/20 transition">
-        </div>
-        <p id="pdfPasswordPromptError" class="hidden text-xs text-red-500 font-semibold"></p>
-
-        <div class="flex items-center gap-2 pt-1">
-          <button type="button" onclick="cancelPdfPasswordPrompt()" class="flex-1 py-2.5 rounded-xl text-xs font-semibold bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 transition cursor-pointer">
-            Cancel
-          </button>
-          <button type="submit" id="btnSubmitPdfPassword" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-[#ff2a5f] hover:bg-[#e01a4f] text-white shadow-md hover:shadow-pink-500/25 transition cursor-pointer">
-            Unlock & Open
-          </button>
-        </div>
-      </form>
-
-    </div>
-  </div>
-
-  <!-- ============================================================ -->
-  <!-- HIGH RESOLUTION PAGE PREVIEW LIGHTBOX MODAL (Pure Frameless Lightbox) -->
+  <!-- HIGH RESOLUTION PAGE PREVIEW LIGHTBOX MODAL -->
   <!-- ============================================================ -->
   <div id="pagePreviewModal" onclick="if(event.target === this) closePagePreviewModal()" class="fixed inset-0 z-[110] bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-all duration-300">
     <div id="previewModalContainer" class="relative inline-flex items-center justify-center max-h-[92vh] max-w-[94vw] transform scale-95 transition-all duration-300 select-none">
-      
-      <!-- Dedicated Crisp Loading Spinner -->
       <div id="previewModalSpinner" class="hidden absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-xs rounded-2xl z-20">
         <div class="flex flex-col items-center gap-2">
-          <div class="w-9 h-9 rounded-full border-3 border-white/20 border-t-[#ff2a5f] animate-spin"></div>
-          <span class="text-xs font-semibold text-white/90">Loading crisp preview...</span>
+          <div class="w-9 h-9 rounded-full border-3 border-white/20 border-t-primary animate-spin"></div>
+          <span class="text-xs font-semibold text-white/90 font-body">Loading crisp preview...</span>
         </div>
       </div>
-
-      <!-- High Resolution Page Image: Self-Framed with Pure Shadow, No Outer Box -->
-      <img id="previewModalImage" src="" alt="Page Preview" class="max-h-[88vh] max-w-[90vw] object-contain rounded-2xl shadow-2xl transition-opacity duration-200 block">
-
-      <!-- Floating Page Number Pill on Top-Left Corner of Image -->
+      <img id="previewModalImage" src="" alt="Page Preview" class="max-h-[88vh] max-w-[90vw] object-contain rounded-2xl shadow-2xl transition-opacity duration-200 block border-2 border-white/20">
       <div class="absolute top-3 left-3 z-30 pointer-events-none">
-        <span id="previewModalTitle" class="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-bold bg-black/60 text-white backdrop-blur-md shadow-md border border-white/15 tracking-wide">
+        <span id="previewModalTitle" class="sketch-pill inline-flex items-center px-3 py-1 text-xs sm:text-sm font-bold bg-black/75 text-white backdrop-blur-md border border-white/20 tracking-wide font-headline">
           Page 1
         </span>
       </div>
-
-      <!-- Floating Close Button (✕) on Top-Right Corner of Image -->
-      <button type="button" onclick="closePagePreviewModal()" class="absolute top-3 right-3 z-30 w-9 h-9 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md shadow-md border border-white/15 flex items-center justify-center transition-transform hover:scale-110 active:scale-95 cursor-pointer" title="Close Preview (Esc)">
+      <button type="button" onclick="closePagePreviewModal()" class="absolute top-3 right-3 z-30 w-9 h-9 rounded-full bg-black/75 hover:bg-black text-white backdrop-blur-md border border-white/20 flex items-center justify-center transition-transform hover:scale-110 active:scale-95 cursor-pointer" title="Close Preview (Esc)">
         <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
       </button>
-
     </div>
   </div>
 
   <!-- ============================================================ -->
-  <!-- REMOVE PAGES BY NUMBER / RANGE MODAL (Ultra-Clean Minimal Alert) -->
+  <!-- REMOVE PAGES BY NUMBER / RANGE MODAL -->
   <!-- ============================================================ -->
-  <div id="enterPagesModal" onclick="if(event.target === this) closeEnterPagesModal()" class="fixed inset-0 z-[115] bg-zinc-950/40 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 opacity-0 pointer-events-none transition-all duration-300">
-    <div class="relative w-full max-w-sm sm:max-w-md bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200/80 dark:border-zinc-800 shadow-2xl p-5 sm:p-6 flex flex-col gap-3 transform scale-95 transition-all duration-300">
-      
-      <!-- Hidden helper for script compatibility -->
+  <div id="enterPagesModal" onclick="if(event.target === this) closeEnterPagesModal()" class="fixed inset-0 z-[115] bg-on-surface/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="relative w-full max-w-sm sm:max-w-md bg-surface rounded-3xl border-2 border-outline shadow-[4px_4px_0_var(--outline)] p-5 sm:p-6 flex flex-col gap-3 transform scale-95 transition-all duration-300">
       <span id="enterPagesTotalHint" class="hidden"></span>
-
-      <!-- Modal Header: Short Description & Close Button (✕) -->
       <div class="flex items-center justify-between pb-1">
-        <p class="text-xs sm:text-sm font-semibold text-zinc-700 dark:text-zinc-300">
+        <p class="font-headline text-lg sm:text-xl text-on-surface">
           Enter pages to remove
         </p>
-        <button type="button" onclick="closeEnterPagesModal()" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500 dark:text-zinc-400 flex items-center justify-center transition cursor-pointer" title="Close">
+        <button type="button" onclick="closeEnterPagesModal()" class="w-8 h-8 rounded-full bg-surface-container hover:bg-surface-variant text-on-surface flex items-center justify-center transition border border-outline cursor-pointer" title="Close">
           <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
-
-      <!-- Input Field Area -->
       <div class="flex flex-col gap-1.5">
         <div class="relative">
-          <textarea id="enterPagesInput" rows="3" oninput="updateEnterPagesLiveFeedback()" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); applyEnteredPagesToRemove();}" placeholder="e.g. 1 to 15, 1, 2, 3 or 1 n 2 n 9" class="w-full px-4 py-3 text-sm sm:text-base font-mono rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-800/80 text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-[#ff2a5f] focus:border-transparent transition resize-none"></textarea>
+          <textarea id="enterPagesInput" rows="3" oninput="updateEnterPagesLiveFeedback()" onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); applyEnteredPagesToRemove();}" placeholder="e.g. 1 to 15, 1, 2, 3 or 1 n 2 n 9" class="w-full px-4 py-3 text-sm sm:text-base font-mono rounded-2xl border-2 border-outline bg-surface-container-lowest text-on-surface placeholder-on-surface-variant/60 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition resize-none"></textarea>
         </div>
-
-        <!-- Live Feedback Message Area -->
-        <div id="enterPagesValidationMsg" class="text-xs min-h-[18px] font-medium transition-all"></div>
+        <div id="enterPagesValidationMsg" class="text-xs min-h-[18px] font-medium transition-all font-body"></div>
       </div>
-
-      <!-- Modal Footer (iOS-Style 2 Equal Halves with Divider: Left Cancel, Right Pink Text Mark for Remove) -->
-      <div class="grid grid-cols-2 divide-x divide-zinc-200 dark:divide-zinc-800 border-t border-zinc-200 dark:border-zinc-800 -mx-5 -mb-5 sm:-mx-6 sm:-mb-6 overflow-hidden rounded-b-3xl">
-        <button type="button" onclick="closeEnterPagesModal()" class="w-full py-3.5 text-sm sm:text-base font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/60 active:bg-zinc-100 dark:active:bg-zinc-800 transition cursor-pointer">
+      <div class="grid grid-cols-2 divide-x divide-outline border-t-2 border-outline -mx-5 -mb-5 sm:-mx-6 sm:-mb-6 overflow-hidden rounded-b-3xl">
+        <button type="button" onclick="closeEnterPagesModal()" class="w-full py-3.5 text-sm sm:text-base font-bold text-on-surface-variant hover:bg-surface-container transition cursor-pointer">
           Cancel
         </button>
-        <button type="button" id="btnApplyEnteredPages" onclick="applyEnteredPagesToRemove()" class="w-full py-3.5 text-sm sm:text-base font-bold text-[#ff2a5f] hover:bg-pink-50/60 dark:hover:bg-pink-950/20 active:bg-pink-100/60 transition cursor-pointer">
+        <button type="button" id="btnApplyEnteredPages" onclick="applyEnteredPagesToRemove()" class="w-full py-3.5 text-sm sm:text-base font-bold text-primary hover:bg-surface-variant transition cursor-pointer font-headline tracking-wide">
           Mark for Remove
         </button>
       </div>
-
     </div>
   </div>
 
   <!-- ============================================================ -->
-  <!-- MERGE OPTIONS MODAL (Clean Apple iOS Sheet Style) -->
+  <!-- MERGE OPTIONS MODAL -->
   <!-- ============================================================ -->
-  <div id="mergeOptionsModal" onclick="if(event.target === this) closeMergeOptionsModal()" class="fixed inset-0 z-[115] bg-zinc-950/40 dark:bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 opacity-0 pointer-events-none transition-all duration-300">
-    <div class="relative w-full max-w-sm sm:max-w-md bg-white/95 dark:bg-zinc-900/95 backdrop-blur-2xl rounded-3xl border border-zinc-200/80 dark:border-zinc-800 shadow-2xl p-5 sm:p-6 flex flex-col gap-4 transform scale-95 transition-all duration-300">
+  <div id="mergeOptionsModal" onclick="if(event.target === this) closeMergeOptionsModal()" class="fixed inset-0 z-[115] bg-on-surface/40 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="relative w-full max-w-sm sm:max-w-md bg-surface rounded-3xl border-2 border-outline shadow-[4px_4px_0_var(--outline)] p-5 sm:p-6 flex flex-col gap-4 transform scale-95 transition-all duration-300">
       
-      <!-- Apple Sheet Top Grabber Handle -->
-      <div class="w-10 h-1.5 rounded-full bg-zinc-300/80 dark:bg-zinc-700 mx-auto -mt-1"></div>
+      <div class="w-10 h-1.5 rounded-full bg-outline-variant mx-auto -mt-1"></div>
 
-      <!-- Modal Header -->
-      <div class="flex items-center justify-between pb-2 border-b border-zinc-100 dark:border-zinc-800">
-        <h3 class="text-sm sm:text-base font-bold text-zinc-900 dark:text-zinc-100 tracking-tight">
+      <div class="flex items-center justify-between pb-2 border-b border-outline-variant">
+        <h3 class="font-headline text-lg sm:text-xl text-on-surface tracking-wide">
           Merge Options
         </h3>
-        <button type="button" onclick="closeMergeOptionsModal()" class="w-8 h-8 rounded-full bg-zinc-100 dark:bg-zinc-800 hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-500 dark:text-zinc-400 flex items-center justify-center transition cursor-pointer" title="Close">
+        <button type="button" onclick="closeMergeOptionsModal()" class="w-8 h-8 rounded-full bg-surface-container hover:bg-surface-variant text-on-surface border border-outline flex items-center justify-center transition cursor-pointer" title="Close">
           <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
         </button>
       </div>
 
-      <!-- Options List -->
-      <div class="space-y-4 text-xs">
-        
-        <!-- Option 1: Organization Mode (Segmented Control: Files vs Pages) -->
+      <div class="space-y-4 text-xs font-body">
+        <!-- Option 1: Organization Mode -->
         <div>
           <div class="flex items-center justify-between mb-1.5">
-            <label class="font-bold text-zinc-800 dark:text-zinc-200 text-xs">Organization Mode:</label>
-            <span id="mergeModeCurrentHint" class="text-[11px] font-semibold text-zinc-400">Files Mode</span>
+            <label class="font-bold text-on-surface text-xs font-label">Organization Mode:</label>
+            <span id="mergeModeCurrentHint" class="text-[11px] font-semibold text-on-surface-variant">Files Mode</span>
           </div>
-          <div class="grid grid-cols-2 p-1 rounded-2xl bg-zinc-100/90 dark:bg-zinc-800/80 border border-zinc-200/60 dark:border-zinc-700/60">
-            <button type="button" id="btnMergeModalModeFile" onclick="setWorkspaceViewMode('file'); updateMergeModalViewButtons();" class="py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white shadow-xs">
-              <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          <div class="grid grid-cols-2 p-1 rounded-2xl bg-surface-container border border-outline">
+            <button type="button" id="btnMergeModalModeFile" onclick="setWorkspaceViewMode('file'); updateMergeModalViewButtons();" class="py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer bg-surface-container-lowest text-on-surface shadow-xs border border-outline">
               <span>Files Mode</span>
             </button>
-            <button type="button" id="btnMergeModalModePage" onclick="setWorkspaceViewMode('page'); updateMergeModalViewButtons();" class="py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
-              <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+            <button type="button" id="btnMergeModalModePage" onclick="setWorkspaceViewMode('page'); updateMergeModalViewButtons();" class="py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer text-on-surface-variant hover:text-on-surface">
               <span>Pages Mode</span>
             </button>
           </div>
-          <p class="text-[11px] text-zinc-400 mt-1.5 leading-snug">
+          <p class="text-[11px] text-on-surface-variant mt-1.5 leading-snug">
             Pages mode lets you delete or rearrange individual pages across documents before merging.
           </p>
         </div>
 
-        <!-- Option 2: Sort Sequence (A-Z, Z-A, Reverse) -->
+        <!-- Option 2: Sort Sequence -->
         <div>
-          <label class="font-bold text-zinc-800 dark:text-zinc-200 text-xs block mb-1.5">Sort Sequence:</label>
+          <label class="font-bold text-on-surface text-xs block mb-1.5 font-label">Sort Sequence:</label>
           <div class="grid grid-cols-3 gap-2">
-            <button type="button" onclick="sortMergeFiles('asc')" class="py-2.5 px-2 rounded-xl border border-zinc-200/90 dark:border-zinc-700 hover:border-[#ff2a5f] bg-zinc-50 dark:bg-zinc-800/70 text-zinc-800 dark:text-zinc-200 font-bold transition flex items-center justify-center gap-1 cursor-pointer active:scale-95">
+            <button type="button" onclick="sortMergeFiles('asc')" class="sketch-btn py-2 px-2 rounded-xl border border-outline hover:border-primary bg-surface-container text-on-surface font-bold transition flex items-center justify-center gap-1 cursor-pointer">
               <span>A → Z</span>
             </button>
-            <button type="button" onclick="sortMergeFiles('desc')" class="py-2.5 px-2 rounded-xl border border-zinc-200/90 dark:border-zinc-700 hover:border-[#ff2a5f] bg-zinc-50 dark:bg-zinc-800/70 text-zinc-800 dark:text-zinc-200 font-bold transition flex items-center justify-center gap-1 cursor-pointer active:scale-95">
+            <button type="button" onclick="sortMergeFiles('desc')" class="sketch-btn py-2 px-2 rounded-xl border border-outline hover:border-primary bg-surface-container text-on-surface font-bold transition flex items-center justify-center gap-1 cursor-pointer">
               <span>Z → A</span>
             </button>
-            <button type="button" onclick="sortMergeFiles('reverse')" class="py-2.5 px-2 rounded-xl border border-zinc-200/90 dark:border-zinc-700 hover:border-[#ff2a5f] bg-zinc-50 dark:bg-zinc-800/70 text-zinc-800 dark:text-zinc-200 font-bold transition flex items-center justify-center gap-1 cursor-pointer active:scale-95">
+            <button type="button" onclick="sortMergeFiles('reverse')" class="sketch-btn py-2 px-2 rounded-xl border border-outline hover:border-primary bg-surface-container text-on-surface font-bold transition flex items-center justify-center gap-1 cursor-pointer">
               <span>Reverse</span>
             </button>
           </div>
         </div>
 
-        <!-- Option 3: Duplex / 2-Sided Printing Blank Page (PDF24 Duplex Feature) -->
-        <div class="p-3.5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200/80 dark:border-zinc-700/60">
+        <!-- Option 3: Duplex Double-Sided Blank Page -->
+        <div class="p-3 rounded-2xl bg-surface-container border border-outline">
           <label class="flex items-start gap-2.5 cursor-pointer select-none">
-            <input type="checkbox" id="chkMergeInsertBlankPage" onchange="toggleMergeInsertBlankPage(this.checked)" class="mt-0.5 rounded text-[#ff2a5f] focus:ring-[#ff2a5f] w-4 h-4 cursor-pointer accent-[#ff2a5f]">
+            <input type="checkbox" id="chkMergeInsertBlankPage" onchange="toggleMergeInsertBlankPage(this.checked)" class="mt-0.5 rounded text-primary focus:ring-primary w-4 h-4 cursor-pointer accent-primary">
             <div class="flex-1">
-              <span class="font-bold text-zinc-900 dark:text-zinc-100 block text-xs">Double-Sided Printing (Duplex)</span>
-              <span class="text-[11px] text-zinc-500 dark:text-zinc-400 leading-tight block mt-0.5">
+              <span class="font-bold text-on-surface block text-xs font-label">Double-Sided Printing (Duplex)</span>
+              <span class="text-[11px] text-on-surface-variant leading-tight block mt-0.5">
                 Insert a blank page after odd-paged documents so every document starts on a front page.
               </span>
             </div>
           </label>
         </div>
 
-        <!-- Option 4: Batch Actions (Rotate Left ⟲, Rotate Right ⟳, Clear 🗑) -->
+        <!-- Option 4: Batch Actions -->
         <div>
-          <label class="font-bold text-zinc-800 dark:text-zinc-200 text-xs block mb-1.5">Batch Actions:</label>
+          <label class="font-bold text-on-surface text-xs block mb-1.5 font-label">Batch Actions:</label>
           <div class="grid grid-cols-3 gap-2">
-            <button type="button" onclick="rotateAllWorkspace(-90)" class="py-2 px-1.5 rounded-xl border border-zinc-200/90 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-bold transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="Rotate all items 90° Left">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 4v5h-.582m-15.356 2A8.001 8.001 0 0119.418 9m0 0H15m-11 11v-5h.581m0 0a8.003 8.003 0 0015.357-2m-15.357 2H9"/></svg>
+            <button type="button" onclick="rotateAllWorkspace(-90)" class="sketch-btn py-2 px-1.5 rounded-xl border border-outline hover:bg-surface-variant text-on-surface font-bold transition flex items-center justify-center gap-1 cursor-pointer" title="Rotate all items 90° Left">
               <span>Left 90°</span>
             </button>
-            <button type="button" onclick="rotateAllWorkspace(90)" class="py-2 px-1.5 rounded-xl border border-zinc-200/90 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-bold transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="Rotate all items 90° Right">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            <button type="button" onclick="rotateAllWorkspace(90)" class="sketch-btn py-2 px-1.5 rounded-xl border border-outline hover:bg-surface-variant text-on-surface font-bold transition flex items-center justify-center gap-1 cursor-pointer" title="Rotate all items 90° Right">
               <span>Right 90°</span>
             </button>
-            <button type="button" onclick="clearWorkspaceFiles(); closeMergeOptionsModal();" class="py-2 px-1.5 rounded-xl border border-red-200/80 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/30 text-red-500 font-bold transition flex items-center justify-center gap-1 cursor-pointer active:scale-95" title="Clear all files">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            <button type="button" onclick="clearWorkspaceFiles(); closeMergeOptionsModal();" class="sketch-btn py-2 px-1.5 rounded-xl border border-error text-error hover:bg-error-container font-bold transition flex items-center justify-center gap-1 cursor-pointer" title="Clear all files">
               <span>Clear</span>
             </button>
           </div>
         </div>
-
       </div>
 
-      <!-- Done Button -->
       <div class="pt-1">
-        <button type="button" onclick="closeMergeOptionsModal()" class="w-full py-3 rounded-2xl bg-[#ff2a5f] hover:bg-[#e01a4f] text-white font-extrabold text-sm transition active:scale-97 cursor-pointer">
+        <button type="button" onclick="closeMergeOptionsModal()" class="sketch-pill sketch-btn w-full py-3 bg-primary text-on-primary font-bold text-sm border-2 border-outline transition active:scale-97 cursor-pointer">
           Done
         </button>
       </div>
-
     </div>
   </div>
 
-  <!-- Vector Illustrations Library -->
-  <script src="vectors.js?v=20261117d"></script>
-  <!-- Main Application Script -->
-  <script src="app.js?v=20261117d"></script>
-
   <!-- ============================================================ -->
-  <!-- RICH DARK FOOTER (CutiPDF Brand, 100% Client-Side Privacy) -->
+  <!-- PDF LOADING PROGRESS MODAL -->
   <!-- ============================================================ -->
-  <footer id="mainSiteFooter" class="w-full bg-[#0d0d10] border-t border-zinc-800/90 text-zinc-400 mt-auto select-none">
-    <div class="max-w-[1480px] mx-auto px-5 sm:px-8 lg:px-12 py-12 sm:py-16">
+  <div id="pdfLoadingModal" class="fixed inset-0 z-[120] bg-on-surface/50 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="relative w-full max-w-xs sm:max-w-sm rounded-3xl bg-surface border-2 border-outline shadow-[4px_4px_0_var(--outline)] p-6 sm:p-7 text-center transform scale-95 transition-all duration-300 flex flex-col items-center">
       
-      <!-- Top Grid: Brand & Tool Categories -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 pb-10 sm:pb-12 border-b border-zinc-800/70">
-        
-        <!-- Brand Column (2 Spans on Desktop) -->
-        <div class="lg:col-span-2 space-y-4">
-          <a href="./" data-tool-id="all-tools" class="inline-flex items-center gap-2 group no-underline">
-            <span class="font-brush text-2xl font-black text-white tracking-tight">Cuti<span class="text-[#ff2a5f]">PDF</span></span>
-          </a>
-          <p class="text-xs font-brush text-[#ff2a5f] text-sm font-semibold tracking-wide">
-            (pdf tool box, but lovely)
-          </p>
-          <p class="text-xs text-zinc-400 max-w-sm leading-relaxed">
-            Every tool you need to work with PDFs in one place. 100% private in-browser processing powered by WebAssembly. No files leave your device.
-          </p>
-          
-          <!-- Privacy Badges -->
-          <div class="flex flex-wrap items-center gap-2 pt-2">
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-800/80 border border-zinc-700/60 text-[11px] font-bold text-zinc-300">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> 100% Client-Side
-            </span>
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-800/80 border border-zinc-700/60 text-[11px] font-bold text-zinc-300">
-              <span class="w-1.5 h-1.5 rounded-full bg-[#ff2a5f]"></span> Zero Cloud Uploads
-            </span>
-          </div>
-        </div>
-
-        <!-- Column 1: ORGANIZE PDF -->
-        <div class="space-y-3">
-          <h4 class="text-xs font-black uppercase tracking-wider text-[#ff2a5f]">Organize PDF</h4>
-          <ul class="space-y-2 text-xs">
-            <li><a href="./merge-pdf" data-tool-id="merge-pdf" class="hover:text-white transition-colors">Merge PDF</a></li>
-            <li><a href="./split-pdf" data-tool-id="split-pdf" class="hover:text-white transition-colors">Split PDF</a></li>
-            <li><a href="./remove-pages" data-tool-id="remove-pages" class="hover:text-white transition-colors">Remove Pages</a></li>
-            <li><a href="./extract-pages" data-tool-id="extract-pages" class="hover:text-white transition-colors">Extract Pages</a></li>
-            <li><a href="./organize-pdf" data-tool-id="organize-pdf" class="hover:text-white transition-colors">Organize PDF</a></li>
-          </ul>
-        </div>
-
-        <!-- Column 2: OPTIMIZE & CONVERT -->
-        <div class="space-y-3">
-          <h4 class="text-xs font-black uppercase tracking-wider text-[#ff2a5f]">Optimize & Convert</h4>
-          <ul class="space-y-2 text-xs">
-            <li><a href="./compress-pdf" data-tool-id="compress-pdf" class="hover:text-white transition-colors">Compress PDF</a></li>
-            <li><a href="./jpg-to-pdf" data-tool-id="jpg-to-pdf" class="hover:text-white transition-colors">JPG to PDF</a></li>
-            <li><a href="./pdf-to-jpg" data-tool-id="pdf-to-jpg" class="hover:text-white transition-colors">PDF to JPG</a></li>
-          </ul>
-        </div>
-
-        <!-- Column 3: EDIT & SECURITY -->
-        <div class="space-y-3">
-          <h4 class="text-xs font-black uppercase tracking-wider text-[#ff2a5f]">Edit & Security</h4>
-          <ul class="space-y-2 text-xs">
-            <li><a href="./rotate-pdf" data-tool-id="rotate-pdf" class="hover:text-white transition-colors">Rotate PDF</a></li>
-            <li><a href="./page-numbers" data-tool-id="page-numbers" class="hover:text-white transition-colors">Page Numbers</a></li>
-            <li><a href="./watermark-pdf" data-tool-id="watermark-pdf" class="hover:text-white transition-colors">Watermark PDF</a></li>
-            <li><a href="./crop-pdf" data-tool-id="crop-pdf" class="hover:text-white transition-colors">Crop PDF</a></li>
-            <li><a href="./edit-pdf" data-tool-id="edit-pdf" class="hover:text-white transition-colors">Edit PDF</a></li>
-            <li><a href="./unlock-pdf" data-tool-id="unlock-pdf" class="hover:text-white transition-colors">Unlock PDF</a></li>
-            <li><a href="./protect-pdf" data-tool-id="protect-pdf" class="hover:text-white transition-colors">Protect PDF</a></li>
-            <li><a href="./sign-pdf" data-tool-id="sign-pdf" class="hover:text-white transition-colors">Sign PDF</a></li>
-          </ul>
-        </div>
-
+      <div class="w-16 h-16 rounded-2xl bg-paper-pink border-2 border-outline text-primary flex items-center justify-center mb-3">
+        <span class="material-symbols-outlined text-3xl animate-bounce" aria-hidden="true">picture_as_pdf</span>
       </div>
 
-      <!-- Bottom Bar: Copyright & Info Modal -->
-      <div class="pt-6 sm:pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
-        <div class="flex items-center gap-2">
-          <span>&copy; 2026 CutiPDF. All rights reserved.</span>
-          <span>•</span>
-          <span class="text-zinc-400">Crafted with care & privacy.</span>
+      <h3 class="font-headline text-lg sm:text-xl text-on-surface mb-1">
+        Preparing Pages...
+      </h3>
+      <p id="pdfLoadingStatusText" class="text-xs text-on-surface-variant mb-3 truncate max-w-[260px] font-body">
+        Loading pages in browser...
+      </p>
+
+      <div class="mb-3">
+        <span id="pdfLoadingPercent" class="font-mono text-3xl sm:text-4xl font-bold text-primary">0%</span>
+      </div>
+
+      <div class="w-full bg-surface-container rounded-full h-3 p-0.5 overflow-hidden border border-outline">
+        <div id="pdfLoadingProgressBar" class="h-full rounded-full bg-primary transition-all duration-150 ease-out" style="width: 0%;"></div>
+      </div>
+
+      <p class="text-[11px] text-on-surface-variant mt-3.5 font-body flex items-center justify-center gap-1">
+        <span>100% Private in your browser</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- SECURE PDF PASSWORD PROMPT MODAL -->
+  <!-- ============================================================ -->
+  <div id="pdfPasswordPromptModal" class="fixed inset-0 z-[130] bg-on-surface/50 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="relative w-full max-w-sm rounded-3xl bg-surface border-2 border-outline shadow-[4px_4px_0_var(--outline)] p-6 sm:p-7 text-center transform scale-95 transition-all duration-300 flex flex-col items-center">
+      
+      <div class="w-14 h-14 rounded-2xl bg-paper-butter border-2 border-outline text-tertiary flex items-center justify-center mb-3">
+        <span class="material-symbols-outlined text-2xl" aria-hidden="true">lock</span>
+      </div>
+
+      <h3 class="font-headline text-lg sm:text-xl text-on-surface mb-1">
+        Password Protected PDF
+      </h3>
+      <p id="pdfPasswordPromptSubtitle" class="text-xs text-on-surface-variant mb-4 text-center leading-relaxed font-body">
+        This document is encrypted. Please enter the password to view and edit pages.
+      </p>
+
+      <form id="pdfPasswordPromptForm" onsubmit="handlePdfPasswordSubmit(event)" class="w-full space-y-3">
+        <div class="relative">
+          <input type="password" id="pdfPromptPasswordInput" placeholder="Enter PDF password" autocomplete="current-password" class="w-full px-4 py-2.5 rounded-xl border-2 border-outline bg-surface-container-lowest text-on-surface text-sm outline-none focus:border-primary transition font-body">
         </div>
-        <div class="flex items-center gap-4">
-          <button type="button" onclick="openInfoModal()" class="hidden sm:inline-block hover:text-[#ff2a5f] transition-colors cursor-pointer">About CutiPDF</button>
-          <span class="hidden sm:inline-block">•</span>
-          <a href="https://github.com/weir-doabby/cutipdf" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">GitHub</a>
+        <p id="pdfPasswordPromptError" class="hidden text-xs text-error font-semibold font-body"></p>
+
+        <div class="flex items-center gap-2 pt-1">
+          <button type="button" onclick="cancelPdfPasswordPrompt()" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-surface-container hover:bg-surface-variant text-on-surface border border-outline transition cursor-pointer font-label">
+            Cancel
+          </button>
+          <button type="submit" id="btnSubmitPdfPassword" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-primary hover:bg-[#8e1937] text-on-primary border border-outline transition cursor-pointer font-label">
+            Unlock & Open
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- ABOUT CUTIPDF INFO MODAL -->
+  <!-- ============================================================ -->
+  <div id="infoModal" onclick="if(event.target === this) closeInfoModal()" class="fixed inset-0 z-[125] bg-on-surface/40 backdrop-blur-xs flex items-center justify-center p-4 opacity-0 pointer-events-none transition-all duration-300">
+    <div class="relative w-full max-w-md rounded-3xl bg-surface border-2 border-outline shadow-[4px_4px_0_var(--outline)] p-6 sm:p-7 text-left transform scale-95 transition-all duration-300 flex flex-col gap-4">
+      <div class="flex items-center justify-between pb-3 border-b border-outline-variant">
+        <div class="flex items-center gap-2.5">
+          <span class="font-headline text-2xl text-on-surface">CutiPDF</span>
+          <span class="text-xs text-primary font-bold font-label">(pdf tool box, but lovely)</span>
+        </div>
+        <button type="button" onclick="closeInfoModal()" class="w-8 h-8 rounded-full bg-surface-container hover:bg-surface-variant text-on-surface border border-outline flex items-center justify-center transition cursor-pointer" title="Close">
+          <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs sm:text-sm text-on-surface-variant font-body">
+        <div class="p-3 rounded-xl bg-surface-container border border-outline">
+          <strong class="text-on-surface block font-headline text-base text-primary">100% Client-Side Privacy</strong>
+          <p class="mt-0.5 leading-relaxed">Your files never leave your paws. All rendering, merging, and page removal run entirely in your local browser sandbox via WebAssembly.</p>
+        </div>
+        <div class="p-3 rounded-xl bg-surface-container border border-outline">
+          <strong class="text-on-surface block font-headline text-base text-secondary">Fast &amp; No Limits</strong>
+          <p class="mt-0.5 leading-relaxed">No server queues, no file size caps, no watermarks, and no sign-ups needed.</p>
         </div>
       </div>
 
+      <button type="button" onclick="closeInfoModal()" class="sketch-pill sketch-btn w-full py-3 bg-primary text-on-primary font-bold text-sm border-2 border-outline transition cursor-pointer font-label">
+        Got it
+      </button>
+    </div>
+  </div>
+
+  <!-- Fullscreen Drag & Drop Overlay -->
+  <div id="globalDropOverlay" class="fixed inset-0 z-[100] bg-on-surface/60 backdrop-blur-xs flex items-center justify-center p-6 opacity-0 pointer-events-none transition-all duration-200">
+    <div class="w-full max-w-md p-8 sm:p-10 rounded-3xl border-3 border-dashed border-primary bg-surface flex flex-col items-center justify-center text-center space-y-3 shadow-2xl pointer-events-none">
+      <div class="w-16 h-16 rounded-2xl bg-paper-pink border-2 border-outline text-primary flex items-center justify-center">
+        <span class="material-symbols-outlined text-3xl" aria-hidden="true">upload_file</span>
+      </div>
+      <h3 class="font-headline text-2xl text-on-surface">Drop your PDF anywhere</h3>
+      <p class="text-xs text-on-surface-variant font-body">Release to open and process instantly</p>
+    </div>
+  </div>
+
+  <!-- Quiet Minimal Footer -->
+  <footer id="mainSiteFooter" class="max-w-5xl w-full mx-auto px-4 sm:px-6 py-8 border-t border-outline-variant flex flex-wrap items-center justify-between gap-4 mt-auto">
+    <p class="font-body text-xs sm:text-sm text-on-surface-variant">© 2026 CutiPDF — (pdf tool box, but lovely)</p>
+    <div class="flex items-center gap-4">
+      <a href="#tools" onclick="if(window.showCatalogView) showCatalogView();" class="inline-flex items-center min-h-10 px-2 font-body text-xs sm:text-sm text-on-surface-variant hover:text-on-surface cursor-pointer">All Tools</a>
+      <a href="#about" onclick="document.getElementById('about')?.scrollIntoView({behavior:'smooth'});" class="inline-flex items-center min-h-10 px-2 font-body text-xs sm:text-sm text-on-surface-variant hover:text-on-surface cursor-pointer">Privacy</a>
+      <a href="#top" onclick="window.scrollTo({top:0, behavior:'smooth'});" class="inline-flex items-center min-h-10 px-2 font-body text-xs sm:text-sm text-on-surface-variant hover:text-on-surface cursor-pointer">Back to top</a>
     </div>
   </footer>
 
+  <!-- Scripts -->
+  <script src="vectors.js?v=20261123"></script>
+  <script src="app.js?v=20261123"></script>
 </body>
 </html>

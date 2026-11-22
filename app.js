@@ -8,6 +8,7 @@ const TOOLS_CATALOG = {
     {
       id: 'merge-pdf',
       title: 'Merge PDF',
+      tagline: 'Combine files in order',
       desc: 'Combine multiple PDF files into one single document in any order you want.',
       accept: 'application/pdf',
       btnText: 'Select PDF files',
@@ -16,6 +17,7 @@ const TOOLS_CATALOG = {
     {
       id: 'split-pdf',
       title: 'Split PDF',
+      tagline: 'Snip into separate files',
       desc: 'Separate pages or extract ranges into independent PDF files instantly.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
@@ -24,6 +26,7 @@ const TOOLS_CATALOG = {
     {
       id: 'remove-pages',
       title: 'Remove Pages',
+      tagline: 'Drop unwanted pages',
       desc: 'Select and remove unwanted pages from your PDF file with interactive preview.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
@@ -32,6 +35,7 @@ const TOOLS_CATALOG = {
     {
       id: 'extract-pages',
       title: 'Extract Pages',
+      tagline: 'Pick favorite pages',
       desc: 'Create a new PDF containing only your selected pages.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
@@ -40,6 +44,7 @@ const TOOLS_CATALOG = {
     {
       id: 'organize-pdf',
       title: 'Organize PDF',
+      tagline: 'Shuffle & reorder',
       desc: 'Drag and drop to sort, reorder, rotate, or delete pages in your PDF.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
@@ -51,6 +56,7 @@ const TOOLS_CATALOG = {
     {
       id: 'compress-pdf',
       title: 'Compress PDF',
+      tagline: 'Squish heavy files',
       desc: 'Reduce file size while preserving high visual quality in your browser.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
@@ -59,6 +65,7 @@ const TOOLS_CATALOG = {
     {
       id: 'jpg-to-pdf',
       title: 'JPG to PDF',
+      tagline: 'Photos to neat PDF',
       desc: 'Convert JPG, PNG, and WebP images into a clean PDF document.',
       accept: 'image/jpeg,image/png,image/webp,image/jpg',
       btnText: 'Select Images',
@@ -67,6 +74,7 @@ const TOOLS_CATALOG = {
     {
       id: 'pdf-to-jpg',
       title: 'PDF to JPG',
+      tagline: 'Pages as crisp JPGs',
       desc: 'Convert every PDF page into high-resolution JPG images packaged in a ZIP.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
@@ -78,6 +86,7 @@ const TOOLS_CATALOG = {
     {
       id: 'rotate-pdf',
       title: 'Rotate PDF',
+      tagline: 'Turn pages 90°–270°',
       desc: 'Rotate individual pages or all pages permanently 90°, 180°, or 270°.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
@@ -86,6 +95,7 @@ const TOOLS_CATALOG = {
     {
       id: 'page-numbers',
       title: 'Page Numbers',
+      tagline: 'Tidy corner numbers',
       desc: 'Add clean page numbers with custom position and numbering format.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
@@ -94,6 +104,7 @@ const TOOLS_CATALOG = {
     {
       id: 'watermark-pdf',
       title: 'Watermark PDF',
+      tagline: 'Stamp custom marks',
       desc: 'Stamp custom text or confidential marks over your PDF pages.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
@@ -102,6 +113,7 @@ const TOOLS_CATALOG = {
     {
       id: 'crop-pdf',
       title: 'Crop PDF',
+      tagline: 'Trim extra margins',
       desc: 'Trim visible page margins and white borders of your PDF documents.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
@@ -110,6 +122,7 @@ const TOOLS_CATALOG = {
     {
       id: 'edit-pdf',
       title: 'Edit PDF',
+      tagline: 'Jot notes & doodles',
       desc: 'Add text notes, highlights, and annotations directly onto your PDF.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
@@ -121,6 +134,7 @@ const TOOLS_CATALOG = {
     {
       id: 'unlock-pdf',
       title: 'Unlock PDF',
+      tagline: 'Remove password',
       desc: 'Remove password security and encryption from your protected PDF.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
@@ -129,6 +143,7 @@ const TOOLS_CATALOG = {
     {
       id: 'protect-pdf',
       title: 'Protect PDF',
+      tagline: 'Guard with password',
       desc: 'Encrypt your PDF with a strong password to prevent unauthorized access.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
@@ -137,6 +152,7 @@ const TOOLS_CATALOG = {
     {
       id: 'sign-pdf',
       title: 'Sign PDF',
+      tagline: 'Draw signature by hand',
       desc: 'Draw or type your signature to stamp onto any page of your PDF.',
       accept: 'application/pdf',
       btnText: 'Select PDF file',
@@ -342,29 +358,48 @@ function getToolVector(toolId, fallbackClass = 'text-sm') {
 // ==========================================
 // Render All Tools Catalog with Brush Headers
 // ==========================================
+const CATEGORY_META = {
+  'ORGANIZE PDF': { title: 'Organize PDF', badge: '01 / ORGANIZE', badgeClass: 'text-primary' },
+  'OPTIMIZE & CONVERT': { title: 'Optimize & Convert', badge: '02 / CONVERT', badgeClass: 'text-secondary' },
+  'EDIT & ENHANCE': { title: 'Edit & Enhance', badge: '03 / EDIT', badgeClass: 'text-tertiary' },
+  'PDF SECURITY': { title: 'PDF Security', badge: '04 / SECURITY', badgeClass: 'text-on-surface' }
+};
+
 function renderAllToolsCatalog() {
   if (!DOM.toolsGridContainer) return;
   DOM.toolsGridContainer.innerHTML = '';
   const basePath = getBasePath();
 
-  for (const [category, tools] of Object.entries(TOOLS_CATALOG)) {
+  const categories = Object.entries(TOOLS_CATALOG);
+  categories.forEach(([category, tools], catIdx) => {
+    const meta = CATEGORY_META[category] || { title: category, badge: category, badgeClass: 'text-primary' };
     const section = document.createElement('section');
-    section.className = 'space-y-4';
+    section.className = 'flex flex-col gap-4';
+
+    const dividerHtml = (catIdx > 0) ? `
+      <div class="py-2" aria-hidden="true">
+        <svg class="w-full h-4 text-outline-variant ink-sketch" viewBox="0 0 800 16" fill="none" preserveAspectRatio="none">
+          <path d="M0 9C38 3 79 13 122 7C165 2 201 14 244 8C287 3 324 13 366 7C408 2 442 14 486 8C528 3 563 13 604 7C646 2 683 14 725 8C764 3 782 11 800 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+        </svg>
+      </div>
+    ` : '';
 
     section.innerHTML = `
-      <div class="flex items-center gap-2 border-b border-pink-100 dark:border-zinc-800 pb-2">
-        <h2 class="category-title">${category}</h2>
+      ${dividerHtml}
+      <div class="flex items-center justify-between gap-4">
+        <h2 class="font-headline text-2xl sm:text-3xl text-on-surface tracking-wide">${meta.title}</h2>
+        <span class="font-label text-xs sm:text-sm font-bold ${meta.badgeClass}">${meta.badge}</span>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-5">
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 items-start">
         ${tools.map(tool => {
-          const vectorSvg = getToolVector(tool.id, 'text-sm');
+          const vectorSvg = getToolVector(tool.id);
           return `
-            <a href="${basePath}${tool.id}" data-tool-id="${tool.id}" class="tool-card group no-underline text-inherit block">
-              <div class="w-12 h-12 flex-shrink-0 group-hover:scale-105 transition-transform duration-200 mb-3">
+            <a href="${basePath}${tool.id}" data-tool-id="${tool.id}" class="tool-doodle flex flex-col items-center text-center gap-1.5 p-2 min-h-12 group no-underline text-inherit cursor-pointer">
+              <div class="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center">
                 ${vectorSvg}
               </div>
-              <h3 class="font-bold text-sm text-zinc-900 dark:text-zinc-100 group-hover:text-[#ff2a5f] transition-colors">${tool.title}</h3>
-              <p class="text-xs text-zinc-500 dark:text-zinc-400 mt-1 line-clamp-2 leading-relaxed">${tool.desc}</p>
+              <h3 class="font-title text-base sm:text-lg font-bold text-on-surface group-hover:text-primary transition-colors leading-tight">${tool.title}</h3>
+              <p class="font-body text-xs sm:text-sm text-on-surface-variant leading-snug">${tool.tagline || tool.desc}</p>
             </a>
           `;
         }).join('')}
@@ -372,7 +407,7 @@ function renderAllToolsCatalog() {
     `;
 
     DOM.toolsGridContainer.appendChild(section);
-  }
+  });
 }
 
 // ==========================================
@@ -1158,6 +1193,7 @@ async function handleFilesSelected(files) {
   // Keep filesSelectedArea clean and hidden while building preview cards so no background ghost buttons bleed through
   DOM.filesSelectedArea.classList.add('hidden');
   if (DOM.selectedFilesList) DOM.selectedFilesList.innerHTML = '';
+  if (DOM.viewToolActive) DOM.viewToolActive.classList.add('has-files');
 
   showToast('Generating document preview cards...');
   await buildWorkspacePreview(files);
@@ -2713,6 +2749,12 @@ function renderInteractiveWorkspace() {
   if (actionBar) actionBar.classList.add('floating-mode');
 
   const toolsBtn = document.getElementById('floatingToolsBtn');
+  const capsuleDivider = document.getElementById('capsuleDivider');
+  const subButtons = document.getElementById('workspaceActionSubButtons');
+  if (capsuleDivider && subButtons) {
+    const hasVisibleSub = Array.from(subButtons.children).some(el => !el.classList.contains('hidden'));
+    capsuleDivider.classList.toggle('hidden', !hasVisibleSub || subButtons.classList.contains('hidden'));
+  }
 
   if (toolId === 'remove-pages') {
     if (toolsBtn) toolsBtn.classList.add('elevated', 'elevated-mobile');
@@ -2776,15 +2818,15 @@ function renderInteractiveWorkspace() {
     }
   }
 
-  // Container Layout: Grid vs Continuous
+  // Container Layout: Grid vs Continuous (Hand-Drawn Sketchbook Canvas)
   const isContinuous = (toolId === 'remove-pages' && state.pageLayoutMode === 'continuous');
   const isRemoveTool = (toolId === 'remove-pages');
   const isMergeTool = (toolId === 'merge-pdf');
   const grid = document.createElement('div');
   if (isContinuous) {
-    grid.className = 'flex flex-col items-center gap-6 max-w-xl mx-auto pt-3 sm:pt-4 pb-6 w-full';
+    grid.className = 'flex flex-col items-center gap-6 max-w-xl mx-auto pt-3 sm:pt-4 pb-28 w-full';
   } else {
-    grid.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3.5 pt-3 sm:pt-4 pb-6';
+    grid.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5 sm:gap-6 pt-3 sm:pt-4 pb-28 w-full max-w-6xl mx-auto';
   }
 
   state.workspaceItems.forEach((item, index) => {
@@ -2796,14 +2838,11 @@ function renderInteractiveWorkspace() {
     }
 
     if (isContinuous) {
-      card.className = `preview-card ${item.removed ? 'removed' : ''} w-full max-w-md sm:max-w-lg shadow-sm hover:shadow-md transition-all cursor-pointer`;
-    } else if (isMergeTool) {
-      card.className = `preview-card flex flex-col justify-between min-h-[220px] sm:min-h-[250px] shadow-sm hover:shadow-md transition-all cursor-grab active:cursor-grabbing select-none`;
+      card.className = `preview-card ${item.removed ? 'removed' : ''} w-full max-w-md sm:max-w-lg cursor-pointer`;
     } else {
-      card.className = `preview-card ${item.removed ? 'removed' : ''} ${(!isRemoveTool && !isMergeTool && item.selected) ? 'selected' : ''} ${isRemoveTool ? 'min-h-[220px] sm:min-h-[250px]' : ''}`;
+      card.className = `preview-card ${item.removed ? 'removed' : ''} ${(!isRemoveTool && !isMergeTool && item.selected) ? 'selected' : ''} select-none`;
     }
 
-    // Drag and Drop Events (only for re-ordering tools, NOT remove-pages)
     if (toolId !== 'remove-pages') {
       card.setAttribute('draggable', 'true');
       card.addEventListener('dragstart', (e) => handleCardDragStart(e, index));
@@ -2813,258 +2852,160 @@ function renderInteractiveWorkspace() {
       card.addEventListener('dragend', (e) => handleCardDragEnd(e));
     }
 
-    // Top badges: For remove-pages, Page Number on Left and Zoom Preview on Right
-    // For merge-pdf, Order Number on Left and Page Count on Right (matching squircle rounded-xl)
-    let orderBadge = '';
-    let infoBadge = '';
-    let zoomPreviewBtn = '';
+    const orderBadge = `
+      <div class="absolute top-2 left-2 z-10 min-w-[24px] h-6 px-1.5 rounded-lg bg-[#1D1C14] text-white text-[11px] font-bold flex items-center justify-center shadow-xs pointer-events-none select-none">
+        ${index + 1}
+      </div>
+    `;
 
-    if (toolId === 'remove-pages') {
-      orderBadge = `
-        <div class="absolute top-2 left-2 z-20 min-w-[28px] h-7 sm:min-w-[32px] sm:h-8 px-1.5 rounded-xl bg-white/95 dark:bg-zinc-800/95 text-zinc-700 dark:text-zinc-200 text-xs sm:text-sm font-bold shadow-sm border border-zinc-200/80 dark:border-zinc-700 flex items-center justify-center pointer-events-none select-none">
-          ${index + 1}
+    let infoBadge = '';
+    if (isMergeTool) {
+      infoBadge = `
+        <div class="absolute top-2 right-2 z-10 px-2 h-6 rounded-lg bg-[#1D1C14] text-white text-[10px] font-semibold flex items-center justify-center shadow-xs pointer-events-none select-none">
+          ${item.type === 'pdf-page' ? `P. ${item.pageNum}` : `${item.pageCount || 1} pgs`}
         </div>
       `;
-      zoomPreviewBtn = `
-        <button type="button" onclick="openPagePreviewModal(${index}); event.stopPropagation();" class="absolute top-2 right-2 z-20 w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/95 dark:bg-zinc-800/95 text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50 dark:hover:bg-zinc-700 shadow-sm border border-zinc-200/80 dark:border-zinc-700 flex items-center justify-center transition-all hover:scale-110 active:scale-95 cursor-pointer" title="Zoom & Preview Page">
-          <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
+    } else if (isRemoveTool) {
+      infoBadge = `
+        <button type="button" onclick="openPagePreviewModal(${index}); event.stopPropagation();" class="absolute top-2 right-2 z-20 w-6 h-6 rounded-lg bg-[#1D1C14] text-white hover:text-[#ff2a5f] hover:bg-white flex items-center justify-center transition active:scale-95 cursor-pointer" title="Zoom & Preview Page">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
         </button>
       `;
-    } else if (toolId === 'merge-pdf') {
-      orderBadge = `
-        <div class="absolute top-2 left-2 z-20 min-w-[28px] h-7 sm:min-w-[32px] sm:h-8 px-1.5 rounded-xl bg-white/95 dark:bg-zinc-800/95 text-zinc-700 dark:text-zinc-200 text-xs sm:text-sm font-bold shadow-sm border border-zinc-200/80 dark:border-zinc-700 flex items-center justify-center pointer-events-none select-none">
-          ${index + 1}
-        </div>
-      `;
-      infoBadge = `
-        <div class="absolute top-2 right-2 z-20 flex items-center gap-1.5 select-none">
-          <button type="button" onclick="openPagePreviewModal(${index}); event.stopPropagation();" class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-white/95 dark:bg-zinc-800/95 text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50 dark:hover:bg-zinc-700 shadow-sm border border-zinc-200/80 dark:border-zinc-700 flex items-center justify-center transition-all hover:scale-105 active:scale-95 cursor-pointer" title="Zoom & Preview Document">
-            <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
-          </button>
-          <div class="min-w-[28px] h-7 sm:min-w-[32px] sm:h-8 px-2 rounded-xl bg-white/95 dark:bg-zinc-800/95 text-zinc-700 dark:text-zinc-200 text-[11px] sm:text-xs font-bold shadow-sm border border-zinc-200/80 dark:border-zinc-700 flex items-center justify-center pointer-events-none">
-            ${item.type === 'pdf-page' ? `P. ${item.pageNum}` : `${item.pageCount || 1} pgs`}
-          </div>
-        </div>
-      `;
-    } else {
-      orderBadge = `<div class="absolute top-2 left-2 z-10 bg-zinc-900/80 dark:bg-black/80 backdrop-blur-md text-white text-[11px] font-bold px-2 py-0.5 rounded-lg border border-white/10 shadow-xs">${index + 1}</div>`;
-      if (item.type === 'pdf-file') {
-        infoBadge = `<div class="absolute top-2 right-2 z-10 bg-[#ff2a5f] text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-xs">${item.pageCount || 1} pgs</div>`;
-      } else if (item.type === 'pdf-page') {
-        infoBadge = `<div class="absolute top-2 right-2 z-10 bg-white/90 dark:bg-zinc-800/90 text-zinc-700 dark:text-zinc-200 text-[10px] font-bold px-1.5 py-0.5 rounded-md border border-zinc-200 dark:border-zinc-700 shadow-xs truncate max-w-[80px]" title="${item.fileName || ''}">${item.name || `P. ${item.pageNum}`}</div>`;
-      }
     }
 
-    // Flat Style Minimal Cross for remove-pages, Large Red Cross for other modes
-    const overlayHiddenClass = item.removed ? '' : 'hidden';
     let removedOverlayHtml = '';
     if (isRemoveTool) {
       removedOverlayHtml = `
-        <div class="card-removed-overlay ${overlayHiddenClass} absolute inset-0 flex items-center justify-center pointer-events-none z-15 bg-black/5 dark:bg-black/25">
-          <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white/95 dark:bg-zinc-800/95 border border-zinc-200/90 dark:border-zinc-700 shadow-sm flex items-center justify-center text-[#ff2a5f]">
+        <div class="card-removed-overlay ${item.removed ? '' : 'hidden'} absolute inset-0 flex items-center justify-center pointer-events-none z-15 bg-black/10">
+          <div class="w-10 h-10 rounded-full bg-white border-2 border-outline shadow-sm flex items-center justify-center text-primary">
             <svg class="w-5 h-5 stroke-[2.4]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
             </svg>
           </div>
         </div>
       `;
-    } else if (!isMergeTool) {
-      removedOverlayHtml = `
-        <div class="card-removed-overlay ${overlayHiddenClass} absolute inset-0 flex items-center justify-center pointer-events-none z-15 bg-black/15 dark:bg-black/35">
-          <svg viewBox="0 0 100 100" class="${isContinuous ? 'w-28 h-28 sm:w-36 sm:h-36' : 'w-20 h-20 sm:w-24 sm:h-24'} pointer-events-none drop-shadow-md text-red-500" fill="none" stroke="currentColor">
-            <path d="M22 22 L78 78 M78 22 L22 78" stroke="#ef4444" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-      `;
     }
 
-    // Hover Action Buttons (shown only when NOT removed and NOT remove-pages)
     let hoverActionsHtml = '';
     if (!item.removed) {
-      if (toolId === 'merge-pdf') {
+      if (isMergeTool) {
         hoverActionsHtml = `
-          <div class="card-hover-actions absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center gap-2 z-20">
-            <button type="button" onclick="rotateWorkspaceItem(${index}, -1); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Rotate 90° Left">
-              <svg class="w-4 h-4 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 4v5h-.582m-15.356 2A8.001 8.001 0 0119.418 9m0 0H15m-11 11v-5h.581m0 0a8.003 8.003 0 0015.357-2m-15.357 2H9"/></svg>
-            </button>
-            <button type="button" onclick="rotateWorkspaceItem(${index}, 1); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Rotate 90° Right">
-              <svg class="w-4 h-4 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-            </button>
-            <button type="button" onclick="openPagePreviewModal(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Zoom Preview">
-              <svg class="w-4 h-4 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
-            </button>
-            <button type="button" onclick="removeWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-400 hover:text-red-500 hover:bg-red-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Delete">
-              <svg class="w-4 h-4 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-            </button>
+          <div class="card-hover-actions absolute inset-0 bg-black/25 flex items-center justify-center z-20">
+            <div class="hover-action-pill">
+              <button type="button" onclick="rotateWorkspaceItem(${index}, -1); event.stopPropagation();" class="hover-pill-btn" title="Rotate 90° Left">
+                <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 4v5h-.582m-15.356 2A8.001 8.001 0 0119.418 9m0 0H15m-11 11v-5h.581m0 0a8.003 8.003 0 0015.357-2m-15.357 2H9"/></svg>
+              </button>
+              <button type="button" onclick="rotateWorkspaceItem(${index}, 1); event.stopPropagation();" class="hover-pill-btn" title="Rotate 90° Right">
+                <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              </button>
+              <button type="button" onclick="openPagePreviewModal(${index}); event.stopPropagation();" class="hover-pill-btn" title="Quick Look">
+                <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
+              </button>
+              <button type="button" onclick="removeWorkspaceItem(${index}); event.stopPropagation();" class="hover-pill-btn danger" title="Delete">
+                <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            </div>
           </div>
         `;
-      } else if (toolId !== 'remove-pages') {
+      } else if (!isRemoveTool) {
         hoverActionsHtml = `
-          <div class="card-hover-actions absolute inset-0 bg-black/35 backdrop-blur-[1px] flex items-center justify-center gap-2 z-20">
-            <button type="button" onclick="rotateWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:text-[#ff2a5f] hover:bg-pink-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Rotate 90 degrees">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-            </button>
-            <button type="button" onclick="removeWorkspaceItem(${index}); event.stopPropagation();" class="w-8 h-8 rounded-full bg-white dark:bg-zinc-800 text-zinc-400 hover:text-red-500 hover:bg-red-50 shadow-md flex items-center justify-center transition-all cursor-pointer hover:scale-110 active:scale-95" title="Delete">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-            </button>
+          <div class="card-hover-actions absolute inset-0 bg-black/25 flex items-center justify-center z-20">
+            <div class="hover-action-pill">
+              <button type="button" onclick="rotateWorkspaceItem(${index}); event.stopPropagation();" class="hover-pill-btn" title="Rotate 90°">
+                <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              </button>
+              <button type="button" onclick="removeWorkspaceItem(${index}); event.stopPropagation();" class="hover-pill-btn danger" title="Delete">
+                <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </button>
+            </div>
           </div>
         `;
       }
     }
 
-    // Thumbnail Area: For remove-pages & merge-pdf, full clean white canvas
-    let thumbHtml = '';
-    if (isRemoveTool) {
-      const thumbHeight = isContinuous ? 'h-80 sm:h-96' : 'h-full min-h-[220px] sm:min-h-[250px]';
-      if (item.previewUrl) {
-        thumbHtml = `
-          <div class="${thumbHeight} bg-white dark:bg-zinc-900 flex items-center justify-center overflow-hidden p-0 relative group/thumb">
-            ${orderBadge}
-            ${infoBadge}
-            ${zoomPreviewBtn}
-            <img src="${item.previewUrl}" alt="${item.name}" style="transform: rotate(${item.rotation || 0}deg); ${item.removed ? 'opacity: 0.45;' : ''}" class="page-thumb-img w-full h-full object-contain pointer-events-none select-none transition-opacity duration-150">
-            ${removedOverlayHtml}
-          </div>
-        `;
-      } else {
-        thumbHtml = `
-          <div class="${thumbHeight} bg-white dark:bg-zinc-900 flex items-center justify-center overflow-hidden p-0 relative group/thumb">
-            ${orderBadge}
-            ${infoBadge}
-            ${zoomPreviewBtn}
-            <div class="page-thumb-skeleton absolute inset-0 flex flex-col items-center justify-center p-3 text-center pointer-events-none bg-zinc-50 dark:bg-zinc-800/40">
-              <div class="w-9 h-9 rounded-xl bg-pink-100 dark:bg-zinc-700 text-[#ff2a5f] flex items-center justify-center font-bold text-xs mb-1">P.${item.pageNum}</div>
-              <p class="text-[10px] text-zinc-400">Page ${item.pageNum}</p>
-            </div>
-            <img src="" alt="${item.name}" class="page-thumb-img opacity-0 w-full h-full object-contain pointer-events-none select-none transition-opacity duration-150">
-            ${removedOverlayHtml}
-          </div>
-        `;
-      }
-    } else if (isMergeTool) {
-      if (item.previewUrl) {
-        thumbHtml = `
-          <div onclick="openPagePreviewModal(${index});" class="flex-1 w-full bg-white dark:bg-zinc-900 flex items-center justify-center overflow-hidden p-2 sm:p-3 relative group/thumb min-h-[160px] sm:min-h-[190px] cursor-pointer">
-            ${orderBadge}
-            ${infoBadge}
-            <img src="${item.previewUrl}" alt="${item.name}" style="transform: rotate(${item.rotation || 0}deg);" class="page-thumb-img max-h-full max-w-full object-contain pointer-events-none select-none transition-transform duration-200">
-            ${hoverActionsHtml}
-          </div>
-        `;
-      } else {
-        thumbHtml = `
-          <div onclick="openPagePreviewModal(${index});" class="flex-1 w-full bg-white dark:bg-zinc-900 flex items-center justify-center overflow-hidden p-2 sm:p-3 relative group/thumb min-h-[160px] sm:min-h-[190px] cursor-pointer">
-            ${orderBadge}
-            ${infoBadge}
-            <div class="page-thumb-skeleton absolute inset-0 flex flex-col items-center justify-center p-3 text-center pointer-events-none bg-zinc-50 dark:bg-zinc-800/40">
-              <div class="w-9 h-9 rounded-xl bg-pink-100 dark:bg-zinc-700 text-[#ff2a5f] flex items-center justify-center font-bold text-xs mb-1">PDF</div>
-              <p class="text-[10px] text-zinc-400">Loading cover...</p>
-            </div>
-            <img src="" alt="${item.name}" class="page-thumb-img opacity-0 max-h-full max-w-full object-contain pointer-events-none select-none transition-opacity duration-150">
-            ${hoverActionsHtml}
-          </div>
-        `;
-      }
-    } else {
-      const thumbHeight = 'h-44';
-      if (item.previewUrl) {
-        thumbHtml = `
-          <div class="${thumbHeight} bg-zinc-100 dark:bg-zinc-800/60 flex items-center justify-center overflow-hidden p-2 relative group/thumb">
-            ${orderBadge}
-            ${infoBadge}
-            ${zoomPreviewBtn}
-            <img src="${item.previewUrl}" alt="${item.name}" style="transform: rotate(${item.rotation || 0}deg); ${item.removed ? 'opacity: 0.55; filter: grayscale(40%);' : ''}" class="page-thumb-img max-h-full max-w-full object-contain transition-transform duration-200 rounded-md shadow-xs pointer-events-none">
-            ${removedOverlayHtml}
-            ${hoverActionsHtml}
-          </div>
-        `;
-      } else {
-        thumbHtml = `
-          <div class="${thumbHeight} bg-zinc-100/70 dark:bg-zinc-800/60 flex items-center justify-center overflow-hidden p-2 relative group/thumb">
-            ${orderBadge}
-            ${infoBadge}
-            ${zoomPreviewBtn}
-            <div class="page-thumb-skeleton absolute inset-0 flex flex-col items-center justify-center p-3 text-center pointer-events-none bg-zinc-50 dark:bg-zinc-800/40">
-              <div class="w-9 h-9 rounded-xl bg-pink-100 dark:bg-zinc-700 text-[#ff2a5f] flex items-center justify-center font-bold text-xs mb-1">P.${item.pageNum}</div>
-              <p class="text-[10px] text-zinc-400">Page ${item.pageNum}</p>
-            </div>
-            <img src="" alt="${item.name}" class="page-thumb-img opacity-0 max-h-full max-w-full object-contain transition-opacity duration-200 rounded-md shadow-xs pointer-events-none">
-            ${removedOverlayHtml}
-            ${hoverActionsHtml}
-          </div>
-        `;
-      }
-    }
+    const skeletonHtml = `
+      <div class="page-thumb-skeleton absolute inset-0 flex flex-col items-center justify-center p-3 text-center pointer-events-none bg-surface-container-low">
+        <div class="w-8 h-8 rounded-xl bg-paper-pink text-primary flex items-center justify-center font-bold text-xs mb-1">PDF</div>
+        <p class="text-[10px] text-zinc-400">Loading...</p>
+      </div>
+    `;
 
-    // Card Footer with Name and Actions (omitted for remove-pages for clean look)
-    let actionsHtml = '';
-    if (toolId === 'merge-pdf') {
-      actionsHtml = `
-        <div class="p-2 sm:p-2.5 bg-white dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-1 text-xs select-none">
-          <div class="truncate flex-1 min-w-0 pr-1 text-left">
-            <p class="text-[11px] font-bold text-zinc-800 dark:text-zinc-200 truncate" title="${item.name}">${item.name}</p>
-            ${item.size ? `<span class="text-[10px] text-zinc-400 block">${item.size}</span>` : ''}
-          </div>
-          <div class="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
-            <button type="button" onclick="rotateWorkspaceItem(${index}, -1); event.stopPropagation();" class="w-7 h-7 rounded-lg hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff2a5f] flex items-center justify-center transition active:scale-95 cursor-pointer" title="Rotate 90° Left">
-              <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 4v5h-.582m-15.356 2A8.001 8.001 0 0119.418 9m0 0H15m-11 11v-5h.581m0 0a8.003 8.003 0 0015.357-2m-15.357 2H9"/></svg>
-            </button>
-            <button type="button" onclick="rotateWorkspaceItem(${index}, 1); event.stopPropagation();" class="w-7 h-7 rounded-lg hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff2a5f] flex items-center justify-center transition active:scale-95 cursor-pointer" title="Rotate 90° Right">
-              <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-            </button>
-            <button type="button" onclick="openPagePreviewModal(${index}); event.stopPropagation();" class="w-7 h-7 rounded-lg hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff2a5f] flex items-center justify-center transition active:scale-95 cursor-pointer sm:hidden" title="Zoom Preview">
-              <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
-            </button>
-            <button type="button" onclick="removeWorkspaceItem(${index}); event.stopPropagation();" class="w-7 h-7 rounded-lg hover:bg-red-50 dark:hover:bg-zinc-800 text-zinc-400 hover:text-red-500 flex items-center justify-center transition active:scale-95 cursor-pointer" title="Delete">
-              <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-            </button>
-          </div>
+    const sheetHtml = `
+      <div class="document-sheet">
+        ${orderBadge}
+        ${infoBadge}
+        <img src="${item.previewUrl || ''}" alt="${item.name}" style="transform: rotate(${item.rotation || 0}deg); ${item.removed ? 'opacity: 0.45;' : ''}" class="page-thumb-img w-full h-full object-contain pointer-events-none select-none transition-transform duration-300 ${item.previewUrl ? '' : 'opacity-0'}">
+        ${item.previewUrl ? '' : skeletonHtml}
+        ${removedOverlayHtml}
+        ${hoverActionsHtml}
+      </div>
+    `;
+
+    let underSheetHtml = '';
+    if (isMergeTool) {
+      underSheetHtml = `
+        <div class="w-full mt-2 text-center px-1 select-none">
+          <p class="text-xs font-semibold text-on-surface truncate" title="${item.name}">${item.name}</p>
+          <p class="text-[11px] text-on-surface-variant font-medium mt-0.5">${item.size ? item.size + ' • ' : ''}${item.pageCount || 1} pgs</p>
+        </div>
+        <div class="flex sm:hidden items-center justify-center gap-1 mt-2 w-full">
+          <button type="button" onclick="moveWorkspaceItem(${index}, -1); event.stopPropagation();" ${index === 0 ? 'disabled' : ''} class="w-7 h-7 rounded-lg border border-outline bg-white disabled:opacity-20 flex items-center justify-center active:scale-95 transition" title="Move Left">
+            <svg class="w-3.5 h-3.5 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          <button type="button" onclick="rotateWorkspaceItem(${index}, -1); event.stopPropagation();" class="w-7 h-7 rounded-lg border border-outline bg-white flex items-center justify-center active:scale-95 transition" title="Rotate Left">
+            <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 4v5h-.582m-15.356 2A8.001 8.001 0 0119.418 9m0 0H15m-11 11v-5h.581m0 0a8.003 8.003 0 0015.357-2m-15.357 2H9"/></svg>
+          </button>
+          <button type="button" onclick="rotateWorkspaceItem(${index}, 1); event.stopPropagation();" class="w-7 h-7 rounded-lg border border-outline bg-white flex items-center justify-center active:scale-95 transition" title="Rotate Right">
+            <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          </button>
+          <button type="button" onclick="openPagePreviewModal(${index}); event.stopPropagation();" class="w-7 h-7 rounded-lg border border-outline bg-white flex items-center justify-center active:scale-95 transition" title="Zoom">
+            <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7"/></svg>
+          </button>
+          <button type="button" onclick="removeWorkspaceItem(${index}); event.stopPropagation();" class="w-7 h-7 rounded-lg border border-outline bg-white text-primary hover:bg-paper-pink flex items-center justify-center active:scale-95 transition" title="Delete">
+            <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+          </button>
+          <button type="button" onclick="moveWorkspaceItem(${index}, 1); event.stopPropagation();" ${index === state.workspaceItems.length - 1 ? 'disabled' : ''} class="w-7 h-7 rounded-lg border border-outline bg-white disabled:opacity-20 flex items-center justify-center active:scale-95 transition" title="Move Right">
+            <svg class="w-3.5 h-3.5 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          </button>
         </div>
       `;
-    } else if (toolId !== 'remove-pages') {
-      actionsHtml = `
-        <div class="p-2 bg-white dark:bg-zinc-900 border-t border-zinc-100 dark:border-zinc-800 flex items-center justify-between gap-1 text-xs">
-          <div class="truncate flex-1 min-w-0 pr-1">
-            <p class="text-[11px] font-bold text-zinc-800 dark:text-zinc-200 truncate" title="${item.name}">${item.name}</p>
-            ${item.size ? `<span class="text-[10px] text-zinc-400">${item.size}</span>` : ''}
-          </div>
-          <div class="flex items-center gap-0.5 flex-shrink-0">
-            <button type="button" onclick="moveWorkspaceItem(${index}, -1); event.stopPropagation();" ${index === 0 ? 'disabled' : ''} class="w-6 h-6 rounded-md hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff2a5f] flex items-center justify-center disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer" title="Move Left">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
-            </button>
-            <button type="button" onclick="moveWorkspaceItem(${index}, 1); event.stopPropagation();" ${index === state.workspaceItems.length - 1 ? 'disabled' : ''} class="w-6 h-6 rounded-md hover:bg-pink-50 dark:hover:bg-zinc-800 text-zinc-500 hover:text-[#ff2a5f] flex items-center justify-center disabled:opacity-20 disabled:pointer-events-none transition cursor-pointer" title="Move Right">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
-            </button>
-          </div>
+    } else if (!isRemoveTool) {
+      underSheetHtml = `
+        <div class="w-full mt-2 text-center px-1 select-none">
+          <p class="text-xs font-semibold text-on-surface truncate" title="${item.name}">${item.name}</p>
+          ${item.size ? `<p class="text-[11px] text-on-surface-variant font-medium mt-0.5">${item.size}</p>` : ''}
         </div>
       `;
     }
 
-    // Click toggle pointer cursor for interactive page tools
     if (toolId === 'remove-pages' || toolId === 'split-pdf' || toolId === 'extract-pages') {
       card.classList.add('cursor-pointer');
     }
 
-    card.innerHTML = thumbHtml + actionsHtml;
+    card.innerHTML = sheetHtml + underSheetHtml;
     grid.appendChild(card);
     if (lazyThumbObserver && !item.previewUrl) {
       lazyThumbObserver.observe(card);
     }
   });
 
-  // "+ Add More Files" Card at end of grid (Smallpdf Style - Matching Card Proportions)
-  const addMoreCard = document.createElement('div');
-  addMoreCard.className = 'preview-card min-h-[220px] sm:min-h-[250px] border-2 border-dashed border-pink-200/90 dark:border-zinc-700 hover:border-[#ff2a5f] bg-pink-50/20 hover:bg-pink-50/50 dark:hover:bg-zinc-800/40 flex flex-col items-center justify-center p-5 text-center cursor-pointer transition-all group select-none';
-  addMoreCard.onclick = () => DOM.fileInput.click();
-  addMoreCard.innerHTML = `
-    <div class="w-12 h-12 rounded-2xl bg-pink-100 dark:bg-zinc-800 text-[#ff2a5f] flex items-center justify-center text-xl font-bold mb-2 group-hover:scale-110 transition-transform shadow-2xs">
-      <svg class="w-6 h-6 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-    </div>
-    <span class="text-xs sm:text-sm font-bold text-zinc-800 dark:text-zinc-200">Add More</span>
-    <span class="text-[11px] text-zinc-400 mt-0.5">Click or drop files</span>
-  `;
-  grid.appendChild(addMoreCard);
-
+  if (isMergeTool) {
+    const addMoreCard = document.createElement('div');
+    addMoreCard.className = 'preview-card w-full flex flex-col items-center select-none cursor-pointer group';
+    addMoreCard.onclick = () => DOM.fileInput.click();
+    addMoreCard.innerHTML = `
+      <div class="document-sheet w-full aspect-[3/4] border-2 border-dashed border-outline/50 hover:border-primary bg-surface-container-low hover:bg-paper-pink rounded-xl flex flex-col items-center justify-center transition-all duration-200">
+        <div class="w-10 h-10 rounded-full bg-paper-pink border border-outline text-primary flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
+          <svg class="w-5 h-5 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+        </div>
+        <span class="text-xs font-semibold text-on-surface group-hover:text-primary transition-colors">Add Files</span>
+      </div>
+      <div class="w-full mt-2 text-center px-1">
+        <p class="text-[11px] text-on-surface-variant font-medium">PDF documents</p>
+      </div>
+    `;
+    grid.appendChild(addMoreCard);
+  }
   container.appendChild(grid);
   initWorkspaceDelegatedEvents();
 
@@ -3142,37 +3083,64 @@ window.rotateWorkspaceItem = function(index, direction = 1) {
   if (state.workspaceItems[index].fileRecord) {
     state.workspaceItems[index].fileRecord.rotation = state.workspaceItems[index].rotation;
   }
-  renderInteractiveWorkspace();
-};
-
-window.removeWorkspaceItem = function(index) {
-  if (!state.workspaceItems[index]) return;
-  const item = state.workspaceItems[index];
-
-  if (item.type === 'pdf-file' && item.fileRecord) {
-    state.uploadedPdfs = state.uploadedPdfs.filter(f => f.id !== item.fileRecord.id);
-    state.selectedFiles = state.selectedFiles.filter(f => f !== item.file);
-  }
-
-  state.workspaceItems.splice(index, 1);
-  if (state.workspaceItems.length === 0) {
-    state.selectedFiles = [];
-    state.uploadedPdfs = [];
-    DOM.filesSelectedArea.classList.add('hidden');
-    DOM.toolDropzone.classList.remove('hidden');
+  const card = document.getElementById(`workspace-card-${index}`);
+  if (card) {
+    const img = card.querySelector('.page-thumb-img');
+    if (img) {
+      img.style.transition = 'transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
+      img.style.transform = `rotate(${state.workspaceItems[index].rotation}deg)`;
+    }
   } else {
     renderInteractiveWorkspace();
   }
 };
 
+window.removeWorkspaceItem = function(index) {
+  if (!state.workspaceItems[index]) return;
+  const card = document.getElementById(`workspace-card-${index}`);
+  const performRemove = () => {
+    const item = state.workspaceItems[index];
+    if (item && item.type === 'pdf-file' && item.fileRecord) {
+      state.uploadedPdfs = state.uploadedPdfs.filter(f => f.id !== item.fileRecord.id);
+      state.selectedFiles = state.selectedFiles.filter(f => f !== item.file);
+    }
+    state.workspaceItems.splice(index, 1);
+    if (state.workspaceItems.length === 0) {
+      state.selectedFiles = [];
+      state.uploadedPdfs = [];
+      DOM.filesSelectedArea.classList.add('hidden');
+      DOM.toolDropzone.classList.remove('hidden');
+      if (DOM.viewToolActive) DOM.viewToolActive.classList.remove('has-files');
+    } else {
+      renderInteractiveWorkspace();
+    }
+  };
+
+  if (card) {
+    card.style.transition = 'transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease';
+    card.style.transform = 'scale(0.8)';
+    card.style.opacity = '0';
+    setTimeout(performRemove, 200);
+  } else {
+    performRemove();
+  }
+};
+
 window.rotateAllWorkspace = function(angle) {
-  state.workspaceItems.forEach(i => {
-    i.rotation = (((i.rotation || 0) + angle) % 360 + 360) % 360;
-    if (i.fileRecord) {
-      i.fileRecord.rotation = i.rotation;
+  state.workspaceItems.forEach((item, index) => {
+    item.rotation = (((item.rotation || 0) + angle) % 360 + 360) % 360;
+    if (item.fileRecord) {
+      item.fileRecord.rotation = item.rotation;
+    }
+    const card = document.getElementById(`workspace-card-${index}`);
+    if (card) {
+      const img = card.querySelector('.page-thumb-img');
+      if (img) {
+        img.style.transition = 'transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
+        img.style.transform = `rotate(${item.rotation}deg)`;
+      }
     }
   });
-  renderInteractiveWorkspace();
 };
 
 window.sortWorkspaceItems = function(by) {

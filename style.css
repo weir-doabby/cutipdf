@@ -1,729 +1,488 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Kaushan+Script&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+/* ============================================================
+   CutiPDF — Hand-Drawn Minimal Design System
+   Warm Cream Paper, Authentic Ink Lines, Hand-Crafted Doodles
+   ============================================================ */
 
 :root {
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Plus Jakarta Sans", system-ui, sans-serif;
-  --font-brush: 'Kaushan Script', 'Caveat', cursive;
-  
-  /* CutiPDF Signature Watercolor Palette */
-  --color-pink-primary: #ff2a5f;
-  --color-pink-deep: #ff3366;
-  --color-pink-wash: #fff0f4;
-  --color-pink-border: #ffd1df;
-  --color-pink-glow: rgba(255, 82, 119, 0.28);
-  
-  /* Light Theme */
-  --bg-main: #fdfbfc;
-  --bg-card: #ffffff;
-  --bg-card-hover: #ffffff;
-  --border-color: #f7d5df;
-  --border-hover: #ff2a5f;
-  --text-main: #1f2024;
-  --text-muted: #6b7280;
-  --text-faint: #9ca3af;
-  --dropzone-bg: #fff8fa;
-  --header-bg: rgba(253, 251, 252, 0.9);
-  --shadow-watercolor: 0 4px 20px -2px rgba(255, 82, 119, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
-  --shadow-watercolor-hover: 0 12px 30px -4px rgba(255, 82, 119, 0.2), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+  --color-primary: #AF2247;
+  --color-on-primary: #FFFFFF;
+  --color-primary-container: #FFD9DD;
+  --color-on-primary-container: #400012;
+  --color-secondary: #006B5B;
+  --color-on-secondary: #FFFFFF;
+  --color-secondary-container: #97F0DB;
+  --color-tertiary: #835100;
+  --color-on-tertiary: #FFFFFF;
+  --color-tertiary-container: #FFEEDF;
+  --color-error: #BA1A1A;
+  --bg-main: #FFF9ED;
+  --surface: #FFF9ED;
+  --surface-dim: #DFD9CE;
+  --surface-bright: #FFF9ED;
+  --surface-container-lowest: #FFFFFF;
+  --surface-container-low: #F9F3E7;
+  --surface-container: #F3EDE1;
+  --surface-container-high: #EDE8DC;
+  --surface-container-highest: #E8E2D6;
+  --on-surface: #1D1C14;
+  --on-surface-variant: #584143;
+  --outline: #1D1C14;
+  --outline-variant: #CBC6BB;
+  --paper-pink: #FFE2E7;
+  --paper-mint: #D8F6EC;
+  --paper-butter: #FFF0C2;
+  --paper-sky: #DCEEFF;
+  --paper-lavender: #EDE2FF;
 }
 
 html.dark {
-  --bg-main: #101013;
-  --bg-card: #18181d;
-  --bg-card-hover: #202026;
-  --border-color: #2e262a;
-  --border-hover: #ff2a5f;
-  --text-main: #f9fafb;
-  --text-muted: #9ca3af;
-  --text-faint: #6b7280;
-  --dropzone-bg: #141214;
-  --header-bg: rgba(16, 16, 19, 0.9);
-  --shadow-watercolor: 0 4px 20px -2px rgba(0, 0, 0, 0.6);
-  --shadow-watercolor-hover: 0 12px 32px -4px rgba(255, 82, 119, 0.25);
+  --bg-main: #1D1C14;
+  --surface: #1D1C14;
+  --surface-dim: #14130D;
+  --surface-bright: #2A281E;
+  --surface-container-lowest: #26241B;
+  --surface-container-low: #222018;
+  --surface-container: #2A281E;
+  --surface-container-high: #323024;
+  --surface-container-highest: #3B382B;
+  --on-surface: #FFF9ED;
+  --on-surface-variant: #CBC6BB;
+  --outline: #FFF9ED;
+  --outline-variant: #584143;
 }
 
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  -webkit-tap-highlight-color: transparent;
-}
-
-html {
-  height: 100%;
 }
 
 body {
-  font-family: var(--font-sans);
+  font-family: 'Capriola', sans-serif;
   background-color: var(--bg-main);
-  color: var(--text-main);
-  min-height: 100vh;
-  min-height: 100dvh;
-  direction: ltr;
-  transition: background-color 0.25s ease, color 0.25s ease;
-  padding-bottom: 0 !important;
-  display: flex !important;
-  flex-direction: column !important;
+  color: var(--on-surface);
+  line-height: 1.5;
+  background-image: radial-gradient(rgba(29, 28, 20, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
-/* Apple Design Foundation: Optical Typography & Response */
-h1, h2, h3, .tool-title {
-  letter-spacing: -0.025em;
+html.dark body {
+  background-image: radial-gradient(rgba(255, 249, 237, 0.05) 1px, transparent 1px);
 }
 
-button, .btn, .btn-primary-action, .segmented-btn, [role="button"] {
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
+.font-display, .font-headline {
+  font-family: 'Boogaloo', cursive, sans-serif;
 }
 
-button:active, .btn:active, .btn-primary-action:active {
-  transform: scale(0.965);
-  transition: transform 80ms cubic-bezier(0.16, 1, 0.3, 1);
+.font-title, .font-body, .font-label {
+  font-family: 'Capriola', sans-serif;
 }
 
-main {
-  flex: 1 0 auto !important;
-}
-
-#mainSiteFooter {
-  margin-top: auto !important;
-  width: 100% !important;
-}
-
-/* Subtle watercolor paper texture effect */
-.watercolor-paper-bg {
-  background-color: var(--bg-main);
-  background-image: radial-gradient(rgba(255, 182, 201, 0.18) 1px, transparent 1px);
-  background-size: 28px 28px;
-}
-
-/* Painterly Brush Font for Categories */
-.font-brush {
-  font-family: var(--font-brush);
-  letter-spacing: 0.5px;
-}
-
-.category-title {
-  font-family: var(--font-brush);
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: var(--color-pink-primary);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  position: relative;
-  text-shadow: 0 1px 2px rgba(255, 82, 119, 0.15);
-}
-
-.category-title::after {
-  content: '';
+.material-symbols-outlined {
   display: inline-block;
-  height: 3px;
-  width: 32px;
-  background: linear-gradient(90deg, var(--color-pink-primary), transparent);
-  border-radius: 9999px;
-  margin-left: 4px;
-}
-
-/* Brand Logo (Light & Dark Mode) */
-.brand-logo {
-  transition: filter 0.25s ease, transform 0.2s ease;
-}
-
-.brand-logo:hover {
-  transform: scale(1.04);
-}
-
-html.dark .brand-logo {
-  filter: drop-shadow(0 2px 10px rgba(255, 82, 119, 0.5)) brightness(1.05);
-}
-
-/* Watercolor Card Styles */
-.tool-card {
-  background: var(--bg-card);
-  border: 1.5px solid var(--border-color);
-  border-radius: 20px;
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: pointer;
-  box-shadow: var(--shadow-watercolor);
-  position: relative;
+  width: 1em;
+  height: 1em;
+  line-height: 1 !important;
+  box-sizing: content-box;
   overflow: hidden;
+  white-space: nowrap;
+  direction: ltr;
+  vertical-align: middle;
 }
 
-.tool-card:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--color-pink-primary);
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-watercolor-hover);
+/* Hand-Drawn Minimal Components */
+.sketch-pill {
+  border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
 }
 
-/* Floating Square Tools Button (Royal Blue Contrast - Static Button with Adobe Stock Tool Logo) */
+.ink-sketch {
+  filter: url(#ink-wobble);
+}
 
-/* Smooth Zoom Pulse Animation (Gear smoothly zooms without any rotation) */
-@keyframes gearSmoothZoom {
-  0%, 45% {
-    transform: scale(1);
+.tool-doodle {
+  transition: transform 180ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tool-doodle:hover {
+  transform: translateY(-4px) rotate(-1.5deg);
+}
+
+.sketch-btn {
+  transition: transform 120ms ease-out, background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.sketch-btn:hover {
+  transform: translate(-1.5px, -1.5px) rotate(-0.8deg);
+  box-shadow: 2px 2px 0 var(--outline);
+}
+
+.sketch-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+/* 3-Frame Flipbook Animation */
+@keyframes flipFrame1 {
+  0%, 33% { opacity: 1; }
+  33.1%, 100% { opacity: 0; }
+}
+@keyframes flipFrame2 {
+  0%, 33% { opacity: 0; }
+  33.1%, 66% { opacity: 1; }
+  66.1%, 100% { opacity: 0; }
+}
+@keyframes flipFrame3 {
+  0%, 66% { opacity: 0; }
+  66.1%, 100% { opacity: 1; }
+}
+
+.flip-f1 { animation: flipFrame1 1.2s steps(1, end) infinite; }
+.flip-f2 { animation: flipFrame2 1.2s steps(1, end) infinite; }
+.flip-f3 { animation: flipFrame3 1.2s steps(1, end) infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tool-doodle, .sketch-btn {
+    transition: none !important;
+    transform: none !important;
   }
-  68% {
-    transform: scale(1.085);
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.85));
-  }
-  84% {
-    transform: scale(1.025);
-  }
-  100% {
-    transform: scale(1);
-    filter: none;
-  }
+  .flip-f1 { animation: none !important; opacity: 1 !important; }
+  .flip-f2, .flip-f3 { animation: none !important; opacity: 0 !important; }
 }
 
-/* Interactive Click/Tap Fast Snap Zoom */
-@keyframes gearZoomSnap {
-  0% {
-    transform: scale(1);
-  }
-  30% {
-    transform: scale(0.88);
-  }
-  70% {
-    transform: scale(1.14);
-    filter: drop-shadow(0 0 7px rgba(255, 255, 255, 0.95));
-  }
-  100% {
-    transform: scale(1);
-    filter: none;
-  }
-}
-
-/* Floating Action Bar (Remove Pages, Merge PDF & Unified Control Center)
-   Apple Design Materials: Translucent frosted glass, specular highlight edge, and spring active press */
-.workspace-action-bar.floating-mode {
-  position: fixed !important;
-  bottom: calc(18px + env(safe-area-inset-bottom, 0px)) !important;
-  left: 50% !important;
-  right: auto !important;
-  transform: translateX(-50%) !important;
-  z-index: 70 !important;
-  padding: 0 !important;
-  margin: 0 auto !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: min(calc(100% - 32px), 520px) !important;
-  max-width: 520px !important;
-  pointer-events: none;
-  animation: floatInUpCenter 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.workspace-action-bar.floating-mode > * {
-  pointer-events: auto;
-}
-
-.workspace-action-bar.floating-mode #workspaceActionControlsContainer {
-  width: 100% !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 10px !important;
-}
-
-/* Row 1: The two frosted sub-buttons, split 50/50 with specular top highlight */
-.workspace-action-bar.floating-mode #workspaceActionSubButtons {
-  display: flex !important;
-  width: 100% !important;
-  gap: 10px !important;
-}
-
-.workspace-action-bar.floating-mode #workspaceActionSubButtons button {
-  flex: 1 1 50% !important;
-  width: 50% !important;
-  height: 52px !important;
-  min-height: 52px !important;
-  border-radius: 18px !important;
-  font-size: 13.5px !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.01em !important;
-  border: 1px solid rgba(228, 228, 231, 0.85) !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.6) !important;
-  background: rgba(255, 255, 255, 0.88) !important;
-  backdrop-filter: blur(20px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
-  color: #18181b !important;
-  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.08), 0 2px 6px -1px rgba(0, 0, 0, 0.04) !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  cursor: pointer !important;
-  white-space: nowrap !important;
-  transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, box-shadow 0.15s ease !important;
-}
-
-html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button {
-  background: rgba(39, 39, 42, 0.88) !important;
-  color: #f4f4f5 !important;
-  border-color: rgba(63, 63, 70, 0.8) !important;
-  border-top-color: rgba(255, 255, 255, 0.15) !important;
-  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.35) !important;
-}
-
-.workspace-action-bar.floating-mode #workspaceActionSubButtons button:hover {
-  background: rgba(244, 244, 245, 0.96) !important;
-  transform: translateY(-1px) !important;
-}
-
-html.dark .workspace-action-bar.floating-mode #workspaceActionSubButtons button:hover {
-  background: rgba(63, 63, 70, 0.96) !important;
-}
-
-.workspace-action-bar.floating-mode #workspaceActionSubButtons button:active {
-  transform: scale(0.97) !important;
-  transition: transform 80ms cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-.workspace-action-bar.floating-mode #workspaceActionSubButtons button.hidden {
-  display: none !important;
-}
-
-/* Row 2: Punchy Royal Pink Primary Action Button (Apple Spring Active Scale) */
-.workspace-action-bar.floating-mode #btnExecuteAction {
-  width: 100% !important;
-  border-radius: 18px !important;
-  padding: 14px 28px !important;
-  min-height: 52px !important;
-  height: 52px !important;
-  font-size: 15px !important;
-  font-weight: 800 !important;
-  letter-spacing: -0.015em !important;
-  background-color: #ff2a5f !important;
-  color: #ffffff !important;
-  box-shadow: 0 4px 18px rgba(255, 42, 95, 0.3) !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 10px !important;
-  white-space: nowrap !important;
-  border: none !important;
-  cursor: pointer !important;
-  transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, box-shadow 0.15s ease !important;
-}
-
-.workspace-action-bar.floating-mode #btnExecuteAction:hover {
-  background-color: #e01a4f !important;
-  box-shadow: 0 6px 22px rgba(255, 42, 95, 0.38) !important;
-  transform: translateY(-1px) !important;
-}
-
-.workspace-action-bar.floating-mode #btnExecuteAction:active {
-  transform: scale(0.97) !important;
-  transition: transform 80ms cubic-bezier(0.16, 1, 0.3, 1) !important;
-}
-
-.workspace-action-bar.floating-mode #workspaceActionSummary,
-.workspace-action-bar.floating-mode #workspaceActionSummaryWrapper {
-  display: none !important;
-}
-
-/* Full-Canvas View for Remove Pages & Merge PDF: extra bottom padding so cards aren't obscured by floating controls */
-.remove-pages-workspace #selectedFilesList,
-.merge-pdf-workspace #selectedFilesList {
-  max-height: none !important;
-  overflow-y: visible !important;
-  margin-top: 0 !important;
-  padding-top: 8px !important;
-  padding-bottom: 140px !important;
-}
-
-@keyframes floatInUpCenter {
-  from {
-    opacity: 0;
-    transform: translate(-50%, 16px) scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0) scale(1);
-  }
-}
-
-/* Container for Action Buttons (Mobile: Select on Top, Cloud Row Underneath; Desktop: Inline Row) */
-.action-buttons-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  max-width: 320px;
-  margin: 0 auto;
-}
-
-@media (min-width: 640px) {
-  .action-buttons-wrap {
-    flex-direction: row;
-    gap: 10px;
-    max-width: none;
-    width: auto;
-  }
-}
-
-/* Balancer for Desktop (Invisible placeholder to balance cloud buttons on the right) */
-.desktop-balancer {
-  display: none;
-}
-
-@media (min-width: 640px) {
-  .desktop-balancer {
-    display: block;
-    width: 46px;
-    flex-shrink: 0;
-    visibility: hidden;
-    pointer-events: none;
-    user-select: none;
-  }
-}
-
-/* Big Hero Action Button (iLovePDF Style - Large, Prominent & Confident) */
-.btn-primary-action {
-  background: #ff2a5f;
-  color: #ffffff;
-  font-weight: 800;
-  border-radius: 20px;
-  min-height: 64px;
-  height: 64px;
-  width: 100%;
-  max-width: 360px;
-  padding: 16px 32px;
-  font-size: 19px;
-  letter-spacing: -0.2px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  box-shadow: 0 4px 16px rgba(255, 42, 95, 0.2);
-  transition: all 0.15s ease;
-  border: none;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
-
-@media (min-width: 640px) {
-  .btn-primary-action {
-    min-height: 72px;
-    height: 72px;
-    width: auto;
-    min-width: 320px;
-    max-width: none;
-    padding: 18px 52px;
-    font-size: 22px;
-    border-radius: 22px;
-  }
-}
-
-.btn-primary-action:hover {
-  background: #e01a4f;
-  transform: none;
-  box-shadow: 0 6px 20px rgba(255, 42, 95, 0.28);
-}
-
-.btn-primary-action:active {
-  transform: scale(0.98);
-  box-shadow: 0 2px 8px rgba(255, 42, 95, 0.15);
-}
-
-/* Cloud Source Buttons Wrap (Mobile: horizontal row underneath; Desktop: vertical stack beside) */
-.cloud-buttons-wrap {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-  width: 100%;
-  max-width: 360px;
-  gap: 8px;
-}
-
-@media (min-width: 640px) {
-  .cloud-buttons-wrap {
-    flex-direction: column;
-    justify-content: space-between;
-    height: 72px;
-    width: 46px;
-    max-width: 46px;
-    gap: 6px;
-    flex-shrink: 0;
-  }
-}
-
-/* Cloud Source Button (Google Drive & Dropbox) */
-.btn-cloud-source {
-  width: 42px;
-  height: 42px;
-  min-width: 42px;
-  border-radius: 50%;
-  background: #ff2a5f;
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border: none;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
-  transition: all 0.15s ease;
-  -webkit-tap-highlight-color: transparent;
-  flex-shrink: 0;
-}
-
-@media (min-width: 640px) {
-  .btn-cloud-source {
-    width: 46px;
-    min-width: 46px;
-    height: 33px;
-    border-radius: 12px;
-  }
-}
-
-.btn-cloud-source:hover {
-  background: #e01a4f;
-  transform: none;
-}
-
-.btn-cloud-source:active {
-  transform: scale(0.95);
-}
-
-/* Upload Dropzone (Pure iLovePDF Style: No bordered box on any device; global drag & drop anywhere) */
-.tool-dropzone {
-  border: none !important;
-  background: transparent !important;
-  border-radius: 0 !important;
-  padding: 1rem 0 !important;
-  box-shadow: none !important;
-  transition: opacity 0.2s ease;
-}
-
-.tool-dropzone:hover {
-  border: none !important;
-  background: transparent !important;
-}
-
-.tool-dropzone.drag-active {
-  border: none !important;
-  background: transparent !important;
-  transform: none !important;
-}
-
-/* Thumbnail Preview Cards (Apple Squircle & Direct Manipulation Physics) */
-.preview-card {
-  background: var(--bg-card);
-  border: 1.5px solid rgba(228, 228, 231, 0.9);
-  border-radius: 20px;
-  overflow: hidden;
-  box-sizing: border-box;
-  contain: content; /* Isolates paint & layout: 700 cards scroll at 60/120fps with zero offscreen paint! */
-  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.15s ease, background-color 0.15s ease, opacity 0.15s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  cursor: pointer;
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
-  touch-action: pan-y;
-}
-
-.page-thumb-skeleton {
-  contain: strict;
-  pointer-events: none;
-}
-
-.page-thumb-img {
-  pointer-events: none;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-html.dark .preview-card {
-  border-color: rgba(63, 63, 70, 0.7);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-}
-
-.preview-card:active {
-  transform: scale(0.98);
-  transition: transform 80ms cubic-bezier(0.16, 1, 0.3, 1);
-  cursor: grabbing;
-}
-
-/* Hover effects restricted to mouse/pointer devices so touch scrolling never shifts or jumps */
-@media (hover: hover) and (pointer: fine) {
-  .preview-card:hover {
-    border-color: rgba(203, 213, 225, 0.95);
-    box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.03);
-    transform: translateY(-2px);
-  }
-  html.dark .preview-card:hover {
-    border-color: rgba(82, 82, 91, 0.85);
-    box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.35);
-  }
-  .preview-card.removed:hover {
-    border-color: rgba(255, 82, 119, 0.7) !important;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06) !important;
-  }
-}
-
-.preview-card.dragging {
-  opacity: 0.85;
-  transform: scale(1.02);
-  border-color: var(--color-pink-primary);
-  box-shadow: 0 20px 35px -8px rgba(0, 0, 0, 0.22);
-  cursor: grabbing;
-  z-index: 30;
-}
-
-.preview-card.drag-over {
-  border-color: var(--color-pink-primary);
-  box-shadow: 0 0 0 2.5px var(--color-pink-primary), 0 12px 28px -4px rgba(255, 42, 95, 0.25);
-  transform: translateY(-3px);
-}
-
-/* Selected / Marked for Removal Card: Faint subtle pink outline, NO bright pink background wash, NO heavy glow */
-.preview-card.removed {
-  border-color: rgba(255, 82, 119, 0.5) !important;
-  background-color: var(--bg-card) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
-}
-
-html.dark .preview-card.removed {
-  background-color: var(--bg-card) !important;
-  border-color: rgba(255, 82, 119, 0.5) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
-}
-
-.preview-card.removed img {
-  opacity: 0.5;
-  filter: none;
-}
-
-.preview-card.selected:not(.removed) {
-  border-color: var(--color-pink-primary);
-  box-shadow: 0 0 0 2px var(--color-pink-primary);
-}
-
-/* Silky Smooth 60/120fps Hardware-Accelerated Scrolling Container */
-#selectedFilesList {
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior-y: contain;
-  scroll-behavior: smooth;
-  will-change: scroll-position;
-  transform: translateZ(0);
-}
-
-/* Card hover overlay actions */
-.card-hover-actions {
-  opacity: 0;
-  transition: opacity 0.18s ease;
-}
-
-.preview-card:hover .card-hover-actions,
-.preview-card:focus-within .card-hover-actions {
-  opacity: 1;
-}
-
-@media (hover: none) {
-  .card-hover-actions {
-    opacity: 1;
-  }
-}
-
-/* Options Drawer */
-.options-drawer {
-  background: var(--bg-card);
-  border: 1.5px solid var(--border-color);
-  border-radius: 20px;
-  box-shadow: var(--shadow-watercolor);
-}
-
-/* Segmented Control */
-.segmented-control {
-  display: inline-flex;
-  background: rgba(0, 0, 0, 0.04);
-  border-radius: 12px;
-  padding: 3px;
-  gap: 2px;
-}
-
-html.dark .segmented-control {
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.segmented-btn {
-  padding: 6px 14px;
-  border-radius: 9px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.segmented-btn.active {
-  background: var(--bg-card);
-  color: var(--color-pink-primary);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-/* Smooth view transitions */
+/* Views Management */
 .view-container {
   display: none;
-  animation: fadeIn 0.25s ease-out;
 }
 
 .view-container.active {
   display: block;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
+#view-tool-active.has-files {
+  max-width: 1240px !important;
+  width: 100% !important;
+}
+
+/* Hand-Drawn Dropzone */
+.tool-dropzone {
+  border: 2.5px dashed var(--outline);
+  border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+  background: var(--surface-container-low);
+  padding: 48px 24px;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.tool-dropzone:hover, .tool-dropzone.dragover {
+  border-color: var(--color-primary);
+  background: var(--paper-pink);
+  transform: scale(1.008) rotate(-0.4deg);
+}
+
+.btn-primary-action {
+  height: 58px;
+  min-height: 58px;
+  padding: 0 32px;
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  border: 2px solid var(--outline);
+  border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+  font-family: 'Capriola', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--outline);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.btn-primary-action:hover {
+  transform: translate(-1.5px, -1.5px) rotate(-0.5deg);
+  box-shadow: 3.5px 3.5px 0 var(--outline);
+}
+
+.btn-primary-action:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+/* Action buttons balancer & cloud wrappers */
+.action-buttons-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cloud-buttons-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-cloud-source {
+  width: 44px;
+  height: 44px;
+  border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+  border: 2px solid var(--outline);
+  background: var(--surface-container-lowest);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 120ms ease, background-color 150ms ease;
+  box-shadow: 1.5px 1.5px 0 var(--outline);
+}
+
+.btn-cloud-source:hover {
+  transform: translateY(-2px) rotate(1deg);
+  background: var(--paper-butter);
+}
+
+/* Hand-Drawn Document Sheet in Workspace */
+.preview-card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  cursor: grab;
+  position: relative;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+
+.preview-card:active {
+  cursor: grabbing;
+}
+
+.preview-card .document-sheet {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  background: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid var(--outline);
+  box-shadow: 3px 3px 0 var(--outline);
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .preview-card:hover .document-sheet {
+    transform: translateY(-3px) rotate(-1deg);
+    box-shadow: 5px 5px 0 var(--outline);
   }
-  to {
+}
+
+.page-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+}
+
+.preview-card.dragging {
+  opacity: 0.85;
+  transform: scale(1.05) rotate(2deg);
+  z-index: 50;
+  cursor: grabbing;
+}
+
+.preview-card.drag-over .document-sheet {
+  border-color: var(--color-primary);
+  box-shadow: 4px 4px 0 var(--color-primary);
+  transform: translateY(-4px) rotate(1deg);
+}
+
+.preview-card.removed .document-sheet {
+  border-color: var(--color-primary) !important;
+  box-shadow: 2px 2px 0 var(--color-primary) !important;
+}
+
+.preview-card.removed img {
+  opacity: 0.45;
+  filter: grayscale(40%);
+}
+
+/* Card Hover Actions */
+.card-hover-actions {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .preview-card:hover .card-hover-actions,
+  .preview-card:focus-within .card-hover-actions {
     opacity: 1;
-    transform: translateY(0);
+    pointer-events: auto;
   }
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+@media (hover: none), (pointer: coarse) {
+  .card-hover-actions {
+    display: none !important;
+  }
 }
 
-::-webkit-scrollbar-track {
+.hover-action-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  background: var(--surface);
+  border: 2px solid var(--outline);
+  border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+  box-shadow: 2.5px 2.5px 0 var(--outline);
+  transform: scale(0.92);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.preview-card:hover .hover-action-pill {
+  transform: scale(1) rotate(-1deg);
+}
+
+.hover-pill-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--on-surface);
   background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-::-webkit-scrollbar-thumb {
-  background: #f7d5df;
-  border-radius: 10px;
+.hover-pill-btn:hover {
+  background: var(--paper-pink);
+  transform: scale(1.1);
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #ff2a5f;
+.hover-pill-btn.danger:hover {
+  color: var(--color-primary) !important;
+  background: var(--primary-container) !important;
 }
 
-html.dark ::-webkit-scrollbar-thumb {
-  background: #2e262a;
+/* Hand-Drawn Sketch Action Bar (Floating Mode) */
+.workspace-action-bar.floating-mode {
+  position: fixed !important;
+  bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  z-index: 50 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  max-width: 96vw !important;
+  pointer-events: none;
 }
 
-/* Footer only visible on Home page (hidden whenever inside any active tool or workspace) */
-body:has(#view-tool-active.active) #mainSiteFooter {
+.workspace-action-bar.floating-mode > * {
+  pointer-events: auto;
+}
+
+.apple-floating-capsule {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 6px 10px !important;
+  background: var(--surface) !important;
+  border: 2px solid var(--outline) !important;
+  border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px !important;
+  box-shadow: 4px 4px 0 var(--outline) !important;
+  box-sizing: border-box !important;
+  max-width: 100% !important;
+}
+
+.capsule-btn {
+  height: 42px !important;
+  padding: 0 16px !important;
+  border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px !important;
+  font-family: 'Capriola', sans-serif !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border: 1.5px solid var(--outline) !important;
+  background: var(--surface-container-lowest) !important;
+  color: var(--on-surface) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  box-shadow: 1.5px 1.5px 0 var(--outline) !important;
+  transition: transform 0.1s ease, background-color 0.15s ease !important;
+}
+
+.capsule-btn:hover {
+  background: var(--paper-pink) !important;
+  transform: translate(-1px, -1px) !important;
+}
+
+.capsule-btn:active {
+  transform: translate(1px, 1px) !important;
+  box-shadow: none !important;
+}
+
+.capsule-btn.hidden {
   display: none !important;
+}
+
+.capsule-divider {
+  height: 24px !important;
+  width: 2px !important;
+  background: var(--outline-variant) !important;
+  margin: 0 2px !important;
+  flex-shrink: 0 !important;
+}
+
+.capsule-primary-btn {
+  height: 42px !important;
+  padding: 0 22px !important;
+  border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px !important;
+  font-family: 'Capriola', sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  background: var(--color-primary) !important;
+  color: var(--color-on-primary) !important;
+  border: 2px solid var(--outline) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  box-shadow: 2px 2px 0 var(--outline) !important;
+  transition: transform 0.1s ease, box-shadow 0.1s ease !important;
+}
+
+.capsule-primary-btn:hover {
+  transform: translate(-1px, -1px) rotate(-0.5deg) !important;
+  box-shadow: 3px 3px 0 var(--outline) !important;
+}
+
+.capsule-primary-btn:active {
+  transform: translate(1px, 1px) !important;
+  box-shadow: none !important;
 }
