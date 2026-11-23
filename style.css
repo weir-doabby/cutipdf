@@ -1,4 +1,23 @@
 /* ============================================================
+   ABSOLUTE ZERO ANIMATION & TRANSITION OVERRIDE (Instant & Crisp)
+   ============================================================ */
+*, *::before, *::after {
+  animation: none !important;
+  transition: none !important;
+}
+
+.flip-f1 {
+  animation: none !important;
+  opacity: 1 !important;
+}
+
+.flip-f2, .flip-f3 {
+  animation: none !important;
+  display: none !important;
+  opacity: 0 !important;
+}
+
+/* ============================================================
    CutiPDF — Hand-Drawn Minimal Design System
    Warm Cream Paper, Authentic Ink Lines, Hand-Crafted Doodles
    ============================================================ */
@@ -485,4 +504,124 @@ html.dark body {
 .capsule-primary-btn:active {
   transform: translate(1px, 1px) !important;
   box-shadow: none !important;
+}
+
+
+/* ============================================================
+   Desktop Studio Sidebar & Mobile Top Bar (Adobe / Smallpdf Style)
+   ============================================================ */
+.desktop-studio-sidebar {
+  width: 320px;
+  background-color: var(--surface-container);
+  border: 2px solid var(--outline);
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 4px 4px 0 var(--outline);
+  position: sticky;
+  top: 16px;
+  align-self: flex-start;
+}
+
+.mobile-workspace-topbar {
+  background-color: var(--surface-container);
+  border: 2px solid var(--outline);
+  border-radius: 18px;
+  padding: 10px 14px;
+  box-shadow: 2px 2px 0 var(--outline);
+  position: sticky;
+  top: 12px;
+  z-index: 30;
+}
+
+.studio-primary-btn {
+  width: 100%;
+  height: 52px;
+  border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  border: 2px solid var(--outline);
+  font-family: 'Capriola', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--outline);
+}
+
+.studio-primary-btn:hover {
+  background-color: #93193a;
+}
+
+.studio-primary-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--outline);
+}
+
+.studio-secondary-btn {
+  width: 100%;
+  height: 42px;
+  border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px;
+  background-color: var(--surface-container-lowest);
+  color: var(--color-primary);
+  border: 2px solid var(--outline);
+  font-family: 'Capriola', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--outline);
+}
+
+.studio-secondary-btn:hover {
+  background-color: var(--paper-pink);
+}
+
+.studio-secondary-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--outline);
+}
+
+.studio-tool-group {
+  background-color: var(--surface-container-lowest);
+  border: 1.5px solid var(--outline);
+  border-radius: 16px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.studio-pill-btn {
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--outline);
+  background-color: var(--surface-container);
+  color: var(--on-surface);
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.studio-pill-btn:hover {
+  background-color: var(--surface-variant);
+}
+
+.studio-pill-btn.active {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+.studio-pill-btn.danger:hover {
+  background-color: var(--error-container);
+  color: var(--color-error);
 }

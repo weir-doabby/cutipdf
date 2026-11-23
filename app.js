@@ -3009,6 +3009,38 @@ function renderInteractiveWorkspace() {
   container.appendChild(grid);
   initWorkspaceDelegatedEvents();
 
+  // Synchronize Desktop Studio Sidebar Elements
+  const sidebarToolTitle = document.getElementById('sidebarToolTitle');
+  if (sidebarToolTitle && state.activeTool) {
+    sidebarToolTitle.textContent = state.activeTool.title;
+  }
+  const sidebarToolVector = document.getElementById('sidebarToolVector');
+  if (sidebarToolVector && state.activeTool) {
+    sidebarToolVector.innerHTML = getToolVector(state.activeTool.id);
+  }
+  const sidebarStatsSummary = document.getElementById('sidebarStatsSummary');
+  if (sidebarStatsSummary) {
+    if (toolId === 'merge-pdf') {
+      sidebarStatsSummary.textContent = String(totalFiles) + ' PDFs • ' + String(totalPages) + ' pages ready';
+    } else if (toolId === 'remove-pages') {
+      const removedCount = state.workspaceItems.filter(i => i.removed).length;
+      sidebarStatsSummary.textContent = String(state.workspaceItems.length) + ' pages • ' + String(removedCount) + ' marked';
+    } else {
+      sidebarStatsSummary.textContent = String(state.workspaceItems.length) + ' items ready';
+    }
+  }
+
+  // Toggle tool-specific controls in Desktop Sidebar & Mobile Modal
+  const sidebarRemovePages = document.getElementById('sidebarRemovePagesControls');
+  const mobileRemovePages = document.getElementById('mobileRemovePagesGroup');
+  const mobileModeGroup = document.getElementById('mobileModeGroup');
+  if (sidebarRemovePages) sidebarRemovePages.classList.toggle('hidden', toolId !== 'remove-pages');
+  if (mobileRemovePages) mobileRemovePages.classList.toggle('hidden', toolId !== 'remove-pages');
+  if (mobileModeGroup) mobileModeGroup.classList.toggle('hidden', toolId !== 'merge-pdf');
+
+  // Synchronize Mobile & Desktop Primary Action Buttons
+  syncMobileAndDesktopActionButtons();
+
   // Update Action Button Text (only for tools other than remove-pages and merge-pdf, which are handled above)
   if (toolId !== 'remove-pages' && toolId !== 'merge-pdf') {
     const activeCount = state.workspaceItems.filter(i => !i.removed).length;
@@ -3544,14 +3576,7 @@ async function engineMergePdf() {
   state.lastProcessedPdfFile = new File([mergedBytes], filename, { type: 'application/pdf' });
 
   // Confetti celebration!
-  if (typeof confetti === 'function') {
-    confetti({
-      particleCount: 80,
-      spread: 70,
-      origin: { y: 0.7 },
-      colors: ['#ff2a5f', '#ff7597', '#ffd1df', '#ff3366']
-    });
-  }
+  if (false) {}
 
   // Show standardized Post-Process Done Screen
   showGenericDoneScreen(`${state.workspaceItems.length} PDFs Merged`);
@@ -4200,14 +4225,7 @@ function downloadBlob(blob, filename, customTitle) {
   a.click();
   document.body.removeChild(a);
 
-  if (typeof confetti === 'function') {
-    confetti({
-      particleCount: 80,
-      spread: 70,
-      origin: { y: 0.7 },
-      colors: ['#ff2a5f', '#ff7597', '#ffd1df', '#ff3366']
-    });
-  }
+  if (false) {}
 
   // Show standardized Post-Process Done Screen
   const title = customTitle || (state.activeTool ? `${state.activeTool.title} Completed!` : 'Document Ready!');
@@ -4297,4 +4315,66 @@ function formatBytes(bytes) {
   const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
+
+// ==========================================
+// Mobile Other Options Bottom Sheet Modal
+// ==========================================
+window.openMobileOtherOptionsModal = function() {
+  const modal = document.getElementById('mobileOtherOptionsModal');
+  if (modal) {
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    modal.classList.add('opacity-100', 'pointer-events-auto');
+    if (typeof window.updateMobileModeButtons === 'function') {
+      window.updateMobileModeButtons();
+    }
+  }
+};
+
+window.closeMobileOtherOptionsModal = function() {
+  const modal = document.getElementById('mobileOtherOptionsModal');
+  if (modal) {
+    modal.classList.add('opacity-0', 'pointer-events-none');
+    modal.classList.remove('opacity-100', 'pointer-events-auto');
+  }
+};
+
+window.updateMobileModeButtons = function() {
+  const btnFile = document.getElementById('btnMobileModeFile');
+  const btnPage = document.getElementById('btnMobileModePage');
+  if (btnFile && btnPage) {
+    if (state.workspaceViewMode === 'page') {
+      btnPage.classList.add('bg-surface-container-lowest', 'font-bold', 'text-on-surface');
+      btnPage.classList.remove('bg-surface-container', 'font-medium', 'text-on-surface-variant');
+      btnFile.classList.remove('bg-surface-container-lowest', 'font-bold', 'text-on-surface');
+      btnFile.classList.add('bg-surface-container', 'font-medium', 'text-on-surface-variant');
+    } else {
+      btnFile.classList.add('bg-surface-container-lowest', 'font-bold', 'text-on-surface');
+      btnFile.classList.remove('bg-surface-container', 'font-medium', 'text-on-surface-variant');
+      btnPage.classList.remove('bg-surface-container-lowest', 'font-bold', 'text-on-surface');
+      btnPage.classList.add('bg-surface-container', 'font-medium', 'text-on-surface-variant');
+    }
+  }
+  const chk = document.getElementById('chkMobileMergeInsertBlankPage');
+  if (chk) {
+    chk.checked = !!(state.toolOptions && state.toolOptions.mergeInsertBlankPage);
+  }
+};
+
+function syncMobileAndDesktopActionButtons() {
+  const mobileBtn = document.getElementById('btnExecuteActionMobile');
+  if (mobileBtn && DOM.btnExecuteAction) {
+    mobileBtn.disabled = DOM.btnExecuteAction.disabled;
+    if (mobileBtn.disabled) {
+      mobileBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    } else {
+      mobileBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+    const mobileTxtSpan = document.getElementById('mobileActionButtonText');
+    const desktopTxtSpan = DOM.btnExecuteAction.querySelector('#actionButtonText');
+    if (mobileTxtSpan && desktopTxtSpan) {
+      mobileTxtSpan.textContent = desktopTxtSpan.textContent;
+    }
+  }
 }
